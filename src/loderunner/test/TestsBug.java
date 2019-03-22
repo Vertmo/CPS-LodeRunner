@@ -6,7 +6,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 
 @Suite.SuiteClasses({
-        ScreenTest.class,
+        ScreenTestBug.class
 })
 
-public class Tests {}
+public class TestsBug {}
