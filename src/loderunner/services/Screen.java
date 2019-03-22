@@ -15,9 +15,9 @@ public interface Screen {
     /* Constructors */
 
     // pre: 0 < w && 0 < h
-    // post: width() = w
-    // post: height() = h
-    // post: \forall x \in [0..width()[ \forall y \in [0..height()[ getCellNature(x, y) == EMP
+    // post: getWidth() = w
+    // post: getHeight() = h
+    // post: \forall x \in [0..getWidth()[ \forall y \in [0..getHeight()[ getCellNature(x, y) == EMP
     public void init(int w, int h);
 
     /* Operators */

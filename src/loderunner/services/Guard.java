@@ -6,6 +6,11 @@ public interface Guard extends Character {
     // const
     public int getId();
 
+    // const
+    public int getInitCol();
+    // const
+    public int getInitHgt();
+
     public Move getBehaviour();
 
     // const
@@ -63,8 +68,8 @@ public interface Guard extends Character {
 
     // pre: e.getCellNature(x, y) == EMP
     // post: getEnvi() == e
-    // post: getCol() == x
-    // post: getHgt() == y
+    // post: getCol() == getInitCol() == x
+    // post: getHgt() == getInitCol() == y
     // post: getTarget() == t
     public void init(Environment e, Character t, int x, int y);
 
@@ -75,11 +80,11 @@ public interface Guard extends Character {
     //       => (getCol() == getCol()@pre && getHgt() == getHgt()@pre)
     // post: getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre+1) \in { MTL, PLT }
     //       => (getCol() == getCol()@pre && getHgt() == getHgt()@pre)
-    // post: \exists Character c \in getEnvi().getCellContent(getCol()@pre-1, getHgt()@pre+1)
+    // post: \exists Guard g \in getEnvi().getCellContent(getCol()@pre-1, getHgt()@pre+1)
     //       => (getCol() == getCol()@pre && getHgt() == getHgt()@pre)
     // post: getCol() != 0
     //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre+1) \notin { MTL, PLT }
-    //       && \not \exists Character c \in getEnvi().getCellContent(getCol()@pre-1, getHgt()@pre+1)
+    //       && \not \exists Guard g \in getEnvi().getCellContent(getCol()@pre-1, getHgt()@pre+1)
     //       => (getCol() == getCol()@pre-1 && getHgt() == getHgt()@pre+1)
     public void climbLeft();
 
@@ -88,11 +93,11 @@ public interface Guard extends Character {
     //       => (getCol() == getCol()@pre && getHgt() == getHgt()@pre)
     // post: getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre+1) \in { MTL, PLT }
     //       => (getCol() == getCol()@pre && getHgt() == getHgt()@pre)
-    // post: \exists Character c \in getEnvi().getCellContent(getCol()@pre+1, getHgt()@pre+1)
+    // post: \exists Guard g \in getEnvi().getCellContent(getCol()@pre+1, getHgt()@pre+1)
     //       => (getCol() == getCol()@pre && getHgt() == getHgt()@pre)
     // post: getCol() != getEnvi().getWidth()-1
     //       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre+1) \notin { MTL, PLT }
-    //       && \not \exists Character c \in getEnvi().getCellContent(getCol()@pre+1, getHgt()@pre+1)
+    //       && \not \exists Guard g \in getEnvi().getCellContent(getCol()@pre+1, getHgt()@pre+1)
     //       => (getCol() == getCol()@pre+1 && getHgt() == getHgt()@pre+1)
     public void climbRight();
 
