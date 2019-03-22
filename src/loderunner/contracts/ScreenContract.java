@@ -21,9 +21,6 @@ public class ScreenContract extends ScreenDecorator {
         if(x < 0 || x >= getWidth() || y < 0 || y >= getHeight())
             throw new PreconditionError("Screen", "getCellNature", "0 <= x < getWidth() && 0 <= y < getHeight()");
 
-        // pre-invariant
-        checkInvariant();
-
         // run
         return super.getCellNature(x, y);
     }
@@ -32,9 +29,6 @@ public class ScreenContract extends ScreenDecorator {
     public void init(int w, int h) {
         // pre: 0 < w && 0 < h
         if(w <= 0 || h <= 0) throw new PreconditionError("Screen", "init", "0 < w && 0 < h");
-
-        // pre-invariant
-        checkInvariant();
 
         // run
         super.init(w, h);
@@ -87,7 +81,7 @@ public class ScreenContract extends ScreenDecorator {
         // post: \forall i \in [0..getWidth()[ \forall j \in [0..getHeight()[
         //         (i != x || j != y) => getCellNature(i, j) == getCellNature(i, j)@pre
         for(int i = 0; i < getWidth(); i++) {
-            for(int j = 0; j < getWidth(); j++) {
+            for(int j = 0; j < getHeight(); j++) {
                 if((i != x || j != y) && getCellNature(i, j) != cellNature_pre[i][j])
                     throw new PostconditionError("Screen", "dig", "One of the other cells has changed");
             }
@@ -124,7 +118,7 @@ public class ScreenContract extends ScreenDecorator {
         // post: \forall i \in [0..getWidth()[ \forall j \in [0..getHeight()[
         //         (i != x || j != y) => getCellNature(i, j) == getCellNature(i, j)@pre
         for(int i = 0; i < getWidth(); i++) {
-            for(int j = 0; j < getWidth(); j++) {
+            for(int j = 0; j < getHeight(); j++) {
                 if((i != x || j != y) && getCellNature(i, j) != cellNature_pre[i][j])
                     throw new PostconditionError("Screen", "fill", "One of the other cells has changed");
             }

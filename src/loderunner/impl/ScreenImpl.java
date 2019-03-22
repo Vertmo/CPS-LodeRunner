@@ -4,7 +4,7 @@ import loderunner.services.Screen;
 import loderunner.services.Cell;
 
 public class ScreenImpl implements Screen {
-    private Cell[][] cells;
+    protected Cell[][] cells;
 
     @Override
     public void init(int w, int h) {

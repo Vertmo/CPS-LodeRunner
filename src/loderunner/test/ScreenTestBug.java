@@ -6,6 +6,6 @@ import loderunner.contracts.ScreenContract;
 public class ScreenTestBug extends AbstractScreenTest {
     @Override
     public void beforeTests() {
-        screen = new ScreenContract(new ScreenImplBug());
+        setScreen(new ScreenContract(new ScreenImplBug()));
     }
 }

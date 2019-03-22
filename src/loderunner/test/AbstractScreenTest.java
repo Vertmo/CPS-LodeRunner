@@ -12,6 +12,10 @@ import loderunner.services.Screen;
 public abstract class AbstractScreenTest {
     protected Screen screen;
 
+    public void setScreen(Screen screen) {
+        this.screen = screen;
+    }
+
     @Before
     public abstract void beforeTests();
 
@@ -31,6 +35,7 @@ public abstract class AbstractScreenTest {
         screen.init(10, 5);
         // Opération
         screen.getCellNature(2, 3);
+        // Oracle: pas d'exception
     }
 
     @Test
@@ -58,6 +63,7 @@ public abstract class AbstractScreenTest {
         // Conditions initiales: aucune
         // Opération
         screen.init(10, 5);
+        // Oracle: pas d'exception
     }
 
     @Test

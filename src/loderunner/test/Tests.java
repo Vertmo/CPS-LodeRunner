@@ -6,7 +6,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 
 @Suite.SuiteClasses({
-        ScreenTest.class,
+            ScreenTest.class,
+            EditableScreenTest.class
 })
 
 public class Tests {}
