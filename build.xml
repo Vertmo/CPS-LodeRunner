@@ -43,6 +43,19 @@
     </junit>
   </target>
 
+  <target name="test-bug" depends="compile" description="test the implementation">
+    <junit printsummary="yes">
+      <classpath>
+        <pathelement location="${build}"/>
+        <pathelement location="${jars}/junit.jar"/>
+      </classpath>
+
+      <formatter type="plain"/>
+
+      <test name="loderunner.test.TestsBug" outfile="reportBug"/>
+    </junit>
+  </target>
+
   <target name="dist" depends="init,clean" description="Generer la distribution">
     <!-- tout mettre dans l'archive -->
     <jar basedir="." jarfile="../CPS-LodeRunner-${nom1}-${nom2}-${DSTAMP}.jar" />

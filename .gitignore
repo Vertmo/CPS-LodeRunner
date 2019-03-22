@@ -23,7 +23,7 @@
 hs_err_pid*
 
 # Junit report
-report.txt
+report*.txt
 
 # ant and eclim stuff
 build/
