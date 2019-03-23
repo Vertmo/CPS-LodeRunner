@@ -8,7 +8,7 @@ import loderunner.services.Cell;
 import loderunner.contracts.errors.PreconditionError;
 
 public abstract class AbstractEditableScreenTest extends AbstractScreenTest {
-    protected EditableScreen screen;
+    private EditableScreen screen;
 
     public void setScreen(EditableScreen screen) {
         super.setScreen(screen);
@@ -100,7 +100,7 @@ public abstract class AbstractEditableScreenTest extends AbstractScreenTest {
     // Etats remarquables
 
     @Test
-    public void playableStateTest() {
+    public void testPlayableState() {
         // Conditions initiales
         screen.init(10, 5);
         for(int i = 0; i < 10; i++) {
@@ -113,7 +113,7 @@ public abstract class AbstractEditableScreenTest extends AbstractScreenTest {
     // Paires de transitions
 
     @Test
-    public void digFillTest() {
+    public void testDigFill() {
         // Conditions initiales
         screen.init(10, 5); screen.setNature(5, 3, Cell.PLT);
         // Opérations
@@ -122,7 +122,7 @@ public abstract class AbstractEditableScreenTest extends AbstractScreenTest {
     }
 
     @Test
-    public void fillDigTest() {
+    public void testFillDig() {
         // Conditions initiales
         screen.init(10, 5); screen.setNature(5, 3, Cell.HOL);
         // Opérations
@@ -133,7 +133,7 @@ public abstract class AbstractEditableScreenTest extends AbstractScreenTest {
     // Scénarios
 
     @Test
-    public void scenarTest() {
+    public void testScenar() {
         screen.init(10, 5);
         for(int i = 0; i < 10; i++) screen.setNature(i, 0, Cell.MTL);
         screen.setNature(5, 3, Cell.PLT); screen.setNature(6, 3, Cell.PLT);

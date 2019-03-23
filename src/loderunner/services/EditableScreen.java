@@ -1,6 +1,6 @@
 package loderunner.services;
 
-public interface EditableScreen extends Screen {
+public interface EditableScreen extends /* refine */ Screen {
     /* Observators */
     public boolean isPlayable();
 

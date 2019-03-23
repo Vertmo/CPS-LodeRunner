@@ -2,7 +2,7 @@ package loderunner.services;
 
 import java.util.Set;
 
-public interface Environment extends Screen {
+public interface Environment extends /* include */ Screen {
     /* Observators */
 
     // pre: 0 <= x < getWidth() && 0 <= y < getHeight()
@@ -22,15 +22,27 @@ public interface Environment extends Screen {
 
     /* Constructors */
 
-    // post: getWidth() = s.getWidth()
-    // post: getHeight() = s.getHeight()
+    // pre: 0 < w && 0 < h
+    // post: getWidth() == w
+    // post: getHeight() == h
+    // post: \forall x \in [0..getWidth()[ \forall y \in [0..getHeight()[ getCellNature(x, y) == EMP
+    // post: \forall x \in [0..getWidth()[ \forall y \in [0..getHeight()[
+    //         getCellContent(x, y).isEmpty()
+    @Override
+    public void init(int w, int h);
+
+    // post: getWidth() == s.getWidth()
+    // post: getHeight() == s.getHeight()
     // post: \forall x \in [0..getWidth()[ \forall y \in [0..getHeight()[
     //         getCellNature(x, y) == s.getCellNature(x, y)
+    // post: \forall x \in [0..getWidth()[ \forall y \in [0..getHeight()[
+    //         getCellContent(x, y).isEmpty()
     public void init(Screen s);
 
     /* Operators */
 
     // pre: 0 <= x < getWidth() && 0 <= y < getHeight()
+    // pre: getCellNature(x, y) == EMP && getCellNature(x, y-1) \in { PLT, MTL }
     // post: c \in getCellContent(x, y)
     // post: \forall InCell c2 \in getCellContent(x, y)@pre c2 \in getCellContent(x, y)
     //       && \forall InCell c2 \in getCellContent(x, y) c2 != c => c2 \in getCellContent(x, y)@pre
@@ -49,4 +61,12 @@ public interface Environment extends Screen {
     // post: \forall i \in [0..getWidth()[ \forall j \in [0..getHeight()[
     //         getCellNature(x, y) == getCellNature(x, y)@pre
     public void removeCellContent(int x, int y, InCell c);
+
+    // pre: getCellNature(x, y) == PLT
+    // pre: \not \exists Item i \in getCellContent(x, y+1)
+    // post: getCellNature(x, y) == HOL
+    // post: \forall i \in [0..getWidth()[ \forall j \in [0..getHeight()[
+    //         (i != x || j != y) => getCellNature(i, j) == getCellNature(i, j)@pre
+    @Override
+    public void dig(int x, int y);
 }

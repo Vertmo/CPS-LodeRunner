@@ -10,7 +10,7 @@ import loderunner.contracts.errors.PreconditionError;
 import loderunner.services.Screen;
 
 public abstract class AbstractScreenTest {
-    protected Screen screen;
+    private Screen screen;
 
     public void setScreen(Screen screen) {
         this.screen = screen;
