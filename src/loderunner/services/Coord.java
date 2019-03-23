@@ -1,6 +1,8 @@
 package loderunner.services;
 
 public interface Coord {
-    int getCol();
-    int getHgt();
+    public int getCol();
+    public int getHgt();
+    public void setCol(int col);
+    public void setHgt(int hgt);
 }
