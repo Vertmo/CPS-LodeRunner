@@ -30,6 +30,12 @@
     </java>
   </target>
 
+  <target name="run-editor" depends="compile" description="run the editor">
+    <!--<echo>================ Run the editor ================</echo>-->
+    <java classname="loderunner.main.Editor" classpath="${build}:${jars}/jfxrt.jar">
+    </java>
+  </target>
+
   <target name="test" depends="compile" description="test the implementation">
     <junit printsummary="yes">
       <classpath>

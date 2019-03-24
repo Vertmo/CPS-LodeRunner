@@ -15,7 +15,7 @@ import loderunner.services.Cell;
 import loderunner.services.Coord;
 import loderunner.services.EditableScreen;
 
-public class Level {
+public class Level implements loderunner.services.Level {
     private EditableScreen screen;
     private Coord playerCoord;
     private Set<Coord> guardCoords;
@@ -71,7 +71,11 @@ public class Level {
         screen = new EditableScreenImpl();
         screen.init(w, h);
 
-        playerCoord = new CoordImpl(0, 0);
+        for(int x = 0; x < w; x++) {
+            screen.setNature(x, 0, Cell.MTL);
+        }
+
+        playerCoord = new CoordImpl(0, 1);
         guardCoords = new HashSet<>();
         treasureCoords = new HashSet<>();
     }
