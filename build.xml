@@ -22,6 +22,11 @@
           description="compile the source " >
     <!-- Compile the java code from ${src} into ${build} -->
     <javac debug="true" classpath="${jars}/junit.jar" srcdir="${src}" excludes="" destdir="${build}" includeantruntime="false" />
+
+    <!-- Copy the ${assets} to ${build$} -->
+    <copy todir="${build}/assets">
+      <fileset dir="assets"/>
+    </copy>
   </target>
 
   <target name="run" depends="compile" description="run the game">
