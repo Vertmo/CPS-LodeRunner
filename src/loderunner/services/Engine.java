@@ -8,12 +8,8 @@ public interface Engine {
     // const
     public Environment getEnvironment();
 
-    // const
     public Player getPlayer();
-
-    // const
     public Set<Guard> getGuards();
-
     public Set<Item> getTreasures();
     public Set<Hole> getHoles();
     public Status getStatus();
@@ -24,9 +20,12 @@ public interface Engine {
     // pre: screen.isPlayable()
     // pre: \forall Coord c \in { pCoord } union gCoords union tCoords
     //        getEnvironment().getCellNature(c.getCol(), c.getHgt()) == EMP
-    // pre: \forall Coord c1 \in { pCoord } union gCoords union tCoords
-    //        \forall Coord c2 \in { pCoord } union gCoords union tCoords
-    //          (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
+    // pre: \forall Coord c1 \in gCoords \forall Coord c2 \in gCoords
+    //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
+    // pre: \forall Coord c1 \in tCoords \forall Coord c2 \in tCoords
+    //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
+    // pre: \forall Coord c \in gCoords union tCoords
+    //        pCoord.getCol() != c.getCol() || pCord.getHgt() != c.getHgt()
     // post: getStatus() == Playing
     // post: getEnvironment().getWidth() == screen.getWidth()
     //       && getEnvironment().getHeight() == screen.getHeight()
@@ -60,6 +59,9 @@ public interface Engine {
     /* Operators */
 
     // pre: getStatus() == Playing
+    // post: getPlayer() == (getPlayer()@pre).step()
+    // post: \forall Guard g: getGuards() g == (g@pre).step()
+    // TODO les tresors suivent les gardes (et sont lachés quand le garde tombe dans un trou)
     // post: \exists Item i \in getTreasures()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
     //       => i \notin getTreasures()
     // post: \forall Item i \in getTreasures()@pre (i.getCol() != getPlayer().getCol() || i.getHgt() != getPlayer().getHgt())
