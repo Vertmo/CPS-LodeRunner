@@ -169,9 +169,11 @@ public class EditorWindow {
             level.getScreen().getCellNature(level.getPlayerCoord().getCol(), level.getPlayerCoord().getHgt()) == Cell.EMP;
         for(Coord g: level.getGuardCoords()) {
             if(level.getScreen().getCellNature(g.getCol(), g.getHgt()) != Cell.EMP) correctContent = false;
+            if(level.getPlayerCoord().getCol() == g.getCol() && level.getPlayerCoord().getHgt() == g.getHgt()) correctContent = false;
         }
         for(Coord t: level.getTreasureCoords()) {
             if(level.getScreen().getCellNature(t.getCol(), t.getHgt()) != Cell.EMP) correctContent = false;
+            if(level.getPlayerCoord().getCol() == t.getCol() && level.getPlayerCoord().getHgt() == t.getHgt()) correctContent = false;
             if(level.getScreen().getCellNature(t.getCol(), t.getHgt()-1) != Cell.PLT &&
                level.getScreen().getCellNature(t.getCol(), t.getHgt()-1) != Cell.MTL &&
                !level.getGuardCoords().contains(t)) correctContent = false;
