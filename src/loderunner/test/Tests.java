@@ -8,7 +8,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         ScreenTest.class,
             EditableScreenTest.class,
-            EnvironmentTest.class
+            EnvironmentTest.class,
+            CharacterTest.class
 })
 
 public class Tests {}

@@ -20,7 +20,7 @@ public class CharacterContract extends CharacterDecorator {
         // inv: getEnvi().getCellNature(getCol(), getHgt()) \in { EMP, HOL, LAD, HDR }
         Cell nat = getEnvi().getCellNature(getCol(), getHgt());
         if(nat != Cell.EMP && nat != Cell.HOL && nat != Cell.LAD && nat != Cell.HDR)
-            throw new InvariantError("Character", "The character is in a non-empty cell");
+            throw new InvariantError("Character", "The character is in a non-free cell");
     }
 
     @Override
@@ -83,7 +83,7 @@ public class CharacterContract extends CharacterDecorator {
         // post: getEnvi().getCellNature(getCol()@pre-1,getHgt()) \in { PLT, MTL }
         //       => getCol() == getCol()@pre
         Cell nat_left = getEnvi().getCellNature(col_pre-1, getHgt());
-        if(nat_left == Cell.PLT || nat_left == Cell.MTL && getCol() != col_pre)
+        if((nat_left == Cell.PLT || nat_left == Cell.MTL) && getCol() != col_pre)
             throw new PostconditionError("Character", "goLeft", "The character has moved into a non-free cell");
 
         // post: getEnvi().getCellNature(getCol()@pre, getHgt()) \notin { LAD, HDR }
@@ -161,7 +161,7 @@ public class CharacterContract extends CharacterDecorator {
         // post: getEnvi().getCellNature(getCol()@pre+1,getHgt()) \in { PLT, MTL }
         //       => getCol() == getCol()@pre
         Cell nat_right = getEnvi().getCellNature(col_pre+1, getHgt());
-        if(nat_right == Cell.PLT || nat_right == Cell.MTL && getCol() != col_pre)
+        if((nat_right == Cell.PLT || nat_right == Cell.MTL) && getCol() != col_pre)
             throw new PostconditionError("Character", "goRight", "The character has moved into a non-free cell");
 
         // post: getEnvi().getCellNature(getCol()@pre, getHgt()) \notin { LAD, HDR }
