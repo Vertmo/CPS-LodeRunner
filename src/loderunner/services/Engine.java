@@ -9,7 +9,10 @@ public interface Engine {
     public Environment getEnvironment();
 
     public Player getPlayer();
+
+    // const
     public Set<Guard> getGuards();
+
     public Set<Item> getTreasures();
     public Set<Hole> getHoles();
     public Status getStatus();
@@ -39,6 +42,7 @@ public interface Engine {
     void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords);
 
     /* Invariants */
+
     // inv: getPlayer() \in getEnvironment().getCellContent(getPlayer().getCol(), getPlayer().getHgt())
     //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
     //           getPlayer() \in getEnvironment().getCellContent(x, y)
@@ -59,16 +63,36 @@ public interface Engine {
     /* Operators */
 
     // pre: getStatus() == Playing
+
+    // Gestion des déplacements
     // post: getPlayer() == (getPlayer()@pre).step()
     // post: \forall Guard g: getGuards() g == (g@pre).step()
-    // TODO les tresors suivent les gardes (et sont lachés quand le garde tombe dans un trou)
+
+    // Les gardes peuvent porter des trésors (et les perdent quand ils tombent dans un trou)
+    // post: \forall Item t \in getTreasures()@pre
+    //         \exists Guard g \in getEnvi().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
+    //           getCellNature(g.getCol(), g.getHgt()) != HOL
+    //         => t.getCol() = g.getCol() && t.getHgt() = g.getHgt()
+    // post: \forall Item t \in getTreasures()@pre
+    //         \exists Guard g \in getEnvi().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
+    //           getCellNature(g.getCol(), g.getHgt()) == HOL
+    //         => t.getCol() = g.getCol() && t.getHgt() = g.getHgt()+1
+    // post: \forall Item t \in getTreasures()@pre
+    //         \not \exists Guard g \in getEnvi().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
+    //         => t.getCol() = t.getCol()@pre && t.getHgt() = t.getHgt()@pre
+
+    // Le joueur peut récupérer un trésor, ce qui peut amener à la fin de la partie
     // post: \exists Item i \in getTreasures()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
     //       => i \notin getTreasures()
     // post: \forall Item i \in getTreasures()@pre (i.getCol() != getPlayer().getCol() || i.getHgt() != getPlayer().getHgt())
     //       => i \in getTreasures()
     // post: getTreasures().isEmpty() => getStatus() == Win
+
+    // Le joueur peut être tué par un garde
     // post: \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
     //       => getStatus() == Loss
+
+    // Gestion des trous
     // post: \forall Hole h \in getHoles()
     //       => h \notin getHoles()@pre => h.getT() == 0
     // post: \forall Hole h \in getHoles()@pre h1.getT()@pre < 15
@@ -78,6 +102,8 @@ public interface Engine {
     //           && (getPlayer.getCol()@pre == h.getCol() && getPlayer()@pre.getHgt() == h.getHgt() => getStatus() == Loss)
     //           && (\exists Guard g \in getEnvironment().getCellContent(h.getCol(), h.getHgt())@pre
     //               => g.getCol() == g.getInitCol() && g.getHgt() == g.getInitHgt()))
+
+    // La partie continue
     // post: \not getTreasures().isEmpty()
     //       && \not \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
     //       && \not \exists Hole h \in getHoles()@pre

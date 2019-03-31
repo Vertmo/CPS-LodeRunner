@@ -5,4 +5,6 @@ public interface Item extends InCell {
     public ItemType getNature();
     public int getCol();
     public int getHgt();
+    public void setCol(int col);
+    public void setHgt(int hgt);
 }
