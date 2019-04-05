@@ -37,7 +37,7 @@
 
   <target name="run-editor" depends="compile" description="run the editor">
     <!--<echo>================ Run the editor ================</echo>-->
-    <java classname="loderunner.main.Editor" classpath="${build}:${jars}/jfxrt.jar">
+    <java classname="loderunner.main.Editor" classpath="${build}:${java.home}/lib/ext/jfxrt.jar">
     </java>
   </target>
 
