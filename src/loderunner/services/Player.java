@@ -27,13 +27,13 @@ public interface Player extends Character {
     //        && getEngine().getNextCommand() == Up => step() == goUp()
     //        && getEngine().getNextCommand() == Down => step() == goDown())
     // post: getEngine().getNextCommand() == DigL
-    //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL }
+    //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD}
     //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
     //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) \in { EMP, HOL, LAD, HDR }
     //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre-1)@pre == PLT
     //       => getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre-1) == HOL
     // post: getEngine().getNextCommand() == DigR
-    //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL }
+    //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
     //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
     //       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre) \in { EMP, HOL, LAD, HDR }
     //       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre-1)@pre == PLT

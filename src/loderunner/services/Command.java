@@ -6,5 +6,6 @@ public enum Command {
     Up,
     Down,
     DigL,
-    DigR
+    DigR,
+    Neutral
 }
