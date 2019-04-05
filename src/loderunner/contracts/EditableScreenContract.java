@@ -19,8 +19,8 @@ public class EditableScreenContract extends ScreenContract implements EditableSc
         super.checkInvariant();
 
         // inv: isPlayable() ==
-        //      \forall x \in [0..width()[ \forall y \in [0..height()[ getCellNature(x, y) != HOL
-        //      && \forall x \in [0..width()[ getCellNature(x, 0) == MTL
+        //      \forall x \in [0..getWidth()[ \forall y \in [0..getHeight()[ getCellNature(x, y) != HOL
+        //      && \forall x \in [0..getWidth()[ getCellNature(x, 0) == MTL
         boolean is_playable = true;
         for(int x = 0; x < getWidth(); x++) {
             for(int y = 0; y < getHeight(); y++) {
@@ -64,7 +64,7 @@ public class EditableScreenContract extends ScreenContract implements EditableSc
 
         // post: getCellNature(x, y) = c
         if(getCellNature(x, y) != c) throw new PostconditionError("EditableScreen", "setNature", "getCellNature(x, y) = c");
-        // post: \forall i \in [0..width()[ \forall j \in [0..height()[ getCellNature(x, y)
+        // post: \forall i \in [0..getWidth()[ \forall j \in [0..getHeight()[ getCellNature(x, y)
         //         (i != x || j != y) => getCellNature(i, j) == getCellNature(i, j)@pre
         for(int i = 0; i < getWidth(); i++) {
             for(int j = 0; j < getHeight(); j++) {

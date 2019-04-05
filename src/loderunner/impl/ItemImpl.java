@@ -34,5 +34,15 @@ public class ItemImpl implements Item {
     @Override
     public int getHgt() {
         return hgt;
-    }
+	}
+
+	@Override
+	public void setCol(int col) {
+      this.col = col;
+	}
+
+	@Override
+	public void setHgt(int hgt) {
+      this.hgt = hgt;
+	}
 }
