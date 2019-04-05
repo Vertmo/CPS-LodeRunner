@@ -41,6 +41,7 @@ public class CharacterImpl implements Character {
         }
         if(envi.getCellNature(col, hgt) != Cell.LAD && envi.getCellNature(col, hgt) != Cell.HDR
            && envi.getCellNature(col, hgt-1) != Cell.PLT && envi.getCellNature(col, hgt-1) != Cell.MTL
+           && envi.getCellNature(col, hgt-1) != Cell.LAD
            && !charUnderneath) return;
         boolean guardLeft = false;
         for(InCell ic: envi.getCellContent(col-1, hgt)) {
@@ -60,6 +61,7 @@ public class CharacterImpl implements Character {
         }
         if(envi.getCellNature(col, hgt) != Cell.LAD && envi.getCellNature(col, hgt) != Cell.HDR
            && envi.getCellNature(col, hgt-1) != Cell.PLT && envi.getCellNature(col, hgt-1) != Cell.MTL
+           && envi.getCellNature(col, hgt-1) != Cell.LAD
            && !charUnderneath) return;
         boolean guardRight = false;
         for(InCell ic: envi.getCellContent(col+1, hgt)) {

@@ -367,12 +367,34 @@ public abstract class AbstractCharacterTest {
 
     // Scénarios
     @Test
-    public void testScenar() {
+    public void testScenar1() {
         // Conditions initiales
         EditableScreen es = new EditableScreenImpl(); es.init(10, 5);
-        es.setNature(5, 0, Cell.MTL); es.setNature(6, 0, Cell.PLT); es.setNature(4, 1, Cell.PLT);
-        es.setNature(7, 1, Cell.LAD); es.setNature(7, 2, Cell.LAD);
-        es.setNature(7, 3, Cell.LAD); es.setNature(7, 4, Cell.LAD);
+        es.setNature(5, 0, Cell.MTL); es.setNature(6, 0, Cell.PLT); es.setNature(8, 0, Cell.PLT);
+        es.setNature(4, 1, Cell.PLT);
+        es.setNature(7, 1, Cell.LAD); es.setNature(7, 2, Cell.LAD); es.setNature(7, 3, Cell.LAD);
+        es.setNature(6, 4, Cell.HDR); es.setNature(5, 4, Cell.HDR);
+        Environment env = new EnvironmentImpl(); env.init(es);
+        character.init(env, 5, 1);
+        // Opérations
+        character.goLeft();
+        character.goRight(); character.goRight();
+        character.goUp(); character.goUp(); character.goUp(); character.goUp(); // Il grimpe l'echelle
+        character.goRight(); character.goDown(); character.goDown(); character.goDown(); // Il tombe de l'echelle
+        character.goUp();
+        character.goLeft(); character.goRight();
+        // Oracle
+        assertEquals(8, character.getCol());
+        assertEquals(1, character.getHgt());
+    }
+
+    @Test
+    public void testScenar2() {
+        // Conditions initiales
+        EditableScreen es = new EditableScreenImpl(); es.init(10, 5);
+        es.setNature(5, 0, Cell.MTL); es.setNature(6, 0, Cell.PLT); es.setNature(8, 0, Cell.PLT);
+        es.setNature(4, 1, Cell.PLT);
+        es.setNature(7, 1, Cell.LAD); es.setNature(7, 2, Cell.LAD); es.setNature(7, 3, Cell.LAD);
         es.setNature(6, 4, Cell.HDR); es.setNature(5, 4, Cell.HDR);
         Environment env = new EnvironmentImpl(); env.init(es);
         character.init(env, 5, 1);
