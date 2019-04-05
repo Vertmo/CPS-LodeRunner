@@ -22,13 +22,15 @@ public interface Engine {
 
     // pre: screen.isPlayable()
     // pre: \forall Coord c \in { pCoord } union gCoords union tCoords
-    //        getEnvironment().getCellNature(c.getCol(), c.getHgt()) == EMP
+    //        screen.getCellNature(c.getCol(), c.getHgt()) == EMP
     // pre: \forall Coord c1 \in gCoords \forall Coord c2 \in gCoords
     //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
     // pre: \forall Coord c1 \in tCoords \forall Coord c2 \in tCoords
     //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
-    // pre: \forall Coord c \in gCoords union tCoords
-    //        pCoord.getCol() != c.getCol() || pCord.getHgt() != c.getHgt()
+    // pre: \forall Coord c \in gCoords
+    //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
+    // pre: \forall Coord c \in tCoords
+    //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
     // pre: \forall Coord c \in tCoords
     //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL }
     //        || c \in gCoords
@@ -42,7 +44,7 @@ public interface Engine {
     //       && \forall Guard g \in getGuards() \exists Coord c \in gCoords (g.getCol() == c.getCol() && g.getHgt() == c.getHgt())
     // post: \forall Coord c \in tCoords \exists Item i \in getTreasures() (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
     //       && \forall Item i \in getTreasures() \exists Coord c \in tCoords (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
-    void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords);
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords);
 
     /* Invariants */
 
@@ -112,5 +114,5 @@ public interface Engine {
     //       && \not \exists Hole h \in getHoles()@pre
     //                 (h.getT() == 15 && h.getCol() == getPlayer().getCol()@pre && h.getHgt() == getPlayer().getHgt()@pre)
     //       => getStatus() == Playing
-    void step();
+    public void step();
 }
