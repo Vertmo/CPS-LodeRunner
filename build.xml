@@ -52,7 +52,7 @@
 
       <formatter type="plain"/>
 
-      <test name="loderunner.test.TestsBug" outfile="reportBug"/>
+      <test name="loderunner.test.TestsBug" outfile="report-bug"/>
     </junit>
   </target>
 

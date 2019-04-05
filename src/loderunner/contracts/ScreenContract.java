@@ -58,6 +58,8 @@ public class ScreenContract extends ScreenDecorator {
             throw new PreconditionError("Screen", "dig", "getCellNature(x, y) == PLT");
 
         // captures
+        int width_pre = getWidth();
+        int height_pre = getHeight();
         Cell[][] cellNature_pre = new Cell[getWidth()][getHeight()];
         for(int i = 0; i < getWidth(); i++) {
             for(int j = 0; j < getHeight(); j++) {
@@ -73,6 +75,13 @@ public class ScreenContract extends ScreenDecorator {
 
         // post-invariant
         checkInvariant();
+
+        // const: getWidth()
+        if(getWidth() != width_pre)
+            throw new PostconditionError("Screen", "dig", "getWidth() is supposed to be constant");
+        // const: getHeight()
+        if(getHeight() != height_pre)
+            throw new PostconditionError("Screen", "dig", "getHeight() is supposed to be constant");
 
         // post: getCellNature(x, y) == HOL
         if(getCellNature(x, y) != Cell.HOL)
@@ -95,6 +104,8 @@ public class ScreenContract extends ScreenDecorator {
             throw new PreconditionError("Screen", "dig", "getCellNature(x, y) == HOL");
 
         // captures
+        int width_pre = getWidth();
+        int height_pre = getHeight();
         Cell[][] cellNature_pre = new Cell[getWidth()][getHeight()];
         for(int i = 0; i < getWidth(); i++) {
             for(int j = 0; j < getHeight(); j++) {
@@ -110,6 +121,13 @@ public class ScreenContract extends ScreenDecorator {
 
         // post-invariant
         checkInvariant();
+
+        // const: getWidth()
+        if(getWidth() != width_pre)
+            throw new PostconditionError("Screen", "fill", "getWidth() is supposed to be constant");
+        // const: getHeight()
+        if(getHeight() != height_pre)
+            throw new PostconditionError("Screen", "fill", "getHeight() is supposed to be constant");
 
         // post: getCellNature(x, y) == PLT
         if(getCellNature(x, y) != Cell.PLT)

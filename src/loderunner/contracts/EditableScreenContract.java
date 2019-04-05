@@ -46,6 +46,8 @@ public class EditableScreenContract extends ScreenContract implements EditableSc
             throw new PreconditionError("EditableScreen", "setNature", "0 <= x < getWidth() && 0 <= y < getHeight()");
 
         // captures
+        int width_pre = getWidth();
+        int height_pre = getHeight();
         Cell[][] cellNature_pre = new Cell[getWidth()][getHeight()];
         for(int i = 0; i < getWidth(); i++) {
             for(int j = 0; j < getHeight(); j++) {
@@ -61,6 +63,13 @@ public class EditableScreenContract extends ScreenContract implements EditableSc
 
         // post-invariant
         checkInvariant();
+
+        // const: getWidth()
+        if(getWidth() != width_pre)
+            throw new PostconditionError("EditableScreen", "setNature", "getWidth() is supposed to be constant");
+        // const: getHeight()
+        if(getHeight() != height_pre)
+            throw new PostconditionError("EditableScreen", "setNature", "getHeight() is supposed to be constant");
 
         // post: getCellNature(x, y) = c
         if(getCellNature(x, y) != c) throw new PostconditionError("EditableScreen", "setNature", "getCellNature(x, y) = c");

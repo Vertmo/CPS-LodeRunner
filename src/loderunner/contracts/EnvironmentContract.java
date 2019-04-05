@@ -129,6 +129,8 @@ public class EnvironmentContract extends ScreenContract implements Environment {
             throw new PreconditionError("Environment", "addCellContent", "The cell is not empty or is not above a solid cell");
 
         // captures
+        int width_pre = getWidth();
+        int height_pre = getHeight();
         Cell[][] cellNature_pre = new Cell[getWidth()][getHeight()];
         for(int i = 0; i < getWidth(); i++) {
             for(int j = 0; j < getHeight(); j++) {
@@ -151,6 +153,13 @@ public class EnvironmentContract extends ScreenContract implements Environment {
 
         // post-invariant
         checkInvariant();
+
+        // const: getWidth()
+        if(getWidth() != width_pre)
+            throw new PostconditionError("Environment", "addCellContent", "getWidth() is supposed to be constant");
+        // const: getHeight()
+        if(getHeight() != height_pre)
+            throw new PostconditionError("Environment", "addCellContent", "getHeight() is supposed to be constant");
 
         // post: c \in getCellContent(x, y)
         if(!(getCellContent(x, y).contains(c)))
@@ -194,6 +203,8 @@ public class EnvironmentContract extends ScreenContract implements Environment {
             throw new PreconditionError("Environment", "removeCellContent", "The element is not in the cell");
 
         // captures
+        int width_pre = getWidth();
+        int height_pre = getHeight();
         Cell[][] cellNature_pre = new Cell[getWidth()][getHeight()];
         for(int i = 0; i < getWidth(); i++) {
             for(int j = 0; j < getHeight(); j++) {
@@ -216,6 +227,13 @@ public class EnvironmentContract extends ScreenContract implements Environment {
 
         // post-invariant
         checkInvariant();
+
+        // const: getWidth()
+        if(getWidth() != width_pre)
+            throw new PostconditionError("Environment", "removeCellContent", "getWidth() is supposed to be constant");
+        // const: getHeight()
+        if(getHeight() != height_pre)
+            throw new PostconditionError("Environment", "removeCellContent", "getHeight() is supposed to be constant");
 
         // post: c \notin getCellContent(x, y)
         if(getCellContent(x, y).contains(c))

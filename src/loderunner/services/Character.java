@@ -19,7 +19,6 @@ public interface Character extends InCell {
 
     /* Invariants */
     // inv: getEnvi().getCellNature(getCol(), getHgt()) \in { EMP, HOL, LAD, HDR }
-    // inv: getEnvi().getCellContent(getCol(), getHgt()).contains(this)
 
     /* Operators */
 
@@ -29,18 +28,18 @@ public interface Character extends InCell {
 
     // post: getHgt() == getHgt()@pre
     // post: (getCol()@pre == 0) => getCol() == getCol()@pre
-    // post: getEnvi().getCellNature(getCol()@pre-1,getHgt()) \in { PLT, MTL, LAD }
+    // post: getEnvi().getCellNature(getCol()@pre-1,getHgt()) \in { PLT, MTL }
     //       => getCol() == getCol()@pre
     // post: getEnvi().getCellNature(getCol()@pre, getHgt()) \notin { LAD, HDR }
-    //       && getEnvi().getCellNature(getCol()@pre, getHgt()-1) \notin { PLT, MTL }
+    //       && getEnvi().getCellNature(getCol()@pre, getHgt()-1) \notin { PLT, MTL, LAD }
     //       && \not \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()-1)
     //       => getCol() == getCol()@pre
     // post: this \in Guard && \exists Guard g \in getEnvi().getCellContent(getCol()@pre-1, getHgt())
     //       => getCol() == getCol()@pre
     // post: getCol()@pre != 0
-    //       && getEnvi().getCellNature(getCol()@pre-1 ,getHgt()) \notin { PLT, MTL, LAD }
+    //       && getEnvi().getCellNature(getCol()@pre-1 ,getHgt()) \notin { PLT, MTL }
     //       && (getEnvi().getCellNature(getCol()@pre, getHgt()) \in { LAD, HDR }
-    //           || getEnvi().getCellNature(getCol()@pre, getHgt()-1) \in { PLT, MTL }
+    //           || getEnvi().getCellNature(getCol()@pre, getHgt()-1) \in { PLT, MTL, LAD }
     //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()-1))
     //       && (this \notin Guard || \not \exists Guard g \in getEnvi().getCellContent(getCol()@pre-1, getHgt()))
     //       => getCol() == getCol()@pre - 1
@@ -48,10 +47,10 @@ public interface Character extends InCell {
 
     // post: getHgt() == getHgt()@pre
     // post: (getCol()@pre == getEnvi().getWidth()-1) => getCol() == getCol()@pre
-    // post: getEnvi().getCellNature(getCol()@pre+1, getHgt()) \in { PLT, MTL, LAD }
+    // post: getEnvi().getCellNature(getCol()@pre+1, getHgt()) \in { PLT, MTL }
     //       => getCol() == getCol()@pre
     // post: getEnvi().getCellNature(getCol()@pre, getHgt()) \notin { LAD, HDR }
-    //       && getEnvi().getCellNature(getCol()@pre, getHgt()-1) \notin { PLT, MTL }
+    //       && getEnvi().getCellNature(getCol()@pre, getHgt()-1) \notin { PLT, MTL, LAD }
     //       && \not \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()-1)
     //       => getCol() == getCol()@pre
     // post: this \in Guard && \exists Guard g \in getEnvi().getCellContent(getCol()@pre+1, getHgt())
@@ -59,13 +58,14 @@ public interface Character extends InCell {
     // post: getCol()@pre != 0
     //       && getEnvi().getCellNature(getCol()@pre+1,getHgt()) \notin { PLT, MTL, LAD }
     //       && (getEnvi().getCellNature(getCol()@pre, getHgt()) \in { LAD, HDR }
-    //           || getEnvi().getCellNature(getCol()@pre, getHgt()-1) \in { PLT, MTL }
+    //           || getEnvi().getCellNature(getCol()@pre, getHgt()-1) \in { PLT, MTL, LAD }
     //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()-1))
     //       && (this \notin Guard || \not \exists Guard g \in getEnvi().getCellContent(getCol()@pre+1, getHgt()))
     //       => getCol() == getCol()@pre + 1
     public void goRight();
 
     // post: getCol() == getCol()@pre
+    // post: (getHgt()@pre == getEnvi().getHeight()-1) => getHgt() == getHgt()@pre
     // post: getEnvi().getCellNature(getCol(), getHgt()@pre) == LAD
     //       && getEnvi().getCellNature(getCol(), getHgt()@pre+1) \in { EMP, HOL, LAD, HDR }
     //       && (this \notin Guard || \not \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()@pre+1))
@@ -79,12 +79,13 @@ public interface Character extends InCell {
     // Important: un garde ne marche pas sur la tete du joueur mais tombe sur sa case (le tuant)
     // cependant un garde marche sur la tete d'un autre garde
 
-    // post: getCol() == getCol()@pre
+    // post: (getCol() == getCol()@pre
+    // post: (getHgt()@pre == 0) => getHgt() == getHgt()@pre
     // post: getEnvi().getCellNature(getCol(), getHgt()@pre-1) \in { EMP, HOL, LAD, HDR }
     //       && \not \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()@pre-1)
     //       => getHgt() == getHgt()@pre - 1
     // post: getEnvi().getCellNature(getCol(), getHgt()@pre-1) \notin { EMP, HOL, LAD, HDR }
-    //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()@pre-1)
+    //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()@pre-1))
     //       => getHgt() == getHgt()@pre
     public void goDown();
 }
