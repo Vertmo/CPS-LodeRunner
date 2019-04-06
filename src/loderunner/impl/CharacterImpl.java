@@ -107,11 +107,4 @@ public class CharacterImpl implements Character {
         return c.getCol() == getCol() && c.getHgt() == getHgt();
     }
 
-    @Override
-    public int hashCode() {
-        int iHashCode = 73;
-        iHashCode = 31 * iHashCode + col;
-        iHashCode = 31 * iHashCode + hgt;
-        return iHashCode;
-    }
 }

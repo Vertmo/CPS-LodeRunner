@@ -16,6 +16,7 @@ public interface Engine {
     public Set<Item> getTreasures();
     public Set<Hole> getHoles();
     public Status getStatus();
+    public int getLevelScore();
     public Command getNextCommand();
 
     /* Constructors */
@@ -35,6 +36,7 @@ public interface Engine {
     //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL }
     //        || c \in gCoords
     // post: getStatus() == Playing
+    // post: getLevelScore() == 0
     // post: getEnvironment().getWidth() == screen.getWidth()
     //       && getEnvironment().getHeight() == screen.getHeight()
     //       &&\forall x \in [0..screen.getWidth()[ \forall y \in [0..screen.getHeight()[
@@ -88,7 +90,9 @@ public interface Engine {
 
     // Le joueur peut récupérer un trésor, ce qui peut amener à la fin de la partie
     // post: \exists Item i \in getTreasures()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
-    //       => i \notin getTreasures()
+    //       => i \notin getTreasures() && getLevelScore() == getLevelScore()@pre+1
+    // post: \not exists Item i \in getTreasures()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
+    //       => getLevelScore() == getLevelScore()@pre
     // post: \forall Item i \in getTreasures()@pre (i.getCol() != getPlayer().getCol() || i.getHgt() != getPlayer().getHgt())
     //       => i \in getTreasures()
     // post: getTreasures().isEmpty() => getStatus() == Win

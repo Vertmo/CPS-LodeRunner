@@ -11,6 +11,7 @@ import loderunner.services.Engine;
 import loderunner.services.Environment;
 import loderunner.services.Guard;
 import loderunner.services.Hole;
+import loderunner.services.InCell;
 import loderunner.services.Item;
 import loderunner.services.ItemType;
 import loderunner.services.Player;
@@ -24,6 +25,7 @@ public class EngineImpl implements Engine {
     private Set<Item> treasures;
     private Set<Hole> holes;
     private Status status;
+    private int levelScore;
 
     public EngineImpl(CommandProvider cmdProvider) {
         this.cmdProvider = cmdProvider;
@@ -60,6 +62,11 @@ public class EngineImpl implements Engine {
     }
 
     @Override
+    public int getLevelScore() {
+        return levelScore;
+    }
+
+    @Override
     public Command getNextCommand() {
         return cmdProvider.getNextCommand();
     }
@@ -71,6 +78,7 @@ public class EngineImpl implements Engine {
         player = new PlayerImpl();
         player.init(env, this, pCoord.getCol(), pCoord.getHgt());
         env.addCellContent(pCoord.getCol(), pCoord.getHgt(), player);
+        levelScore = 0;
 
         guards = new HashSet<>();
         for(Coord c: gCoords) {
@@ -97,10 +105,20 @@ public class EngineImpl implements Engine {
             if(g.getCol() == player.getCol() && g.getHgt() == player.getHgt()) status = Status.Loss;
         }
 
-        // Update environment TODO
+        // Update environment
         for(int x = 0; x < env.getWidth(); x++) {
             for(int y = 0; y < env.getHeight(); y++) {
-                env.removeCellContent(x, y, getPlayer());
+                for(InCell ic: env.getCellContent(x, y)) {
+                    if(ic instanceof Player) env.removeCellContent(x, y, ic);
+                    if(ic instanceof Item && ((Item)ic).getNature()==ItemType.Treasure) {
+                        if(getPlayer().getCol() == x && getPlayer().getHgt() == y) {
+                            env.removeCellContent(x, y, ic);
+                            treasures.remove(ic);
+                            levelScore++;
+                        }
+                    }
+                    // TODO
+                }
             }
         }
         env.addCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());

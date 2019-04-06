@@ -55,6 +55,11 @@ public abstract class EngineDecorator implements Engine {
     }
 
     @Override
+    public int getLevelScore() {
+        return delegate.getLevelScore();
+    }
+
+    @Override
     public Command getNextCommand() {
         return delegate.getNextCommand();
     }

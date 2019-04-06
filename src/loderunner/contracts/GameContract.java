@@ -1,6 +1,8 @@
 package loderunner.contracts;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import loderunner.contracts.errors.InvariantError;
 import loderunner.contracts.errors.PostconditionError;
@@ -10,6 +12,7 @@ import loderunner.impl.EngineImpl;
 import loderunner.impl.NeutralCommandProvider;
 import loderunner.services.Engine;
 import loderunner.services.Game;
+import loderunner.services.Item;
 import loderunner.services.Level;
 import loderunner.services.Status;
 
@@ -20,9 +23,7 @@ public class GameContract extends GameDecorator {
     }
 
     public void checkInvariant() {
-        // inv: getLevelScore() >= getScore()
-        if(getLevelScore() < getScore())
-            throw new InvariantError("Game", "getLevelScore() >= getScore()");
+        // rien ?
     }
 
     @Override
@@ -50,9 +51,9 @@ public class GameContract extends GameDecorator {
                  levels.get(0).getGuardCoords(), levels.get(0).getTreasureCoords());
         if(!getEngine().equals(eng))
             throw new PostconditionError("Game", "init", "The engine is not as it should be");
-        // post: getScore() == getLevelScore() == 0
-        if(getScore() != 0 || getLevelScore() != 0)
-            throw new PostconditionError("Game", "init", "getScore() == getLevelScore() == 0");
+        // post: getScore() == 0
+        if(getScore() != 0)
+            throw new PostconditionError("Game", "init", "getScore() == 0");
         // post: getHP() == 3
         if(getHP() != 3)
             throw new PostconditionError("Game", "init", "getHP() == 3");
@@ -74,9 +75,9 @@ public class GameContract extends GameDecorator {
         Status status_pre = getEngine().getStatus();
         int hp_pre = getHP();
         int score_pre = getScore();
-        int levelScore_pre = getLevelScore();
         int levelIndex_pre = getLevelIndex();
         Engine engine_pre = getEngine().clone();
+        Set<Item> treasures_pre = new HashSet<>(getEngine().getTreasures());
 
         // run
         super.checkStateAndUpdate();
@@ -85,8 +86,7 @@ public class GameContract extends GameDecorator {
         checkInvariant();
 
         // post: getEngine().getStatus()@pre == Loss
-        //       => (getLevelScore() == getScore() &&
-        //           getHP() = getHP()@pre - 1 &&
+        //       => (getHP() = getHP()@pre - 1 &&
         //           getEngine().equals(
         //           Engine::init(levels.get(getLevelIndex()).getScreen(), levels.get(getLevelIndex()).getPlayerCoord(),
         //                        levels.get(getLevelIndex()).getGuardCoords(), levels.get(getLevelIndex()).getTreasureCoords())))
@@ -95,7 +95,7 @@ public class GameContract extends GameDecorator {
         if(status_pre != Status.Loss && getHP() != hp_pre)
             throw new PostconditionError("Game", "checkAndUpdate", "hp has changed while it shouldn't have");
         // post: getEngine().getStatus()@pre == Win
-        //       => (getScore() == getLevelScore() &&
+        //       => (getScore() == getScore()@pre + getEngine().getLevelScore()@pre &&
         //           getLevelIndex() == getLevelIndex()@pre + 1 &&
         //           (getLevelIndex() < getLevels().size() => getEngine().equals(
         //            Engine::init(levels.get(getLevelIndex()).getScreen(), levels.get(getLevelIndex()).getPlayerCoord(),
@@ -108,14 +108,5 @@ public class GameContract extends GameDecorator {
         // post: getEngine().getStatus()@pre == Playing => getEngine().equals(getEngine()@pre)
         if(status_pre == Status.Playing && !getEngine().equals(engine_pre))
             throw new PostconditionError("Game", "checkAndUpdate", "engine has changed while it shouldn't have");
-        // post: \exists Item i \in getEngines().getTreasures()@pre
-        //         (i.getCol() == getEngine().getPlayer().getCol() && i.getHgt() == getEngine().getPlayer().getHgt())
-        //       => getLevelScore() == getLevelScore()@pre + 1
-        // TODO
-        // post: (\not \exists Item i \in getEngines().getTreasures()@pre
-        //             (i.getCol() == getEngine().getPlayer().getCol() && i.getHgt() == getEngine().getPlayer().getHgt())
-        //        && getEngine().getStatus() != Loss)
-        //       => getLevelScore() == getLevelScore()@pre
-        // TODO
     }
 }

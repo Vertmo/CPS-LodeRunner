@@ -34,11 +34,6 @@ public abstract class GameDecorator implements Game {
     }
 
     @Override
-    public int getLevelScore() {
-        return delegate.getLevelScore();
-    }
-
-    @Override
     public int getHP() {
         return delegate.getHP();
     }

@@ -13,7 +13,6 @@ public class GameImpl implements Game {
     private Engine engine;
     private int levelIndex;
     private int score;
-    private int levelScore;
     private int hp;
 
     public GameImpl(CommandProvider cp) {
@@ -41,11 +40,6 @@ public class GameImpl implements Game {
     }
 
     @Override
-    public int getLevelScore() {
-        return levelScore;
-    }
-
-    @Override
     public int getHP() {
         return hp;
     }
@@ -58,7 +52,6 @@ public class GameImpl implements Game {
         engine.init(levels.get(0).getScreen(), levels.get(0).getPlayerCoord(),
                     levels.get(0).getGuardCoords(), levels.get(0).getTreasureCoords());
         score = 0;
-        levelScore = 0;
         hp = 3;
     }
 

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import loderunner.services.Cell;
 import loderunner.services.Command;
 import loderunner.services.Game;
 import loderunner.services.Level;
+import loderunner.services.Status;
 
 public abstract class AbstractGameTest {
     private Game game;

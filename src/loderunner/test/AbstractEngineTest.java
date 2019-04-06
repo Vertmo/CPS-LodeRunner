@@ -125,6 +125,30 @@ public abstract class AbstractEngineTest {
     // TODO
 
     // Transitions
+
+    @Test
+    public void testStepTrans1() {
+        // Conditions initiales
+        engine.init(createPlayableScreen(), new CoordImpl(5, 1),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(7, 1))));
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Right, Command.Right)));
+        // Opération
+        engine.step();
+        // Oracle: vérifié par contrat
+    }
+
+    @Test
+    public void testStepTrans2() {
+        // Conditions initiales
+        engine.init(createPlayableScreen(), new CoordImpl(5, 1),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 1))));
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Right, Command.Right)));
+        // Opération
+        engine.step();
+        // Oracle: vérifié par contrat
+    }
     // TODO
 
     // Etats remarquables

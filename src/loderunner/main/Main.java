@@ -67,7 +67,7 @@ public class Main extends Application {
                 Platform.runLater(() -> {
                         window.redrawCanvas(game.getEngine());
                         window.redrawHp(game.getHP());
-                        window.redrawScore(game.getLevelScore());
+                        window.redrawScore(game.getScore()+game.getEngine().getLevelScore());
                     });
                 try {
                     Thread.sleep(100);

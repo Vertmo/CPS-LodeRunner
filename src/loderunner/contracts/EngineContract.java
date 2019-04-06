@@ -1,5 +1,6 @@
 package loderunner.contracts;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import loderunner.contracts.errors.InvariantError;
@@ -11,7 +12,9 @@ import loderunner.services.Coord;
 import loderunner.services.EditableScreen;
 import loderunner.services.Engine;
 import loderunner.services.Guard;
+import loderunner.services.InCell;
 import loderunner.services.Item;
+import loderunner.services.Player;
 import loderunner.services.Status;
 
 public class EngineContract extends EngineDecorator {
@@ -29,9 +32,11 @@ public class EngineContract extends EngineDecorator {
             throw new InvariantError("Engine", "The player is not in the correct cell");
         for(int x = 0; x < getEnvironment().getWidth(); x++) {
             for(int y = 0; y < getEnvironment().getHeight(); y++) {
-                if(getEnvironment().getCellContent(x, y).contains(getPlayer()) &&
-                   (x != getPlayer().getCol() || y != getPlayer().getHgt()))
-                    throw new InvariantError("Engine", "The player is not in the correct cell");
+                for(InCell ic: getEnvironment().getCellContent(x, y)) {
+                    if(ic instanceof Player &&
+                       (x != getPlayer().getCol() || y != getPlayer().getHgt()))
+                        throw new InvariantError("Engine", "The player is not in the correct cell");
+                }
             }
         }
         // inv: \forall Guard g \in getGuards() g \in getEnvironment().getCellContent(g.getCol(), g.getHgt())
@@ -126,6 +131,9 @@ public class EngineContract extends EngineDecorator {
         // post: getStatus() == Playing
         if(getStatus() != Status.Playing)
             throw new PostconditionError("Engine", "init", "getStatus() == Playing");
+        // post: getLevelScore() == 0
+        if(getLevelScore() != 0)
+            throw new PostconditionError("Engine", "init", "getLevelScore() == 0");
         // post: getEnvironment().getWidth() == screen.getWidth()
         //       && getEnvironment().getHeight() == screen.getHeight()
         //       &&\forall x \in [0..screen.getWidth()[ \forall y \in [0..screen.getHeight()[
@@ -190,6 +198,10 @@ public class EngineContract extends EngineDecorator {
         // pre-invariant
         checkInvariant();
 
+        // captures
+        Set<Item> treasures_pre = new HashSet<>(getTreasures());
+        int levelScore_pre = getLevelScore();
+
         // run
         super.step();
 
@@ -215,11 +227,21 @@ public class EngineContract extends EngineDecorator {
         //         => t.getCol() = t.getCol()@pre && t.getHgt() = t.getHgt()@pre
         // TODO
         // post: \exists Item i \in getTreasures()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
-        //       => i \notin getTreasures()
+        //       => i \notin getTreasures() && getLevelScore() == getLevelScore()@pre+1
+        for(Item i: treasures_pre) {
+            if(i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt()
+               && (getTreasures().contains(i) || getLevelScore() != levelScore_pre + 1))
+                throw new PostconditionError("Engine", "step", "The treasure should have been taken by the player");
+        }
+        // post: \not exists Item i \in getTreasures()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
+        //       => getLevelScore() == getLevelScore()@pre
         // TODO
         // post: \forall Item i \in getTreasures()@pre (i.getCol() != getPlayer().getCol() || i.getHgt() != getPlayer().getHgt())
         //       => i \in getTreasures()
-        // TODO
+        for(Item i: treasures_pre)
+            if((i.getCol() != getPlayer().getCol() || i.getHgt() != getPlayer().getHgt())
+               && !getTreasures().contains(i))
+                throw new PostconditionError("Engine", "step", "The treasure should not have been taken by the player");
         // post: getTreasures().isEmpty() => getStatus() == Win
         if(getTreasures().isEmpty() && getStatus() != Status.Win)
             throw new PostconditionError("Engine", "step", "getTreasures().isEmpty() => getStatus() == Win");
