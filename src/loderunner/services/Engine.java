@@ -93,9 +93,17 @@ public interface Engine {
     //       => i \in getTreasures()
     // post: getTreasures().isEmpty() => getStatus() == Win
 
-    // Le joueur peut être tué par un garde
+    // Le joueur peut être tué par un garde, mais il gagne is il a attrapé le dernier trésor malgré tout (on est génereux)
     // post: \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
+    //       && !getTreasures().isEmpty()
     //       => getStatus() == Loss
+
+    // La partie continue
+    // post: \not getTreasures().isEmpty()
+    //       && \not \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
+    //       && \not \exists Hole h \in getHoles()@pre
+    //                 (h.getT() == 15 && h.getCol() == getPlayer().getCol()@pre && h.getHgt() == getPlayer().getHgt()@pre)
+    //       => getStatus() == Playing
 
     // Gestion des trous
     // post: \forall Hole h \in getHoles()
@@ -107,12 +115,7 @@ public interface Engine {
     //           && (getPlayer.getCol()@pre == h.getCol() && getPlayer()@pre.getHgt() == h.getHgt() => getStatus() == Loss)
     //           && (\exists Guard g \in getEnvironment().getCellContent(h.getCol(), h.getHgt())@pre
     //               => g.getCol() == g.getInitCol() && g.getHgt() == g.getInitHgt()))
-
-    // La partie continue
-    // post: \not getTreasures().isEmpty()
-    //       && \not \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
-    //       && \not \exists Hole h \in getHoles()@pre
-    //                 (h.getT() == 15 && h.getCol() == getPlayer().getCol()@pre && h.getHgt() == getPlayer().getHgt()@pre)
-    //       => getStatus() == Playing
     public void step();
+
+    public Engine clone();
 }

@@ -1,6 +1,7 @@
 package loderunner.test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
@@ -10,6 +11,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import loderunner.contracts.errors.PreconditionError;
+import loderunner.services.Cell;
+import loderunner.services.Command;
 import loderunner.services.Game;
 import loderunner.services.Level;
 
@@ -39,7 +42,7 @@ public abstract class AbstractGameTest {
 
     private Level createPlayableLevel() {
         Level l = new loderunner.io.Level(10, 5);
-        // TODO
+        for(int i = 0; i < 10; i++) l.getScreen().setNature(i, 0, Cell.MTL);
         return l;
     }
 
@@ -64,7 +67,29 @@ public abstract class AbstractGameTest {
         game.init(levels);
     }
 
-    // TODO
+    @Test
+    public void testCheckAndUpdatePre1() { // Positif
+        // Conditions initiales
+        List<Level> levels = new ArrayList<>(); levels.add(createPlayableLevel());
+        game.init(levels);
+        // Opération
+        game.checkStateAndUpdate();
+        // Oracle: pas d'exception
+    }
+
+    @Test
+    public void testCheckAndUpdatePre2() { // Négatif
+        // Conditions initiales
+        List<Level> levels = new ArrayList<>(); levels.add(createPlayableLevel());
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral)));
+        game.init(levels);
+        game.getEngine().step();
+        game.checkStateAndUpdate(); // Ending first level
+        // Oracle: pas d'exception
+        exception.expect(PreconditionError.class);
+        // Opération
+        game.checkStateAndUpdate();
+    }
 
     // Transitions
     // TODO

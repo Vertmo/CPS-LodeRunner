@@ -55,12 +55,12 @@ public class EngineContract extends EngineDecorator {
         //           => i \in getTreasures() && (i.getCol() == x && i.getHgt() == y)
         for(Item i: getTreasures()) {
             if(!getEnvironment().getCellContent(i.getCol(), i.getHgt()).contains(i))
-                throw new InvariantError("Engine", "A guard is not in the correct cell");
+                throw new InvariantError("Engine", "A treasure is not in the correct cell");
             for(int x = 0; x < getEnvironment().getWidth(); x++) {
                 for(int y = 0; y < getEnvironment().getHeight(); y++) {
                     if(getEnvironment().getCellContent(x, y).contains(i) &&
                        (x != i.getCol() || y != i.getHgt()))
-                        throw new InvariantError("Engine", "A guard is not in the correct cell");
+                        throw new InvariantError("Engine", "A treasure is not in the correct cell");
                 }
             }
         }
@@ -81,11 +81,11 @@ public class EngineContract extends EngineDecorator {
         if(screen.getCellNature(pCoord.getCol(), pCoord.getHgt()) != Cell.EMP)
             throw new PreconditionError("Engine", "init", "The player is not on an empty cell");
         for(Coord c: gCoords) {
-            if(getEnvironment().getCellNature(c.getCol(), c.getHgt()) != Cell.EMP)
+            if(screen.getCellNature(c.getCol(), c.getHgt()) != Cell.EMP)
                 throw new PreconditionError("Engine", "init", "A guard is not on an empty cell");
         }
         for(Coord c: tCoords) {
-            if(getEnvironment().getCellNature(c.getCol(), c.getHgt()) != Cell.EMP)
+            if(screen.getCellNature(c.getCol(), c.getHgt()) != Cell.EMP)
                 throw new PreconditionError("Engine", "init", "A treasure is not on an empty cell");
         }
         // pre: \forall Coord c1 \in gCoords \forall Coord c2 \in gCoords
@@ -145,10 +145,40 @@ public class EngineContract extends EngineDecorator {
             throw new PostconditionError("Engine", "init", "The coords of the player are not the same");
         // post: \forall Coord c \in gCoords \exists Guard g \in getGuards() (g.getCol() == c.getCol() && g.getHgt() == c.getHgt())
         //       && \forall Guard g \in getGuards() \exists Coord c \in gCoords (g.getCol() == c.getCol() && g.getHgt() == c.getHgt())
-        // TODO
+        for(Coord c: gCoords) {
+            boolean found = false;
+            for(Guard g: getGuards()) {
+                if(c.getCol() == g.getCol() && c.getHgt() == g.getHgt()) found = true;
+            }
+            if(!found)
+                throw new PostconditionError("Engine", "init", "A guard is missing");
+        }
+        for(Guard g: getGuards()) {
+            boolean found = false;
+            for(Coord c: gCoords) {
+                if(c.getCol() == g.getCol() && c.getHgt() == g.getHgt()) found = true;
+            }
+            if(!found)
+                throw new PostconditionError("Engine", "init", "There are too much guards");
+        }
         // post: \forall Coord c \in tCoords \exists Item i \in getTreasures() (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
         //       && \forall Item i \in getTreasures() \exists Coord c \in tCoords (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
-        // TODO
+        for(Coord c: tCoords) {
+            boolean found = false;
+            for(Item t: getTreasures()) {
+                if(c.getCol() == t.getCol() && c.getHgt() == t.getHgt()) found = true;
+            }
+            if(!found)
+                throw new PostconditionError("Engine", "init", "A treasure is missing");
+        }
+        for(Item t: getTreasures()) {
+            boolean found = false;
+            for(Coord c: tCoords) {
+                if(c.getCol() == t.getCol() && c.getHgt() == t.getHgt()) found = true;
+            }
+            if(!found)
+                throw new PostconditionError("Engine", "init", "There are too much treasures");
+        }
     }
 
     @Override
@@ -194,7 +224,19 @@ public class EngineContract extends EngineDecorator {
         if(getTreasures().isEmpty() && getStatus() != Status.Win)
             throw new PostconditionError("Engine", "step", "getTreasures().isEmpty() => getStatus() == Win");
         // post: \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
+        //       && !getTreasures().isEmpty()
         //       => getStatus() == Loss
+        for(Guard g: getGuards()) {
+            if(g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt()
+               && !getTreasures().isEmpty()
+               && getStatus() != Status.Loss)
+                throw new PostconditionError("Engine", "step", "The player should have lost");
+        }
+        // post: \not getTreasures().isEmpty()
+        //       && \not \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
+        //       && \not \exists Hole h \in getHoles()@pre
+        //                 (h.getT() == 15 && h.getCol() == getPlayer().getCol()@pre && h.getHgt() == getPlayer().getHgt()@pre)
+        //       => getStatus() == Playing
         // TODO
         // post: \forall Hole h \in getHoles()
         //       => h \notin getHoles()@pre => h.getT() == 0
@@ -208,11 +250,10 @@ public class EngineContract extends EngineDecorator {
         //           && (\exists Guard g \in getEnvironment().getCellContent(h.getCol(), h.getHgt())@pre
         //               => g.getCol() == g.getInitCol() && g.getHgt() == g.getInitHgt()))
         // TODO
-        // post: \not getTreasures().isEmpty()
-        //       && \not \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
-        //       && \not \exists Hole h \in getHoles()@pre
-        //                 (h.getT() == 15 && h.getCol() == getPlayer().getCol()@pre && h.getHgt() == getPlayer().getHgt()@pre)
-        //       => getStatus() == Playing
-        // TODO
+    }
+
+    @Override
+    public Engine clone() {
+        return new EngineContract((Engine)getDelegate().clone());
     }
 }

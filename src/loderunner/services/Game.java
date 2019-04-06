@@ -23,8 +23,8 @@ public interface Game {
     // pre: !levels.isEmpty()
     // post: getLevels() == levels
     // post: getLevelIndex() == 0
-    // post: getEngine() == Engine::init(levels.get(0).getScreen(), levels.get(0).getPlayerCoord(),
-    //                                   levels.get(0).getGuardCoords(), levels.get(0).getTreasureCoords())
+    // post: getEngine().equals(Engine::init(levels.get(0).getScreen(), levels.get(0).getPlayerCoord(),
+    //                                       levels.get(0).getGuardCoords(), levels.get(0).getTreasureCoords()))
     // post: getScore() == getLevelScore() == 0
     // post: getHP() == 3
     void init(List<Level> levels);
@@ -43,11 +43,11 @@ public interface Game {
     // post: getEngine().getStatus()@pre == Win
     //       => (getScore() == getLevelScore() &&
     //           getLevelIndex() == getLevelIndex()@pre + 1 &&
-    //           (getLevelIndex() < getLevels().size() => getEngine() ==
+    //           (getLevelIndex() < getLevels().size() => getEngine().equals(
     //            Engine::init(levels.get(getLevelIndex()).getScreen(), levels.get(getLevelIndex()).getPlayerCoord(),
-    //                         levels.get(getLevelIndex()).getGuardCoords(), levels.get(getLevelIndex()).getTreasureCoords())))
+    //                         levels.get(getLevelIndex()).getGuardCoords(), levels.get(getLevelIndex()).getTreasureCoords()))))
     // post: getEngine().getStatus()@pre != Win => getLevelIndex() == getLevelIndex()@pre && getScore() == getScore()@pre
-    // post: getEngine().getStatus()@pre == Playing => getEngine() == getEngine()@pre
+    // post: getEngine().getStatus()@pre == Playing => getEngine().equals(getEngine()@pre)
     // post: \exists Item i \in getEngines().getTreasures()@pre
     //         (i.getCol() == getEngine().getPlayer().getCol() && i.getHgt() == getEngine().getPlayer().getHgt())
     //       => getLevelScore() == getLevelScore()@pre + 1

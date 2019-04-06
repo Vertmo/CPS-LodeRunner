@@ -20,6 +20,10 @@ public abstract class EngineDecorator implements Engine {
         this.delegate = delegate;
     }
 
+    public Engine getDelegate() {
+        return delegate;
+    }
+
     @Override
     public Environment getEnvironment() {
         return delegate.getEnvironment();
@@ -64,4 +68,12 @@ public abstract class EngineDecorator implements Engine {
     public void step() {
         delegate.step();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return delegate.equals(o);
+    }
+
+    @Override
+    public abstract Engine clone();
 }

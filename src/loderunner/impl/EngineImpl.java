@@ -90,7 +90,48 @@ public class EngineImpl implements Engine {
 
     @Override
     public void step() {
+        // Step for everyone
         getPlayer().step();
-        // TODO
+        for(Guard g: getGuards()) {
+            g.step();
+            if(g.getCol() == player.getCol() && g.getHgt() == player.getHgt()) status = Status.Loss;
+        }
+
+        // Update environment TODO
+        for(int x = 0; x < env.getWidth(); x++) {
+            for(int y = 0; y < env.getHeight(); y++) {
+                env.removeCellContent(x, y, getPlayer());
+            }
+        }
+        env.addCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
+
+        // Update status TODO
+        if(treasures.isEmpty()) status = Status.Win;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(o == this) return true;
+        if(!(o instanceof Engine)) return false;
+        Engine e = (Engine) o;
+        return e.getEnvironment().equals(getEnvironment())
+            && e.getPlayer().equals(getPlayer())
+            && e.getGuards().equals(getGuards())
+            && e.getTreasures().equals(getTreasures())
+            && e.getHoles().equals(getHoles())
+            && e.getStatus().equals(getStatus());
+    }
+
+    @Override
+    public Engine clone() {
+        EngineImpl ei = new EngineImpl(cmdProvider);
+        ei.env = env;
+        ei.player = player;
+        ei.guards = new HashSet<>(guards);
+        ei.treasures = new HashSet<>(treasures);
+        ei.holes = new HashSet<>(holes);
+        ei.status = status;
+        return ei;
     }
 }

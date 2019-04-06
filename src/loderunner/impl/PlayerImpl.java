@@ -4,6 +4,7 @@ import loderunner.services.Cell;
 import loderunner.services.Command;
 import loderunner.services.Engine;
 import loderunner.services.Environment;
+import loderunner.services.Guard;
 import loderunner.services.InCell;
 import loderunner.services.Player;
 

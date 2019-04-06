@@ -34,15 +34,40 @@ public class ItemImpl implements Item {
     @Override
     public int getHgt() {
         return hgt;
-	}
+    }
 
-	@Override
-	public void setCol(int col) {
-      this.col = col;
-	}
+    @Override
+    public void setCol(int col) {
+        this.col = col;
+    }
 
-	@Override
-	public void setHgt(int hgt) {
-      this.hgt = hgt;
-	}
+    @Override
+    public void setHgt(int hgt) {
+        this.hgt = hgt;
+    }
+
+    @Override
+    public Object clone() {
+        ItemImpl i = new ItemImpl(getNature(), getCol(), getHgt());
+        i.id = id;
+        return i;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(o == this) return true;
+        if(!(o instanceof Item)) return false;
+        Item i = (Item) o;
+        return i.getId() == getId() && i.getNature() == getNature()
+            && i.getCol() == getCol() && i.getHgt() == getHgt();
+    }
+
+    @Override
+    public int hashCode() {
+        int iHashCode = 41;
+        iHashCode = 31 * iHashCode + col;
+        iHashCode = 31 * iHashCode + hgt;
+        return iHashCode;
+    }
 }
