@@ -9,7 +9,7 @@ import loderunner.services.Environment;
 import loderunner.services.InCell;
 import loderunner.services.Player;
 
-public class PlayerImpl extends CharacterImpl implements Player {
+public class PlayerImpl extends CharacterImpl implements Player{
 	private Engine engine;
 
 	public Engine getEngine() {
@@ -41,7 +41,7 @@ public class PlayerImpl extends CharacterImpl implements Player {
 			}
 		}
 		return !(in == Cell.LAD || in == Cell.HDR) && 
-				(down_nat == Cell.HOL || down_nat == Cell.EMP) &&
+				(down_nat == Cell.HOL || down_nat == Cell.EMP || down_nat == Cell.HDR) &&
 				!perso_present;
 	}
 
@@ -113,5 +113,34 @@ public class PlayerImpl extends CharacterImpl implements Player {
 				break;
 			}
 		}
+	}
+
+	@Override
+	/**
+	 * Vérifie l'égalité de l'instance avec l'instance o
+	 */
+	public boolean equals(Object o) {
+		if(o == null) {
+			return false;
+		}
+		if(this == o) {
+			return true;
+		}
+		if(!(o instanceof Player)) {
+			return false;
+		}
+		Player p = (Player) o;
+		return p.getCol() == getCol() && p.getHgt() == p.getHgt() &&
+				p.getEngine().equals(getEngine()) && p.getEnvi().equals(getEnvi());
+	}
+
+	@Override
+	/**
+	 * Clone l'instance courant mais l'environnement et l'engine ne sont pas cloné
+	 */
+	public PlayerImpl clone() {
+		PlayerImpl clone = new PlayerImpl();
+		clone.init(getEnvi(), getEngine(), getCol(), getHgt());;
+		return clone;
 	}
 }
