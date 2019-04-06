@@ -63,7 +63,7 @@ public class Level implements loderunner.services.Level {
 
             br.close();
         } catch(Exception e) {
-            throw new LevelLoadException(file.getName());
+            throw new LevelLoadException(file.getName(), e.getMessage());
         }
     }
 
