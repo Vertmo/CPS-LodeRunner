@@ -10,7 +10,8 @@ import org.junit.runners.Suite;
             EditableScreenTest.class,
             EnvironmentTest.class,
             CharacterTest.class,
-            EngineTest.class
+            EngineTest.class,
+            GameTest.class
 })
 
 public class Tests {}
