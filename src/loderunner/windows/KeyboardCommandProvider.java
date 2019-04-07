@@ -13,9 +13,9 @@ public class KeyboardCommandProvider implements CommandProvider {
         nextCmd = Command.Neutral;
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
                 switch(key.getCode()) {
-                    case LEFT:
-                        nextCmd = Command.Left;
-                        break;
+                case LEFT:
+                    nextCmd = Command.Left;
+                    break;
                 case RIGHT:
                     nextCmd = Command.Right;
                     break;
@@ -25,7 +25,12 @@ public class KeyboardCommandProvider implements CommandProvider {
                 case DOWN:
                     nextCmd = Command.Down;
                     break;
-                    // TODO touches pour dig ? a et d ?
+                case Q:
+                    nextCmd = Command.DigL;
+                    break;
+                case E:
+                    nextCmd = Command.DigR;
+                    break;
                 default:
                     break;
                 }

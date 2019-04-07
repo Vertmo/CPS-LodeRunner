@@ -3,6 +3,7 @@ package loderunner.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import loderunner.services.Cell;
 import loderunner.services.Command;
 import loderunner.services.CommandProvider;
 import loderunner.services.Coord;
@@ -100,6 +101,20 @@ public class EngineImpl implements Engine {
 
     @Override
     public void step() {
+        // Update holes
+        Set<Hole> newHoles = new HashSet<>(holes);
+        for(Hole h: holes) {
+            if(h.getT() == 15) {
+                newHoles.remove(h);
+                env.fill(h.getCol(), h.getHgt());
+                if(getPlayer().getCol() == h.getCol() && getPlayer().getHgt() == h.getHgt())
+                    status = Status.Loss;
+                // TODO update guards in the hole
+            }
+        }
+        holes = newHoles;
+        for(Hole h: holes) h.incT();
+
         // Step for everyone
         getPlayer().step();
         for(Guard g: getGuards()) {
@@ -124,6 +139,13 @@ public class EngineImpl implements Engine {
             }
         }
         env.addCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
+
+        // Create eventual new holes
+        for(int x = 0; x < env.getWidth(); x++) {
+            for(int y = 0; y < env.getHeight(); y++) {
+                if(env.getCellNature(x, y) == Cell.HOL) holes.add(new HoleImpl(x, y));
+            }
+        }
 
         // Update status TODO
         if(treasures.isEmpty()) status = Status.Win;

@@ -62,7 +62,7 @@ public interface Engine {
     //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
     //           \forall Item i \in getEnvironment().getCellContent(x, y) i.getNature() == Treasure
     //           => i \in getTreasures() && (i.getCol() == x && i.getHgt() == y)
-    // inv: \forall Hole h \in getHoles() h getEnvironment().getCellNature(h.getCol(), g.getHgt()) == HOL
+    // inv: \forall Hole h \in getHoles() getEnvironment().getCellNature(h.getCol(), g.getHgt()) == HOL
     //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
     //           getEnvironment().getCellNature(x, y) == HOL
     //           => \exists Hole h \in getHoles() (h.getCol() == x && h.getHgt() == y)
@@ -112,11 +112,11 @@ public interface Engine {
     // Gestion des trous
     // post: \forall Hole h \in getHoles()
     //       => h \notin getHoles()@pre => h.getT() == 0
-    // post: \forall Hole h \in getHoles()@pre h1.getT()@pre < 15
+    // post: \forall Hole h \in getHoles()@pre h.getT()@pre < 15
     //       => h: getHoles() && h.getT() == h.getT()@pre + 1
     // post: \forall Hole h \in getHoles()@pre h.getT() == 15
     //       => (h \notin getHoles()
-    //           && (getPlayer.getCol()@pre == h.getCol() && getPlayer()@pre.getHgt() == h.getHgt() => getStatus() == Loss)
+    //           && (getPlayer.getCol()@pre == h.getCol() && getPlayer().getHgt()@pre == h.getHgt() => getStatus() == Loss)
     //           && (\exists Guard g \in getEnvironment().getCellContent(h.getCol(), h.getHgt())@pre
     //               => g.getCol() == g.getInitCol() && g.getHgt() == g.getInitHgt()))
     public void step();

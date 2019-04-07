@@ -53,6 +53,9 @@ public class ScreenContract extends ScreenDecorator {
 
     @Override
     public void dig(int x, int y) {
+        // pre: getCellNature(x, y+1) \in { EMP, HOL }
+        if(getCellNature(x, y+1) != Cell.EMP && getCellNature(x, y+1) != Cell.HOL)
+            throw new PreconditionError("Screen", "dig", "getCellNature(x, y+1) in { EMP, HOL }");
         // pre: getCellNature(x, y) == PLT
         if(getCellNature(x, y) != Cell.PLT)
             throw new PreconditionError("Screen", "dig", "getCellNature(x, y) == PLT");

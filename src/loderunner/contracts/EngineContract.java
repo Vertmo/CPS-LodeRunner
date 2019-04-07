@@ -12,8 +12,10 @@ import loderunner.services.Coord;
 import loderunner.services.EditableScreen;
 import loderunner.services.Engine;
 import loderunner.services.Guard;
+import loderunner.services.Hole;
 import loderunner.services.InCell;
 import loderunner.services.Item;
+import loderunner.services.ItemType;
 import loderunner.services.Player;
 import loderunner.services.Status;
 
@@ -46,11 +48,15 @@ public class EngineContract extends EngineDecorator {
         for(Guard g: getGuards()) {
             if(!getEnvironment().getCellContent(g.getCol(), g.getHgt()).contains(g))
                 throw new InvariantError("Engine", "A guard is not in the correct cell");
-            for(int x = 0; x < getEnvironment().getWidth(); x++) {
-                for(int y = 0; y < getEnvironment().getHeight(); y++) {
-                    if(getEnvironment().getCellContent(x, y).contains(g) &&
-                        (x != g.getCol() || y != g.getHgt()))
-                        throw new InvariantError("Engine", "A guard is not in the correct cell");
+        }
+        for(int x = 0; x < getEnvironment().getWidth(); x++) {
+            for(int y = 0; y < getEnvironment().getHeight(); y++) {
+                for(InCell ic: getEnvironment().getCellContent(x, y)) {
+                    if(ic instanceof Guard) {
+                        Guard g = (Guard) ic;
+                        if(!getGuards().contains(g) || g.getCol() != x || g.getHgt() != y)
+                            throw new InvariantError("Engine", "A guard is not in the correct cell");
+                    }
                 }
             }
         }
@@ -61,19 +67,37 @@ public class EngineContract extends EngineDecorator {
         for(Item i: getTreasures()) {
             if(!getEnvironment().getCellContent(i.getCol(), i.getHgt()).contains(i))
                 throw new InvariantError("Engine", "A treasure is not in the correct cell");
-            for(int x = 0; x < getEnvironment().getWidth(); x++) {
-                for(int y = 0; y < getEnvironment().getHeight(); y++) {
-                    if(getEnvironment().getCellContent(x, y).contains(i) &&
-                       (x != i.getCol() || y != i.getHgt()))
-                        throw new InvariantError("Engine", "A treasure is not in the correct cell");
+        }
+        for(int x = 0; x < getEnvironment().getWidth(); x++) {
+            for(int y = 0; y < getEnvironment().getHeight(); y++) {
+                for(InCell ic: getEnvironment().getCellContent(x, y)) {
+                    if(ic instanceof Item && ((Item)ic).getNature()==ItemType.Treasure) {
+                        Item t = (Item) ic;
+                        if(!getTreasures().contains(t) || t.getCol() != x || t.getHgt() != y)
+                            throw new InvariantError("Engine", "A treasure is not in the correct cell");
+                    }
                 }
             }
         }
-        // inv: \forall Hole h \in getHoles() h getEnvironment().getCellNature(h.getCol(), g.getHgt()) == HOL
+        // inv: \forall Hole h \in getHoles() getEnvironment().getCellNature(h.getCol(), g.getHgt()) == HOL
         //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
         //           getEnvironment().getCellNature(x, y) == HOL
         //           => \exists Hole h \in getHoles() (h.getCol() == x && h.getHgt() == y)
-        // TODO
+        for(Hole h: getHoles()) {
+            if(getEnvironment().getCellNature(h.getCol(), h.getHgt()) != Cell.HOL)
+                throw new InvariantError("Engine", "A cell is not hol as it should be");
+        }
+        for(int x = 0; x < getEnvironment().getWidth(); x++) {
+            for(int y = 0; y < getEnvironment().getHeight(); y++) {
+                if(getEnvironment().getCellNature(x, y) == Cell.HOL) {
+                    boolean found = false;
+                    for(Hole h: getHoles()) {
+                        if(h.getCol() == x && h.getHgt() == y) found = true;
+                    }
+                    if(!found) throw new InvariantError("Engine", "A hole is missing in the list");
+                }
+            }
+        }
     }
 
     @Override
@@ -201,6 +225,10 @@ public class EngineContract extends EngineDecorator {
         // captures
         Set<Item> treasures_pre = new HashSet<>(getTreasures());
         int levelScore_pre = getLevelScore();
+        Set<Hole> holes_pre = new HashSet<>();
+        for(Hole h: getHoles()) holes_pre.add(h.clone());
+        int playerCol_pre = getPlayer().getCol();
+        int playerHgt_pre = getPlayer().getHgt();
 
         // run
         super.step();
@@ -264,19 +292,48 @@ public class EngineContract extends EngineDecorator {
         //       && \not \exists Hole h \in getHoles()@pre
         //                 (h.getT() == 15 && h.getCol() == getPlayer().getCol()@pre && h.getHgt() == getPlayer().getHgt()@pre)
         //       => getStatus() == Playing
-        // TODO
+        boolean playing = true;
+        if(getTreasures().isEmpty()) playing = false;
+        for(Guard g: getGuards()) {
+            if(g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt()) playing = false;
+        }
+        for(Hole h: holes_pre) {
+            if(h.getT() == 15 && h.getCol() == playerCol_pre && h.getHgt() == playerHgt_pre) playing = false;
+        }
+        if(playing && getStatus() != Status.Playing)
+            throw new PostconditionError("Engine", "step", "The game is not supposed to be over");
         // post: \forall Hole h \in getHoles()
         //       => h \notin getHoles()@pre => h.getT() == 0
-        // TODO
-        // post: \forall Hole h \in getHoles()@pre h1.getT()@pre < 15
+        for(Hole h: getHoles()) {
+            if(!holes_pre.contains(h) && h.getT() != 0)
+                throw new PostconditionError("Engine", "step", "The new hole doesn't have the correct t");
+        }
+        // post: \forall Hole h \in getHoles()@pre h.getT()@pre < 15
         //       => h: getHoles() && h.getT() == h.getT()@pre + 1
-        // TODO
+        for(Hole h: holes_pre) {
+            if(h.getT() < 15) {
+                Hole foundH = null;
+                for(Hole h1: getHoles()) {
+                    if(h1.equals(h)) foundH = h1;
+                }
+                if(foundH == null || foundH.getT() != h.getT()+1)
+                    throw new PostconditionError("Engine", "step", "The t of a hole hasn't increased");
+            }
+        }
         // post: \forall Hole h \in getHoles()@pre h.getT() == 15
         //       => (h \notin getHoles()
-        //           && (getPlayer.getCol()@pre == h.getCol() && getPlayer()@pre.getHgt() == h.getHgt() => getStatus() == Loss)
+        //           && (getPlayer.getCol()@pre == h.getCol() && getPlayer().getHgt()@pre == h.getHgt() => getStatus() == Loss)
         //           && (\exists Guard g \in getEnvironment().getCellContent(h.getCol(), h.getHgt())@pre
         //               => g.getCol() == g.getInitCol() && g.getHgt() == g.getInitHgt()))
-        // TODO
+        for(Hole h: holes_pre) {
+            if(h.getT() == 15) {
+                if(getHoles().contains(h))
+                    throw new PostconditionError("Engine", "step", "The hole should have been refilled");
+                if(h.getCol() == playerCol_pre && h.getHgt() == playerHgt_pre && getStatus() != Status.Loss)
+                    throw new PostconditionError("Engine", "step", "The player should have been crushed by the hole");
+                // TODO
+            }
+        }
     }
 
     @Override

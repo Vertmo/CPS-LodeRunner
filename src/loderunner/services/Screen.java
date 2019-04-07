@@ -23,6 +23,7 @@ public interface Screen {
     /* Operators */
 
     // pre: getCellNature(x, y) == PLT
+    // pre: getCellNature(x, y+1) \in { EMP, HOL }
     // post: getCellNature(x, y) == HOL
     // post: \forall i \in [0..getWidth()[ \forall j \in [0..getHeight()[
     //         (i != x || j != y) => getCellNature(i, j) == getCellNature(i, j)@pre
