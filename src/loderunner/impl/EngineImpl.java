@@ -83,6 +83,8 @@ public class EngineImpl implements Engine {
         guards = new HashSet<>();
         for(Coord c: gCoords) {
             // TODO les gardes
+            // guards.add(g);
+            // env.addCellContent(c.getCol(), c.getHgt(), g);
         }
 
         treasures = new HashSet<>();

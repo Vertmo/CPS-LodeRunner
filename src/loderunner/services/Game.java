@@ -32,15 +32,15 @@ public interface Game {
     //       => (
     //           getHP() = getHP()@pre - 1 &&
     //           getEngine() ==
-    //           Engine::init(levels.get(getLevelIndex()).getScreen(), levels.get(getLevelIndex()).getPlayerCoord(),
-    //                        levels.get(getLevelIndex()).getGuardCoords(), levels.get(getLevelIndex()).getTreasureCoords()))
+    //           Engine::init(getLevels().get(getLevelIndex()).getScreen(), getLevels().get(getLevelIndex()).getPlayerCoord(),
+    //                        getLevels().get(getLevelIndex()).getGuardCoords(), getLevels().get(getLevelIndex()).getTreasureCoords()))
     // post: getEngine().getStatus() != Loss => getHP() == getHP()@pre
     // post: getEngine().getStatus()@pre == Win
     //       => (getScore() == getScore()@pre + getEngine.getLevelScore()@pre &&
     //           getLevelIndex() == getLevelIndex()@pre + 1 &&
     //           (getLevelIndex() < getLevels().size() => getEngine().equals(
-    //            Engine::init(levels.get(getLevelIndex()).getScreen(), levels.get(getLevelIndex()).getPlayerCoord(),
-    //                         levels.get(getLevelIndex()).getGuardCoords(), levels.get(getLevelIndex()).getTreasureCoords()))))
+    //            Engine::init(getLevels().get(getLevelIndex()).getScreen(), getLevels().get(getLevelIndex()).getPlayerCoord(),
+    //                         getLevels().get(getLevelIndex()).getGuardCoords(), getLevels().get(getLevelIndex()).getTreasureCoords()))))
     // post: getEngine().getStatus()@pre != Win => getLevelIndex() == getLevelIndex()@pre && getScore() == getScore()@pre
     // post: getEngine().getStatus()@pre == Playing => getEngine().equals(getEngine()@pre)
     void checkStateAndUpdate();

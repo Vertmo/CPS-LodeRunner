@@ -68,6 +68,11 @@ public class GameWindow {
         scoreLabel.setText("Score: " + score);
     }
 
+    public void drawGameOver(int score) {
+        scoreLabel.setText("Score: " + score);
+        canvas.drawGameOver(score);
+    }
+
     public CommandProvider getCommandProvider() {
         return cp;
     }

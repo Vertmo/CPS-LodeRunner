@@ -73,6 +73,11 @@ public class Main extends Application {
                     Thread.sleep(100);
                 } catch(InterruptedException e) {}
             }
+
+            // Show end of game screen
+            Platform.runLater(() -> {
+                    window.drawGameOver(game.getScore());
+                });
         }
     }
 }

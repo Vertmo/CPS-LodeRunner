@@ -6,6 +6,7 @@ import loderunner.services.CommandProvider;
 import loderunner.services.Engine;
 import loderunner.services.Game;
 import loderunner.services.Level;
+import loderunner.services.Status;
 
 public class GameImpl implements Game {
     private CommandProvider cp;
@@ -57,6 +58,27 @@ public class GameImpl implements Game {
 
     @Override
     public void checkStateAndUpdate() {
-        // TODO Auto-generated method stub
+        // Won the game !
+        if(getEngine().getStatus() == Status.Win) {
+            score += getEngine().getLevelScore();
+            levelIndex++;
+            if(getLevelIndex() < getLevels().size()) {
+                engine.init(levels.get(getLevelIndex()).getScreen(),
+                            levels.get(getLevelIndex()).getPlayerCoord(),
+                            levels.get(getLevelIndex()).getGuardCoords(),
+                            levels.get(getLevelIndex()).getTreasureCoords());
+            }
+        }
+
+        // Lost the game...
+        if(getEngine().getStatus() == Status.Loss) {
+            hp--;
+            if(getLevelIndex() < getLevels().size()) {
+                engine.init(levels.get(getLevelIndex()).getScreen(),
+                            levels.get(getLevelIndex()).getPlayerCoord(),
+                            levels.get(getLevelIndex()).getGuardCoords(),
+                            levels.get(getLevelIndex()).getTreasureCoords());
+            }
+        }
     }
 }

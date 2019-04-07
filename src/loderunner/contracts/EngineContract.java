@@ -235,7 +235,12 @@ public class EngineContract extends EngineDecorator {
         }
         // post: \not exists Item i \in getTreasures()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
         //       => getLevelScore() == getLevelScore()@pre
-        // TODO
+        boolean found = false;
+        for(Item i: treasures_pre) {
+            if(i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt()) found = true;
+        }
+        if(!found && getLevelScore() != levelScore_pre)
+            throw new PostconditionError("Engine", "step", "The score was updated when it should not have been");
         // post: \forall Item i \in getTreasures()@pre (i.getCol() != getPlayer().getCol() || i.getHgt() != getPlayer().getHgt())
         //       => i \in getTreasures()
         for(Item i: treasures_pre)

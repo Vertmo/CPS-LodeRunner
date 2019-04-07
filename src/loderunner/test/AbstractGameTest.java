@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,7 +15,6 @@ import loderunner.services.Cell;
 import loderunner.services.Command;
 import loderunner.services.Game;
 import loderunner.services.Level;
-import loderunner.services.Status;
 
 public abstract class AbstractGameTest {
     private Game game;
@@ -93,13 +91,38 @@ public abstract class AbstractGameTest {
         game.checkStateAndUpdate();
     }
 
+    // TODO
+
     // Transitions
+
+    @Test
+    public void testCheckAndUpdateTrans1() {
+        // Conditions initiales
+        List<Level> levels = new ArrayList<>();
+        levels.add(createPlayableLevel()); levels.add(createPlayableLevel());
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral)));
+        game.init(levels);
+        game.getEngine().step();
+        // Opération
+        game.checkStateAndUpdate();
+        // Oracle: vérifié par les contrats
+    }
+
+    @Test
+    public void testCheckAndUpdateTrans2() {
+        // Conditions initiales
+        List<Level> levels = new ArrayList<>(); levels.add(createPlayableLevel());
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral)));
+        game.init(levels);
+        game.getEngine().step();
+        // Opération
+        game.checkStateAndUpdate();
+        // Oracle: vérifié par les contrats
+    }
+
     // TODO
 
     // Etats remarquables
-    // TODO
-
-    // Paires de transitions
     // TODO
 
     // Scénarios

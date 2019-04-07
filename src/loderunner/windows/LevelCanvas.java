@@ -7,6 +7,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
 import loderunner.impl.CoordImpl;
 import loderunner.io.Level;
@@ -113,5 +115,18 @@ public class LevelCanvas extends Canvas {
             .map(t -> new CoordImpl(t.getCol(), t.getHgt()))
             .collect(Collectors.toSet());
         drawContents(eng.getEnvironment(), pCoord, gCoords, tCoords);
+    }
+
+    public void drawGameOver(int score) {
+        GraphicsContext gc = getGraphicsContext2D();
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, getWidth(), getHeight());
+
+        gc.setFill(Color.WHITE);
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setFont(new Font(40));
+        gc.fillText("Game Over", getWidth()/2, getHeight()/3);
+        gc.setFont(new Font(20));
+        gc.fillText("Score: " + score, getWidth()/2, 2*getHeight()/3);
     }
 }

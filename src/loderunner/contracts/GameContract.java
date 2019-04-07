@@ -1,10 +1,7 @@
 package loderunner.contracts;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import loderunner.contracts.errors.InvariantError;
 import loderunner.contracts.errors.PostconditionError;
 import loderunner.contracts.errors.PreconditionError;
 import loderunner.decorators.GameDecorator;
@@ -12,7 +9,6 @@ import loderunner.impl.EngineImpl;
 import loderunner.impl.NeutralCommandProvider;
 import loderunner.services.Engine;
 import loderunner.services.Game;
-import loderunner.services.Item;
 import loderunner.services.Level;
 import loderunner.services.Status;
 
@@ -75,9 +71,9 @@ public class GameContract extends GameDecorator {
         Status status_pre = getEngine().getStatus();
         int hp_pre = getHP();
         int score_pre = getScore();
+        int levelScore_pre = getEngine().getLevelScore();
         int levelIndex_pre = getLevelIndex();
         Engine engine_pre = getEngine().clone();
-        Set<Item> treasures_pre = new HashSet<>(getEngine().getTreasures());
 
         // run
         super.checkStateAndUpdate();
@@ -86,11 +82,21 @@ public class GameContract extends GameDecorator {
         checkInvariant();
 
         // post: getEngine().getStatus()@pre == Loss
-        //       => (getHP() = getHP()@pre - 1 &&
+        //       => (getHP() == getHP()@pre - 1 &&
         //           getEngine().equals(
-        //           Engine::init(levels.get(getLevelIndex()).getScreen(), levels.get(getLevelIndex()).getPlayerCoord(),
-        //                        levels.get(getLevelIndex()).getGuardCoords(), levels.get(getLevelIndex()).getTreasureCoords())))
-        // TODO
+        //           Engine::init(getLevels().get(getLevelIndex()).getScreen(), getLevels().get(getLevelIndex()).getPlayerCoord(),
+        //                        getLevels().get(getLevelIndex()).getGuardCoords(), getLevels().get(getLevelIndex()).getTreasureCoords())))
+        if(status_pre == Status.Loss) {
+            if(getHP() != hp_pre-1)
+                throw new PostconditionError("Game", "checkAndUpdate", "the hp has not evolved as planned");
+            if(getLevelIndex() < getLevels().size()) {
+                Engine eng = new EngineImpl(new NeutralCommandProvider());
+                eng.init(getLevels().get(getLevelIndex()).getScreen(), getLevels().get(getLevelIndex()).getPlayerCoord(),
+                         getLevels().get(getLevelIndex()).getGuardCoords(), getLevels().get(getLevelIndex()).getTreasureCoords());
+                if(!getEngine().equals(eng))
+                    throw new PostconditionError("Game", "checkAndUpdate", "the engine was not correctly updated");
+            }
+        }
         // post: getEngine().getStatus() != Loss => getHP() == getHP()@pre
         if(status_pre != Status.Loss && getHP() != hp_pre)
             throw new PostconditionError("Game", "checkAndUpdate", "hp has changed while it shouldn't have");
@@ -98,9 +104,20 @@ public class GameContract extends GameDecorator {
         //       => (getScore() == getScore()@pre + getEngine().getLevelScore()@pre &&
         //           getLevelIndex() == getLevelIndex()@pre + 1 &&
         //           (getLevelIndex() < getLevels().size() => getEngine().equals(
-        //            Engine::init(levels.get(getLevelIndex()).getScreen(), levels.get(getLevelIndex()).getPlayerCoord(),
-        //                         levels.get(getLevelIndex()).getGuardCoords(), levels.get(getLevelIndex()).getTreasureCoords()))))
-        // TODO
+        //            Engine::init(getLevels().get(getLevelIndex()).getScreen(), getLevels().get(getLevelIndex()).getPlayerCoord(),
+        //                         getLevels().get(getLevelIndex()).getGuardCoords(), getLevels().get(getLevelIndex()).getTreasureCoords()))))
+        if(status_pre == Status.Win) {
+            if(!(getScore() == score_pre + levelScore_pre &&
+                 getLevelIndex() == levelIndex_pre+1))
+                throw new PostconditionError("Game", "checkAndUpdate", "the score or level index has not evolved as planned");
+            if(getLevelIndex() < getLevels().size()) {
+                Engine eng = new EngineImpl(new NeutralCommandProvider());
+                eng.init(getLevels().get(getLevelIndex()).getScreen(), getLevels().get(getLevelIndex()).getPlayerCoord(),
+                         getLevels().get(getLevelIndex()).getGuardCoords(), getLevels().get(getLevelIndex()).getTreasureCoords());
+                if(!getEngine().equals(eng))
+                    throw new PostconditionError("Game", "checkAndUpdate", "the engine was not correctly updated");
+            }
+        }
         // post: getEngine().getStatus()@pre != Win => getLevelIndex() == getLevelIndex()@pre && getScore() == getScore()@pre
         if(status_pre != Status.Win &&
            (getLevelIndex() != levelIndex_pre || getScore() != score_pre))
