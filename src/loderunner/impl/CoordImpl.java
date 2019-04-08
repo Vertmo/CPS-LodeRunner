@@ -3,11 +3,14 @@ package loderunner.impl;
 import loderunner.services.Coord;
 
 public class CoordImpl implements Coord {
+    private static int counter = 1;
     private int col, hgt;
+    private int id;
 
     public CoordImpl(int col, int hgt) {
         this.col = col;
         this.hgt = hgt;
+        this.id = counter; counter++;
     }
 
     public int getCol() { return col; }
@@ -28,9 +31,6 @@ public class CoordImpl implements Coord {
 
     @Override
     public int hashCode() {
-        int iHashCode = 17;
-        iHashCode = 31 * iHashCode + col;
-        iHashCode = 31 * iHashCode + hgt;
-        return iHashCode;
+        return 73 + 31 * id;
     }
 }

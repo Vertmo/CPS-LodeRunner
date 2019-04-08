@@ -4,7 +4,7 @@ import loderunner.services.Item;
 import loderunner.services.ItemType;
 
 public class ItemImpl implements Item {
-    private static int idCounter = 0;
+    private static int idCounter = 1;
 
     private int id;
     private ItemType nature;
@@ -65,9 +65,6 @@ public class ItemImpl implements Item {
 
     @Override
     public int hashCode() {
-        int iHashCode = 41;
-        iHashCode = 31 * iHashCode + col;
-        iHashCode = 31 * iHashCode + hgt;
-        return iHashCode;
+        return 41 + 31 * id;
     }
 }

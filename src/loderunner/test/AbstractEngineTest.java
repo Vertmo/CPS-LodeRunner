@@ -90,6 +90,64 @@ public abstract class AbstractEngineTest {
     }
 
     @Test
+    public void testInitPre4() { // Négatif
+        // Conditions initiales
+        EditableScreen s = createPlayableScreen();
+        // Oracle: une exception
+        exception.expect(PreconditionError.class);
+        // Opération
+        engine.init(s, new CoordImpl(5, 2), new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2), new CoordImpl(5, 2))));
+    }
+
+    @Test
+    public void testInitPre5() { // Négatif
+        // Conditions initiales
+        EditableScreen s = createPlayableScreen();
+        // Oracle: une exception
+        exception.expect(PreconditionError.class);
+        // Opération
+        engine.init(s, new CoordImpl(5, 2), new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2), new CoordImpl(6, 2))));
+    }
+
+    @Test
+    public void testInitPre6() { // Négatif
+        // Conditions initiales
+        EditableScreen s = createPlayableScreen();
+        // Oracle: une exception
+        exception.expect(PreconditionError.class);
+        // Opération
+        engine.init(s, new CoordImpl(5, 2),
+                    new HashSet<>(Arrays.asList(new CoordImpl(5, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+    }
+
+    // @Test TODO
+    public void testInitPre7() { // Négatif
+        // Conditions initiales
+        EditableScreen s = createPlayableScreen();
+        // Oracle: une exception
+        exception.expect(PreconditionError.class);
+        // Opération
+        engine.init(s, new CoordImpl(5, 2),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+    }
+
+    // @Test TODO
+    public void testInitPre8() { // Négatif
+        // Conditions initiales
+        EditableScreen s = createPlayableScreen();
+        // Oracle: une exception
+        exception.expect(PreconditionError.class);
+        // Opération
+        engine.init(s, new CoordImpl(5, 2),
+                    new HashSet<>(Arrays.asList(new CoordImpl(2, 2), new CoordImpl(2, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+    }
+
+    @Test
     public void testStepPre1() { // Positif
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2), new HashSet<>(), new HashSet<>());
