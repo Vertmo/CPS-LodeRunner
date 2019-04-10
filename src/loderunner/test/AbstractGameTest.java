@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import loderunner.contracts.errors.PreconditionError;
+import loderunner.io.LevelIO;
 import loderunner.services.Cell;
 import loderunner.services.Command;
 import loderunner.services.Game;
@@ -41,7 +42,7 @@ public abstract class AbstractGameTest {
     public final ExpectedException exception = ExpectedException.none();
 
     private Level createPlayableLevel() {
-        Level l = new loderunner.io.Level(10, 5);
+        Level l = new LevelIO(10, 5);
         for(int i = 0; i < 10; i++) l.getScreen().setNature(i, 0, Cell.MTL);
         return l;
     }

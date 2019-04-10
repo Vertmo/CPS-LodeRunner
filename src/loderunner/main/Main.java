@@ -27,7 +27,7 @@ public class Main extends Application {
         for(String lfn: params) {
             File lf = new File(lfn);
             try {
-                levels.add(new loderunner.io.Level(lf));
+                levels.add(new loderunner.io.LevelIO(lf));
             } catch(LevelLoadException e) {
                 System.out.println(e);
             }

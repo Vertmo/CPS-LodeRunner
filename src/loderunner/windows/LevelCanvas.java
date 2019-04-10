@@ -11,9 +11,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 import loderunner.impl.CoordImpl;
-import loderunner.io.Level;
 import loderunner.services.Coord;
 import loderunner.services.Engine;
+import loderunner.services.Level;
 import loderunner.services.Screen;
 
 public class LevelCanvas extends Canvas {
