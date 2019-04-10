@@ -77,16 +77,17 @@ public interface Engine {
 
     // Les gardes peuvent porter des trésors (et les perdent quand ils tombent dans un trou)
     // post: \forall Item t \in getTreasures()@pre
-    //         \exists Guard g \in getEnvi().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
-    //           getCellNature(g.getCol(), g.getHgt()) != HOL
-    //         => t.getCol() = g.getCol() && t.getHgt() = g.getHgt()
+    //         \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
+    //           getEnvironment().getCellNature(g.getCol(), g.getHgt()) != HOL
+    //         => t.getCol() == g.getCol() && t.getHgt() == g.getHgt()
     // post: \forall Item t \in getTreasures()@pre
-    //         \exists Guard g \in getEnvi().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
-    //           getCellNature(g.getCol(), g.getHgt()) == HOL
-    //         => t.getCol() = g.getCol() && t.getHgt() = g.getHgt()+1
+    //         \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
+    //           getEnvironment().getCellNature(g.getCol(), g.getHgt()) == HOL
+    //         => t.getCol() == g.getCol() && t.getHgt() == g.getHgt()+1
     // post: \forall Item t \in getTreasures()@pre
-    //         \not \exists Guard g \in getEnvi().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
-    //         => t.getCol() = t.getCol()@pre && t.getHgt() = t.getHgt()@pre
+    //         \not \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
+    //         && t \in getTreasures()
+    //         => t.getCol() == t.getCol()@pre && t.getHgt() = t.getHgt()@pre
 
     // Le joueur peut récupérer un trésor, ce qui peut amener à la fin de la partie
     // post: \exists Item i \in getTreasures()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())

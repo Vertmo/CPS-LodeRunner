@@ -58,17 +58,6 @@ public abstract class AbstractEditableScreenTest extends AbstractScreenTest {
     }
 
     @Test
-    public void testDigPre4() { // Négatif
-        // Conditions initiales
-        screen.init(10, 5);
-        screen.setNature(2, 3, Cell.PLT); screen.setNature(2, 4, Cell.LAD);
-        // Opération
-        exception.expect(PreconditionError.class);
-        // Oracle: une exception
-        screen.dig(2, 3);
-    }
-
-    @Test
     public void testFillPre3() { // Positif
         // Conditions initiales
         screen.init(10, 5); screen.setNature(2, 3, Cell.HOL);

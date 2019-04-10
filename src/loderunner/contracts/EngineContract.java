@@ -214,6 +214,7 @@ public class EngineContract extends EngineDecorator {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void step() {
         // pre: getStatus() == Playing
         if(getStatus() != Status.Playing)
@@ -229,6 +230,12 @@ public class EngineContract extends EngineDecorator {
         for(Hole h: getHoles()) holes_pre.add(h.clone());
         int playerCol_pre = getPlayer().getCol();
         int playerHgt_pre = getPlayer().getHgt();
+        Set<InCell>[][] cellContent_pre = new Set[getEnvironment().getWidth()][getEnvironment().getHeight()];
+        for(int x = 0; x < getEnvironment().getWidth(); x++) {
+            for(int y = 0; y < getEnvironment().getHeight(); y++) {
+                cellContent_pre[x][y] = new HashSet<>(getEnvironment().getCellContent(x, y));
+            }
+        }
 
         // run
         super.step();
@@ -237,23 +244,55 @@ public class EngineContract extends EngineDecorator {
         checkInvariant();
 
         // post: getPlayer() == (getPlayer()@pre).step()
-        // TODO
+        // Il n'est pas raisonnable de chercher à tester cela (ça voudrait dire cloner l'état entier)
         // post: \forall Guard g: getGuards() g == (g@pre).step()
-        // TODO
+        // Il n'est pas raisonnable de chercher à tester cela (idem)
+
         // post: \forall Item t \in getTreasures()@pre
         //         \exists Guard g \in getEnvi().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
-        //           getCellNature(g.getCol(), g.getHgt()) != HOL
-        //         => t.getCol() = g.getCol() && t.getHgt() = g.getHgt()
-        // TODO
+        //           getEnvi().getCellNature(g.getCol(), g.getHgt()) != HOL
+        //         => t.getCol() == g.getCol() && t.getHgt() == g.getHgt()
+        for(Item i: treasures_pre) {
+            for(InCell ic: cellContent_pre[i.getCol()][i.getHgt()]) {
+                if(ic instanceof Guard) {
+                    Guard g = (Guard) ic;
+                    if(getEnvironment().getCellNature(g.getCol(), g.getHgt()) != Cell.HOL &&
+                       (i.getCol() != g.getCol() || i.getHgt() != g.getHgt()))
+                        throw new PostconditionError("Engine", "step", "The treasure has not moved with the guard");
+                }
+            }
+        }
         // post: \forall Item t \in getTreasures()@pre
-        //         \exists Guard g \in getEnvi().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
-        //           getCellNature(g.getCol(), g.getHgt()) == HOL
-        //         => t.getCol() = g.getCol() && t.getHgt() = g.getHgt()+1
-        // TODO
+        //         \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
+        //           getEnvironment().getCellNature(g.getCol(), g.getHgt()) == HOL
+        //         => t.getCol() == g.getCol() && t.getHgt() == g.getHgt()+1
+        for(Item i: treasures_pre) {
+            for(InCell ic: cellContent_pre[i.getCol()][i.getHgt()]) {
+                if(ic instanceof Guard) {
+                    Guard g = (Guard) ic;
+                    if(getEnvironment().getCellNature(g.getCol(), g.getHgt()) == Cell.HOL &&
+                       (i.getCol() != g.getCol() || i.getHgt() != g.getHgt()+1))
+                        throw new PostconditionError("Engine", "step", "The treasure has not fallen above the guard");
+                }
+            }
+        }
         // post: \forall Item t \in getTreasures()@pre
-        //         \not \exists Guard g \in getEnvi().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
-        //         => t.getCol() = t.getCol()@pre && t.getHgt() = t.getHgt()@pre
-        // TODO
+        //         \not \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
+        //         && t \in getTreasures()
+        //         => t.getCol() == t.getCol()@pre && t.getHgt() == t.getHgt()@pre
+        for(Item i: treasures_pre) {
+            boolean found = false;
+            for(InCell ic: cellContent_pre[i.getCol()][i.getHgt()]) {
+                if(ic instanceof Guard) found = true;
+            }
+            if(!found) {
+                for(Item i2: getTreasures()) {
+                    if(i.getId() == i2.getId() &&
+                       (i.getCol() != i2.getCol() || i.getHgt() != i2.getHgt()))
+                        throw new PostconditionError("Engine", "step", "The treasure has moved while not supposed to");
+                }
+            }
+        }
         // post: \exists Item i \in getTreasures()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
         //       => i \notin getTreasures() && getLevelScore() == getLevelScore()@pre+1
         for(Item i: treasures_pre) {
