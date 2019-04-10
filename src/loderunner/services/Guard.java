@@ -1,6 +1,6 @@
 package loderunner.services;
 
-public interface Guard extends Character {
+public interface Guard extends /* refine */ Character {
     /* Observators */
 
     // const
