@@ -123,19 +123,18 @@ public abstract class AbstractEngineTest {
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
     }
 
-    // @Test TODO
-    public void testInitPre7() { // Négatif
+    // TODO @Test
+    public void testInitPre7() { // Positif
         // Conditions initiales
         EditableScreen s = createPlayableScreen();
-        // Oracle: une exception
-        exception.expect(PreconditionError.class);
         // Opération
         engine.init(s, new CoordImpl(5, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+        // Oracle: pas d'exception
     }
 
-    // @Test TODO
+    @Test
     public void testInitPre8() { // Négatif
         // Conditions initiales
         EditableScreen s = createPlayableScreen();
@@ -182,7 +181,19 @@ public abstract class AbstractEngineTest {
         // Oracle: pas d'exception
     }
 
-    // TODO
+    // TODO @Test
+    public void testStepPre4() { // Négatif
+        // Conditions initiales
+        engine.init(createPlayableScreen(), new CoordImpl(5, 2),
+                    new HashSet<>(Arrays.asList(new CoordImpl(4, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Left, Command.Right)));
+        engine.step();
+        // Oracle: une exception
+        exception.expect(PreconditionError.class);
+        // Opération
+        engine.step();
+    }
 
     // Transitions
 
