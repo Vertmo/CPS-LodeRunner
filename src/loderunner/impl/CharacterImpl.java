@@ -8,7 +8,7 @@ import loderunner.services.InCell;
 
 public class CharacterImpl implements Character {
     private Environment envi;
-    private int col, hgt;
+    protected int col, hgt;
 
     @Override
     public Environment getEnvi() {

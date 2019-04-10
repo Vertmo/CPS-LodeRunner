@@ -24,26 +24,26 @@ public interface Guard extends Character {
     // inv: getEnvi().getCellNature(getCol(), getHgt()) == LAD
     //      && getHgt() < getTarget().getHgt()
     //      && (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
-    //          || \exists Character c \in getEnvi().getCellContent(getCol(), getHgt()-1)
+    //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1)
     //          => getTarget().getHgt() - getHgt() < |getTarget().getCol() - getCol()|)
     //      => getBehaviour() == Up
 
     // inv: getEnvi().getCellNature(getCol(), getHgt()) == LAD
     //      && getHgt() > getTarget().getHgt()
     //      && (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
-    //          || \exists Character c \in getEnvi().getCellContent(getCol(), getHgt()-1)
+    //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1)
     //          => getHgt() - getTarget().getHgt() < |getTarget().getCol() - getCol()|)
     //      => getBehaviour() == Down
 
     // inv: getEnvi().getCellNature(getCol(), getHgt()) == LAD
     //      && getHgt() == getTarget().getHgt()
     //      && !(getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
-    //          || \exists Character c \in getEnvi().getCellContent(getCol(), getHgt()-1))
+    //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //      => getBehaviour() == Neutral
 
     // inv: (getEnvi().getCellNature(getCol(), getHgt()) \in { HDR, HOL }
     //       || getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
-    //       || \exists Character c \in getEnvi().getCellContent(getCol(), getHgt()-1))
+    //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //      && getCol() < getTarget().getCol()
     //      && (getEnvi().getCellNature(getCol(), getHgt()) == LAD
     //          => getTarget().getCol() - getCol() < |getTarget().getHgt() - getHgt()|)
@@ -51,7 +51,7 @@ public interface Guard extends Character {
 
     // inv: (getEnvi().getCellNature(getCol(), getHgt()) \in { HDR, HOL }
     //       || getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
-    //       || \exists Character c \in getEnvi().getCellContent(getCol(), getHgt()-1))
+    //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //      && getCol() > getTarget().getCol()
     //      && (getEnvi().getCellNature(getCol(), getHgt()) == LAD
     //          => getCol() - getTarget().getCol() < |getTarget().getHgt() - getHgt()|)
@@ -59,7 +59,7 @@ public interface Guard extends Character {
 
     // inv: (getEnvi().getCellNature(getCol(), getHgt()) \in { HDR, HOL }
     //       || getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
-    //       || \exists Character c \in getEnvi().getCellContent(getCol(), getHgt()-1))
+    //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //      && getCol() == getTarget().getCol()
     //      && getEnvi().getCellNature(getCol(), getHgt()) != LAD
     //      => getBehaviour() == Neutral
@@ -102,7 +102,7 @@ public interface Guard extends Character {
     public void climbRight();
 
     // def: willFall() = getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { HOL, EMP }
-    //                   && \not \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1)
+    //                   && \not \exists Guard g \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1)
     //                   && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) \notin { LAD, HDR }
     // post: willFall() => step() == goDown()
     // post: \not willFall()
