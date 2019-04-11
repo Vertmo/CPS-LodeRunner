@@ -290,16 +290,6 @@ public abstract class AbstractCharacterTest {
         assertEquals(4, character.getHgt());
     }
 
-    @Test
-    public void testFarDown() {
-        EditableScreen es = new EditableScreenImpl(); es.init(10, 5);
-        Environment env = new EnvironmentImpl(); env.init(es);
-        character.init(env, 5, 0);
-        character.goDown();
-        // Oracle: vérifié par contrat + le personnage ne devrait pas avoir bougé
-        assertEquals(0, character.getHgt());
-    }
-
     // Paires de transitions
     // On ne va pas toutes les faire par contre...
 

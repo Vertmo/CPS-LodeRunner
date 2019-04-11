@@ -1,6 +1,6 @@
 package loderunner.services;
 
-public interface Guard extends /* refine */ Character {
+public interface Guard extends /* refine */ Character, Cloneable {
     /* Observators */
 
     // const
@@ -23,45 +23,42 @@ public interface Guard extends /* refine */ Character {
 
     // inv: getEnvi().getCellNature(getCol(), getHgt()) == LAD
     //      && getHgt() < getTarget().getHgt()
-    //      && (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
-    //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1)
+    //      && (getCol() != getTarget().getCol() && (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
+    //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //          => getTarget().getHgt() - getHgt() < |getTarget().getCol() - getCol()|)
     //      => getBehaviour() == Up
 
     // inv: getEnvi().getCellNature(getCol(), getHgt()) == LAD
     //      && getHgt() > getTarget().getHgt()
-    //      && (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
-    //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1)
+    //      && (getCol() != getTarget().getCol() && (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
+    //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //          => getHgt() - getTarget().getHgt() < |getTarget().getCol() - getCol()|)
     //      => getBehaviour() == Down
 
     // inv: getEnvi().getCellNature(getCol(), getHgt()) == LAD
     //      && getHgt() == getTarget().getHgt()
-    //      && !(getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
-    //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
+    //      && (getCol() == getTarget().getCol() || !(getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
+    //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1)))
     //      => getBehaviour() == Neutral
 
-    // inv: (getEnvi().getCellNature(getCol(), getHgt()) \in { HDR, HOL }
-    //       || getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
+    // inv: (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
     //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //      && getCol() < getTarget().getCol()
-    //      && (getEnvi().getCellNature(getCol(), getHgt()) == LAD
+    //      && (getHgt() != getTarget().getHgt() && (getEnvi().getCellNature(getCol(), getHgt()) == LAD)
     //          => getTarget().getCol() - getCol() < |getTarget().getHgt() - getHgt()|)
     //      => getBehaviour() == Left
 
-    // inv: (getEnvi().getCellNature(getCol(), getHgt()) \in { HDR, HOL }
-    //       || getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
-    //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
+    // inv: (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
+    //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1)))
     //      && getCol() > getTarget().getCol()
-    //      && (getEnvi().getCellNature(getCol(), getHgt()) == LAD
+    //      && (getHgt() != getTarget().getHgt() && (getEnvi().getCellNature(getCol(), getHgt()) == LAD)
     //          => getCol() - getTarget().getCol() < |getTarget().getHgt() - getHgt()|)
     //      => getBehaviour() == Right
 
-    // inv: (getEnvi().getCellNature(getCol(), getHgt()) \in { HDR, HOL }
-    //       || getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
+    // inv: (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
     //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //      && getCol() == getTarget().getCol()
-    //      && getEnvi().getCellNature(getCol(), getHgt()) != LAD
+    //      && (getHgt() == getTarget().getHgt() || (getEnvi().getCellNature(getCol(), getHgt()) == LAD)
     //      => getBehaviour() == Neutral
 
     /* Constructors */
@@ -82,7 +79,7 @@ public interface Guard extends /* refine */ Character {
     //       => (getCol() == getCol()@pre && getHgt() == getHgt()@pre)
     // post: \exists Guard g \in getEnvi().getCellContent(getCol()@pre-1, getHgt()@pre+1)
     //       => (getCol() == getCol()@pre && getHgt() == getHgt()@pre)
-    // post: getCol() != 0
+    // post: getCol()@pre != 0
     //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre+1) \notin { MTL, PLT }
     //       && \not \exists Guard g \in getEnvi().getCellContent(getCol()@pre-1, getHgt()@pre+1)
     //       => (getCol() == getCol()@pre-1 && getHgt() == getHgt()@pre+1)
@@ -95,7 +92,7 @@ public interface Guard extends /* refine */ Character {
     //       => (getCol() == getCol()@pre && getHgt() == getHgt()@pre)
     // post: \exists Guard g \in getEnvi().getCellContent(getCol()@pre+1, getHgt()@pre+1)
     //       => (getCol() == getCol()@pre && getHgt() == getHgt()@pre)
-    // post: getCol() != getEnvi().getWidth()-1
+    // post: getCol()@pre != getEnvi().getWidth()-1
     //       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre+1) \notin { MTL, PLT }
     //       && \not \exists Guard g \in getEnvi().getCellContent(getCol()@pre+1, getHgt()@pre+1)
     //       => (getCol() == getCol()@pre+1 && getHgt() == getHgt()@pre+1)
@@ -108,8 +105,6 @@ public interface Guard extends /* refine */ Character {
     // post: \not willFall()
     //       && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) == HOL && getTimeInHole()@pre < 5
     //       => getTimeInHole() == getTimeInHole()@pre + 1
-    // post: getBehaviour() == Neutral
-    //       => getCol() == getCol()@pre && getHgt() == getHgt()@pre
     // post: \not willFall()
     //       && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) == HOL && getTimeInHole()@pre == 5
     //       => (getBehaviour()@pre == Left => step() == climbLeft()
@@ -120,4 +115,6 @@ public interface Guard extends /* refine */ Character {
     //           && getBehaviour()@pre == Up => step() == goUp()
     //           && getBehaviour()@pre == Down => step() == goDown())
     public void step();
+
+    public Guard clone();
 }

@@ -44,7 +44,7 @@ public class GuardImpl extends CharacterImpl implements Guard {
             if(ic instanceof Guard) guard_below = true;
         }
         if(cell == Cell.LAD) {
-            if((cell_below == Cell.PLT || cell_below == Cell.MTL || guard_below) && hDist > vDist) {
+            if((cell_below == Cell.PLT || cell_below == Cell.MTL || guard_below) && (hDist < vDist || vDist == 0)) {
                 if(getTarget().getCol() < getCol()) return Move.Left;
                 if(getTarget().getCol() > getCol()) return Move.Right;
             }
@@ -62,6 +62,7 @@ public class GuardImpl extends CharacterImpl implements Guard {
 
     @Override
     public Character getTarget() {
+        if(target == null) return this;
         return target;
     }
 
@@ -126,5 +127,31 @@ public class GuardImpl extends CharacterImpl implements Guard {
             else if(getBehaviour() == Move.Up) goUp();
             else if(getBehaviour() == Move.Down) goDown();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(o == this) return true;
+        if(!(o instanceof Guard)) return false;
+        Guard g = (Guard) o;
+        return g.getId() == getId() && g.getTarget() == getTarget() && g.getEnvi() == getEnvi()
+            && g.getCol() == getCol() && g.getHgt() == getHgt()
+            && g.getInitCol() == getInitCol() && g.getInitHgt() == getInitHgt()
+            && g.getTimeInHole() == getTimeInHole();
+    }
+
+    @Override
+    public int hashCode() {
+        return 29 + 31 * id;
+    }
+
+    @Override
+    public Guard clone() {
+        GuardImpl g = new GuardImpl();
+        g.id = getId();
+        g.init(getEnvi(), getTarget(), getInitCol(), getInitHgt());
+        g.col = getCol(); g.hgt = getHgt(); g.timeInHole = getTimeInHole();
+        return g;
     }
 }
