@@ -61,6 +61,15 @@ public abstract class AbstractCharacterTest {
     // Transitions
 
     @Test
+    public void testInitTrans1() {
+        // Conditions initiales
+        Environment env = new EnvironmentImpl(); env.init(10, 5);
+        // Opération
+        character.init(env, 5, 2);
+        // Oracle: vérifié par contrat
+    }
+
+    @Test
     public void testGoLeftTrans1() {
         // Conditions initiales
         EditableScreen es = new EditableScreenImpl(); es.init(10, 5);

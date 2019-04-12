@@ -173,12 +173,21 @@ public class GuardContract extends CharacterContract implements Guard {
         // captures
         int col_pre = getCol();
         int hgt_pre = getHgt();
+        int id_pre = getId();
+        int initCol_pre = getInitCol();
+        int initHgt_pre = getInitHgt();
+        Character target_pre = getTarget();
 
         // run
         delegate.climbLeft();
 
         // post-invariant
         checkInvariant();
+
+        if(getId() != id_pre) throw new PostconditionError("Guard", "climbLeft", "id is supposed to be const");
+        if(getInitCol() != initCol_pre) throw new PostconditionError("Guard", "climbLeft", "initCol is supposed to be const");
+        if(getInitHgt() != initHgt_pre) throw new PostconditionError("Guard", "climbLeft", "initHgt is supposed to be const");
+        if(getTarget() != target_pre) throw new PostconditionError("Guard", "climbLeft", "target is supposed to be const");
 
         // post: getCol()@pre == 0
         //       => (getCol() == getCol()@pre && getHgt() == getHgt()@pre)
@@ -223,12 +232,21 @@ public class GuardContract extends CharacterContract implements Guard {
         // captures
         int col_pre = getCol();
         int hgt_pre = getHgt();
+        int id_pre = getId();
+        int initCol_pre = getInitCol();
+        int initHgt_pre = getInitHgt();
+        Character target_pre = getTarget();
 
         // run
         delegate.climbRight();
 
         // post-invariant
         checkInvariant();
+
+        if(getId() != id_pre) throw new PostconditionError("Guard", "climbRight", "id is supposed to be const");
+        if(getInitCol() != initCol_pre) throw new PostconditionError("Guard", "climbRight", "initCol is supposed to be const");
+        if(getInitHgt() != initHgt_pre) throw new PostconditionError("Guard", "climbRight", "initHgt is supposed to be const");
+        if(getTarget() != target_pre) throw new PostconditionError("Guard", "climbRight", "target is supposed to be const");
 
         // post: getCol()@pre == getEnvi().getWidth()-1
         //       => (getCol() == getCol()@pre && getHgt() == getHgt()@pre)
@@ -287,12 +305,21 @@ public class GuardContract extends CharacterContract implements Guard {
         if(getEnvi().getCellNature(col_pre, hgt_pre) == Cell.HOL) timeInHole_pre = getTimeInHole();
         Move behaviour_pre = getBehaviour();
         Guard delegate_pre = delegate.clone();
+        int id_pre = getId();
+        int initCol_pre = getInitCol();
+        int initHgt_pre = getInitHgt();
+        Character target_pre = getTarget();
 
         // run
         delegate.step();
 
         // post-invariant
         checkInvariant();
+
+        if(getId() != id_pre) throw new PostconditionError("Guard", "step", "id is supposed to be const");
+        if(getInitCol() != initCol_pre) throw new PostconditionError("Guard", "step", "initCol is supposed to be const");
+        if(getInitHgt() != initHgt_pre) throw new PostconditionError("Guard", "step", "initHgt is supposed to be const");
+        if(getTarget() != target_pre) throw new PostconditionError("Guard", "step", "target is supposed to be const");
 
         // post: willFall() => step() == goDown()
         if(willFall(col_pre, hgt_pre)) {

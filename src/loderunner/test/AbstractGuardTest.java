@@ -13,7 +13,6 @@ import loderunner.services.Cell;
 import loderunner.services.EditableScreen;
 import loderunner.services.Environment;
 import loderunner.services.Guard;
-import loderunner.services.Move;
 import loderunner.services.Player;
 
 public abstract class AbstractGuardTest extends AbstractCharacterTest {
@@ -111,7 +110,14 @@ public abstract class AbstractGuardTest extends AbstractCharacterTest {
 
     // Transitions
 
-    // TODO
+    @Test
+    public void testInitTrans2() {
+        // Conditions initiales
+        Environment env = new EnvironmentImpl(); env.init(10, 5);
+        // Opération
+        guard.init(env, new PlayerImpl(), 5, 2);
+        // Oracle: vérifié par contrat
+    }
 
     @Test
     public void testClimbLeftTrans1() {
@@ -308,8 +314,6 @@ public abstract class AbstractGuardTest extends AbstractCharacterTest {
         assertEquals(4, guard.getCol());
         assertEquals(2, guard.getHgt());
     }
-
-    // TODO
 
     // Etats remarquables
 
