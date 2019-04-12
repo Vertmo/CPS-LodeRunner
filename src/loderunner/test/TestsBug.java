@@ -11,7 +11,8 @@ import org.junit.runners.Suite;
             EnvironmentTestBug.class,
             CharacterTestBug.class,
             GameTestBug.class,
-            PlayerTestBug.class
+            PlayerTestBug.class,
+            GuardTestBug.class
 })
 
 public class TestsBug {}

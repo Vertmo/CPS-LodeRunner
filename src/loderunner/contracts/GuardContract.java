@@ -283,6 +283,8 @@ public class GuardContract extends CharacterContract implements Guard {
         // captures
         int col_pre = getCol();
         int hgt_pre = getHgt();
+        int timeInHole_pre = 0;
+        if(getEnvi().getCellNature(col_pre, hgt_pre) == Cell.HOL) timeInHole_pre = getTimeInHole();
         Move behaviour_pre = getBehaviour();
         Guard delegate_pre = delegate.clone();
 
@@ -302,12 +304,22 @@ public class GuardContract extends CharacterContract implements Guard {
         // post: \not willFall()
         //       && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) == HOL && getTimeInHole()@pre < 5
         //       => getTimeInHole() == getTimeInHole()@pre + 1
-        // TODO
+        if(!willFall(col_pre, hgt_pre) &&
+           getEnvi().getCellNature(col_pre, hgt_pre) == Cell.HOL && timeInHole_pre < 5 &&
+           getTimeInHole() != timeInHole_pre + 1)
+            throw new PostconditionError("Guard", "step", "The timeInHole has not increased properly");
         // post: \not willFall()
         //       && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) == HOL && getTimeInHole()@pre == 5
         //       => (getBehaviour()@pre == Left => step() == climbLeft()
         //           && getBehaviour()@pre == Right => step() == climbRight())
-        // TODO
+        if(!willFall(col_pre, hgt_pre) &&
+           getEnvi().getCellNature(col_pre, hgt_pre) == Cell.HOL && timeInHole_pre == 5) {
+            Guard clone = delegate_pre.clone();
+            if(behaviour_pre == Move.Left) clone.climbLeft();
+            if(behaviour_pre == Move.Right) clone.climbRight();
+            if(!delegate.equals(clone))
+                throw new PostconditionError("Guard", "step", "The guard should have climbed");
+        }
         // post: \not willFall() && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) != HOL
         //       => (getBehaviour()@pre == Left => step() == goLeft()
         //           && getBehaviour()@pre == Right => step() == goRight()
