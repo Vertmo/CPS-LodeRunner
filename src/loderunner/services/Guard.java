@@ -64,7 +64,7 @@ public interface Guard extends /* refine */ Character, Cloneable {
     //           && getEnvi().getCellNature(getCol(), getHgt()) != LAD)
     //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //      && getCol() == getTarget().getCol()
-    //      && (getHgt() == getTarget().getHgt() || (getEnvi().getCellNature(getCol(), getHgt()) == LAD)
+    //      && (getHgt() == getTarget().getHgt() || (getEnvi().getCellNature(getCol(), getHgt()) != LAD)
     //      => getBehaviour() == Neutral
 
     /* Constructors */

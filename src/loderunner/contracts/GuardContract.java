@@ -134,12 +134,12 @@ public class GuardContract extends CharacterContract implements Guard {
         //           && getEnvi().getCellNature(getCol(), getHgt()) != LAD)
         //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
         //      && getCol() == getTarget().getCol()
-        //      && (getHgt() == getTarget().getHgt() || (getEnvi().getCellNature(getCol(), getHgt()) == LAD)
+        //      && (getHgt() == getTarget().getHgt() || (getEnvi().getCellNature(getCol(), getHgt()) != LAD)
         //      => getBehaviour() == Neutral
         if((cell_below == Cell.PLT || cell_below == Cell.MTL ||
             (cell_below == Cell.LAD && cell != Cell.LAD) || guard_below) &&
            getCol() == getTarget().getCol() &&
-           (vDist == 0 || !(cell == Cell.LAD)) &&
+           (vDist == 0 || cell != Cell.LAD) &&
            getBehaviour() != Move.Neutral)
             throw new InvariantError("Guard", "getBehaviour() should be Neutral");
     }
