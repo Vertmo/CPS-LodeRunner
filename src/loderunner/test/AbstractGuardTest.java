@@ -331,12 +331,23 @@ public abstract class AbstractGuardTest extends AbstractCharacterTest {
         assertEquals(2, guard.getHgt());
     }
 
-    // TODO
-
-    // Paires de transitions
-    // TODO
-
     // Scénarios
-    // TODO
+
+    @Test
+    public void testScenar3() {
+        Environment env = createEnvironment();
+        Player p = new PlayerImpl(); p.init(env, 7, 5);
+        env.dig(4, 1);
+        guard.init(env, p, 3, 2);
+        guard.step(); guard.step();
+        assertEquals(4, guard.getCol()); assertEquals(1, guard.getHgt());
+        for(int i = 0; i < 5; i++) guard.step();
+        assertEquals(4, guard.getCol()); assertEquals(1, guard.getHgt());
+        guard.step(); guard.step(); guard.step(); guard.step();
+        assertEquals(7, guard.getCol()); assertEquals(3, guard.getHgt());
+        p.goRight(); guard.step();
+        p.goRight(); guard.step(); guard.step(); guard.step();
+        assertEquals(5, guard.getHgt()); assertEquals(9, guard.getCol());
+    }
 
 }

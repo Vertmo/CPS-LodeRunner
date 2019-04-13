@@ -102,33 +102,42 @@ public class GuardContract extends CharacterContract implements Guard {
            getBehaviour() != Move.Neutral)
             throw new InvariantError("Guard", "getBehaviour() should be Neutral");
         // inv: (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
+        //       || (getEnvi().getCellNature(getCol(), getHgt()-1) == LAD
+        //           && getEnvi().getCellNature(getCol(), getHgt()) != LAD)
         //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
         //      && getCol() < getTarget().getCol()
         //      && (getHgt() != getTarget().getHgt() && (getEnvi().getCellNature(getCol(), getHgt()) == LAD)
         //          => getTarget().getCol() - getCol() < |getTarget().getHgt() - getHgt()|)
         //      => getBehaviour() == Left
-        if((cell_below == Cell.PLT || cell_below == Cell.MTL || guard_below) &&
+        if((cell_below == Cell.PLT || cell_below == Cell.MTL ||
+            (cell_below == Cell.LAD && cell != Cell.LAD) || guard_below) &&
            getCol() > getTarget().getCol() &&
            (vDist == 0 || cell != Cell.LAD || hDist < vDist) &&
            getBehaviour() != Move.Left)
             throw new InvariantError("Guard", "getBehaviour() should be Left");
         // inv: (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
+        //       || (getEnvi().getCellNature(getCol(), getHgt()-1) == LAD
+        //           && getEnvi().getCellNature(getCol(), getHgt()) != LAD)
         //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1)))
         //      && getCol() > getTarget().getCol()
         //      && (getHgt() != getTarget().getHgt() && (getEnvi().getCellNature(getCol(), getHgt()) == LAD)
         //          => getCol() - getTarget().getCol() < |getTarget().getHgt() - getHgt()|)
         //      => getBehaviour() == Right
-        if((cell_below == Cell.PLT || cell_below == Cell.MTL || guard_below) &&
+        if((cell_below == Cell.PLT || cell_below == Cell.MTL ||
+            (cell_below == Cell.LAD && cell != Cell.LAD) || guard_below) &&
            getCol() < getTarget().getCol() &&
            (vDist == 0 || cell != Cell.LAD || hDist < vDist) &&
            getBehaviour() != Move.Right)
             throw new InvariantError("Guard", "getBehaviour() should be Right");
         // inv: (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
+        //       || (getEnvi().getCellNature(getCol(), getHgt()-1) == LAD
+        //           && getEnvi().getCellNature(getCol(), getHgt()) != LAD)
         //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
         //      && getCol() == getTarget().getCol()
         //      && (getHgt() == getTarget().getHgt() || (getEnvi().getCellNature(getCol(), getHgt()) == LAD)
         //      => getBehaviour() == Neutral
-        if((cell_below == Cell.PLT || cell_below == Cell.MTL || guard_below) &&
+        if((cell_below == Cell.PLT || cell_below == Cell.MTL ||
+            (cell_below == Cell.LAD && cell != Cell.LAD) || guard_below) &&
            getCol() == getTarget().getCol() &&
            (vDist == 0 || !(cell == Cell.LAD)) &&
            getBehaviour() != Move.Neutral)
