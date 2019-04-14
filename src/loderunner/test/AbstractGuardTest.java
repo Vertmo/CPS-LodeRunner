@@ -29,6 +29,7 @@ public abstract class AbstractGuardTest extends AbstractCharacterTest {
         for(int i = 0; i < 10; i++) es.setNature(i, 1, Cell.PLT);
         es.setNature(7, 2, Cell.LAD); es.setNature(7, 3, Cell.LAD); es.setNature(7, 4, Cell.LAD);
         es.setNature(5, 4, Cell.PLT); es.setNature(6, 4, Cell.PLT); es.setNature(8, 4, Cell.PLT); es.setNature(9, 4, Cell.PLT);
+        es.setNature(1, 4, Cell.HDR); es.setNature(2, 4, Cell.HDR);
 
         Environment e = new EnvironmentImpl();
         e.init(es);
@@ -313,6 +314,20 @@ public abstract class AbstractGuardTest extends AbstractCharacterTest {
         // Oracle: vérifié par contrats + garde en (4, 2)
         assertEquals(4, guard.getCol());
         assertEquals(2, guard.getHgt());
+    }
+
+    @Test
+    public void testStepTrans12() {
+        // Conditions initiales
+        Environment env = createEnvironment();
+        env.addCellContent(7, 3, new GuardImpl()); env.dig(5, 1);
+        Player p = new PlayerImpl(); p.init(env, 7, 5);
+        guard.init(env, p, 1, 5); guard.step();
+        // Opération
+        guard.step();
+        // Oracle: vérifié par contrats + garde en (4, 2)
+        assertEquals(2, guard.getCol());
+        assertEquals(4, guard.getHgt());
     }
 
     // Etats remarquables

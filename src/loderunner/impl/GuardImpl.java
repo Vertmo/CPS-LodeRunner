@@ -104,7 +104,7 @@ public class GuardImpl extends CharacterImpl implements Guard {
 
     private boolean willFall() {
         Cell cell_below = getEnvi().getCellNature(getCol(), getHgt()-1);
-        if(cell_below != Cell.HOL && cell_below != Cell.EMP) return false;
+        if(cell_below != Cell.HOL && cell_below != Cell.EMP && cell_below != Cell.HDR) return false;
         for(InCell ic: getEnvi().getCellContent(getCol(), getHgt()-1)) {
             if(ic instanceof Guard) return false;
         }

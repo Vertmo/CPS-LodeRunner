@@ -239,7 +239,7 @@
   & \quad\quad \textbf{implies} \textrm{Col(ClimbRight(C))} = \textrm{Col(C)}+1 \textbf{and} \textrm{Hgt(ClimbLeft(C))} = \textrm{Hgt(C)}+1 \\
   \textrm{[Step]}:
   & on définit le prédicat WillFall pour simplifier les équations suivantes: \\
-  & \textbf{WillFall}\texttt{(C)} \textbf{defined by} (\textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)-1)} \textbf{in} \{\textbf{HOL}, \textbf{EMP} \}  \\
+  & \textbf{WillFall}\texttt{(C)} \textbf{defined by} (\textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)-1)} \textbf{in} \{\textbf{HOL}, \textbf{EMP}, \textbf{HDR} \}  \\
   & \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \textbf{not exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)-1)} \\
   & \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C))} \textbf{not in} \{\textbf{LAD}, \textbf{HDR} \} ) \\
   & \textrm{WillFall(C)} \textbf{implies} \textrm{Step(G)} = \textrm{GoDown(G)} \\

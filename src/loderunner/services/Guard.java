@@ -104,7 +104,7 @@ public interface Guard extends /* refine */ Character, Cloneable {
     //       => (getCol() == getCol()@pre+1 && getHgt() == getHgt()@pre+1)
     public void climbRight();
 
-    // def: willFall() = getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { HOL, EMP }
+    // def: willFall() = getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { HOL, EMP, HDR }
     //                   && \not \exists Guard g \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1)
     //                   && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) \notin { LAD, HDR }
     // post: willFall() => step() == goDown()

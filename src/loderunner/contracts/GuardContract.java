@@ -288,12 +288,12 @@ public class GuardContract extends CharacterContract implements Guard {
             throw new PostconditionError("Guard", "climbRight", "The guard has not moved correctly");
     }
 
-    // def: willFall() = getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { HOL, EMP }
+    // def: willFall() = getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { HOL, EMP, HDR }
     //                   && \not \exists Guard g \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1)
     //                   && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) \notin { LAD, HDR }
     private boolean willFall(int col_pre, int hgt_pre) {
         Cell cell_below = getEnvi().getCellNature(col_pre, hgt_pre-1);
-        if(cell_below != Cell.HOL && cell_below != Cell.EMP) return false;
+        if(cell_below != Cell.HOL && cell_below != Cell.EMP && cell_below != Cell.HDR) return false;
         for(InCell ic: getEnvi().getCellContent(col_pre, hgt_pre-1)) {
             if(ic instanceof Guard) return false;
         }
