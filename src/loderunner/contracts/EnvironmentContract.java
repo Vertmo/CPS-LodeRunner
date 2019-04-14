@@ -119,10 +119,6 @@ public class EnvironmentContract extends ScreenContract implements Environment {
     @SuppressWarnings("unchecked")
     @Override
     public void addCellContent(int x, int y, InCell c) {
-        // pre: 0 <= x < getWidth() && 0 <= y < getHeight()
-        if(x < 0 || x >= getWidth() || y < 0 || y >= getHeight())
-            throw new PreconditionError("Environment", "addCellContent", "0 <= x < getWidth() && 0 <= y < getHeight()");
-
         // pre: getCellNature(x, y) == EMP && getCellNature(x, y-1) \in { PLT, MTL }
         if(getCellNature(x, y) != Cell.EMP ||
            (getCellNature(x, y-1) != Cell.PLT && getCellNature(x, y-1) != Cell.MTL))
@@ -267,16 +263,5 @@ public class EnvironmentContract extends ScreenContract implements Environment {
                     throw new PostconditionError("Environment", "removeCellContent", "The nature of a cell has changed");
             }
         }
-    }
-
-    @Override
-    public void dig(int x, int y) {
-        // pre: \not \exists Item i \in getCellContent(x, y+1)
-        for(InCell ic: getCellContent(x, y+1)) {
-            if(ic instanceof Item)
-                throw new PreconditionError("Environment", "dig", "There is an Item above this cell");
-        }
-
-        super.dig(x, y);
     }
 }

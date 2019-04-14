@@ -29,6 +29,9 @@ public interface Engine {
     //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
     // pre: \forall Coord c \in gCoords union tCoords
     //        pCoord.getCol() != c.getCol() || pCord.getHgt() != c.getHgt()
+    // pre: \forall Coord c \in tCoords
+    //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL }
+    //        || c \in gCoords
     // post: getStatus() == Playing
     // post: getEnvironment().getWidth() == screen.getWidth()
     //       && getEnvironment().getHeight() == screen.getHeight()

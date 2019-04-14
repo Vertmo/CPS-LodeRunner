@@ -22,11 +22,22 @@
           description="compile the source " >
     <!-- Compile the java code from ${src} into ${build} -->
     <javac debug="true" classpath="${jars}/junit.jar" srcdir="${src}" excludes="" destdir="${build}" includeantruntime="false" />
+
+    <!-- Copy the ${assets} to ${build$} -->
+    <copy todir="${build}/assets">
+      <fileset dir="assets"/>
+    </copy>
   </target>
 
   <target name="run" depends="compile" description="run the game">
     <!--<echo>================ Run the main ================</echo>-->
     <java classname="loderunner.main.Main" classpath="${build}">
+    </java>
+  </target>
+
+  <target name="run-editor" depends="compile" description="run the editor">
+    <!--<echo>================ Run the editor ================</echo>-->
+    <java classname="loderunner.main.Editor" classpath="${build}:${java.home}/lib/ext/jfxrt.jar">
     </java>
   </target>
 

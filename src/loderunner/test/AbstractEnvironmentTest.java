@@ -97,19 +97,6 @@ public abstract class AbstractEnvironmentTest extends AbstractScreenTest {
         screen.removeCellContent(2, 3, t);
     }
 
-    @Test
-    public void testDigPre3() { // Negatif
-        // Conditions initiales
-        EditableScreen es = new EditableScreenImpl(); es.init(10, 5);
-        es.setNature(2, 2, Cell.PLT);
-        screen.init(es);
-        screen.addCellContent(2, 3, new ItemImpl(ItemType.Treasure, 2, 3));
-        // Oracle: une exception
-        exception.expect(PreconditionError.class);
-        // Opération
-        screen.dig(2, 2);
-    }
-
     // Transitions
 
     @Test
