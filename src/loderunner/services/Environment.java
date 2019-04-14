@@ -41,7 +41,6 @@ public interface Environment extends /* include */ Screen {
 
     /* Operators */
 
-    // pre: 0 <= x < getWidth() && 0 <= y < getHeight()
     // pre: getCellNature(x, y) == EMP && getCellNature(x, y-1) \in { PLT, MTL }
     // post: c \in getCellContent(x, y)
     // post: \forall InCell c2 \in getCellContent(x, y)@pre c2 \in getCellContent(x, y)
@@ -61,12 +60,4 @@ public interface Environment extends /* include */ Screen {
     // post: \forall i \in [0..getWidth()[ \forall j \in [0..getHeight()[
     //         getCellNature(x, y) == getCellNature(x, y)@pre
     public void removeCellContent(int x, int y, InCell c);
-
-    // pre: getCellNature(x, y) == PLT
-    // pre: \not \exists Item i \in getCellContent(x, y+1)
-    // post: getCellNature(x, y) == HOL
-    // post: \forall i \in [0..getWidth()[ \forall j \in [0..getHeight()[
-    //         (i != x || j != y) => getCellNature(i, j) == getCellNature(i, j)@pre
-    @Override
-    public void dig(int x, int y);
 }

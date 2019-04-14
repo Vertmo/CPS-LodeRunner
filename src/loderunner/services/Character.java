@@ -67,11 +67,11 @@ public interface Character extends InCell {
     // post: getCol() == getCol()@pre
     // post: (getHgt()@pre == getEnvi().getHeight()-1) => getHgt() == getHgt()@pre
     // post: getEnvi().getCellNature(getCol(), getHgt()@pre) == LAD
-    //       && getEnvi().getCellNature(getCol(), getHgt()@pre+1) \in { EMP, HOL, LAD, HDR }
+    //       && getEnvi().getCellNature(getCol(), getHgt()@pre+1) \notin { PLT, MTL }
     //       && (this \notin Guard || \not \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()@pre+1))
     //       => getHgt() == getHgt()@pre + 1
     // post: getEnvi().getCellNature(getCol(), getHgt()@pre) != LAD
-    //       || getEnvi().getCellNature(getCol(), getHgt()@pre+1) \notin { EMP, HOL, LAD, HDR }
+    //       || getEnvi().getCellNature(getCol(), getHgt()@pre+1) \in { PLT, MTL }
     //       || (this \in Guard && \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()@pre+1))
     //       => getHgt() == getHgt()@pre
     public void goUp();
@@ -81,10 +81,10 @@ public interface Character extends InCell {
 
     // post: (getCol() == getCol()@pre
     // post: (getHgt()@pre == 0) => getHgt() == getHgt()@pre
-    // post: getEnvi().getCellNature(getCol(), getHgt()@pre-1) \in { EMP, HOL, LAD, HDR }
+    // post: getEnvi().getCellNature(getCol(), getHgt()@pre-1) \notin { PLT, MTL }
     //       && \not \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()@pre-1)
     //       => getHgt() == getHgt()@pre - 1
-    // post: getEnvi().getCellNature(getCol(), getHgt()@pre-1) \notin { EMP, HOL, LAD, HDR }
+    // post: getEnvi().getCellNature(getCol(), getHgt()@pre-1) \in { PLT, MTL }
     //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()@pre-1))
     //       => getHgt() == getHgt()@pre
     public void goDown();

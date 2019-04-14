@@ -1,6 +1,7 @@
 \documentclass[8pt]{article}
 \usepackage[a4paper, margin=0.5in]{geometry}
 \usepackage{listings}
+\usepackage{longtable}
 
 \title{CPS - Projet - LodeRunner\\Spécification}
 \author{Basile Pesin, David Sreng\\Sorbonne Université}
@@ -13,10 +14,10 @@
 \subsection{Screen}
 
 {\small
-\begin{tabular}{rl}
+\begin{longtable}{rl}
   \textbf{Service}: & \textrm{Screen}  \\
   \textbf{Observators}: & \textbf{const}~\texttt{Height}: \textrm{[Screen]} $\rightarrow$ \textrm{int} \\
-  & \textbf{const}~\texttt{Width}: \textrm{[Screen]} $\rightarrow$ \textrm{int} \\
+  & \textbf{const} \texttt{Width}: \textrm{[Screen]} $\rightarrow$ \textrm{int} \\
   & \texttt{CellNature}: \textrm{[Screen]} $\times$ \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{Cell} \\
   & \quad \textbf{pre } \texttt{CellNature(S,x,y)} \textbf{ requires } 0 $\leq$ \texttt{y} $<$ \texttt{Height(S)} \textbf{ and } 0 $\leq$ \texttt{x} $<$ \texttt{Width(S)}\\
   \textbf{Constructors}: & \texttt{init}: \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{[Screen]} \\
@@ -29,16 +30,18 @@
   \texttt{[init]}: & \texttt{Height(init(h,w))} $=$ \texttt{h} \\
   & \texttt{Width(init(h,w))} $=$ \texttt{w} \\
   & \textbf{forall} $(x,y)$ \textbf{in} \texttt{[0;Width(S)[}$\times$ \texttt{[0;Height(S)[},~ \texttt{CellNature(init(h,w),x,y)} $=$ \textbf{EMP} \\
-          \texttt{[Dig]}: & \texttt{CellNature(Dig(S,x,y)),x,y} $=$ \textbf{HOL} \\
-          & \textbf{forall} $(x,y)$ \textbf{in} \texttt{[0;Width(S)[} $\times$ \texttt{[0;Height(S)[}, \\ & \quad\quad\quad\quad (\texttt{x} $\neq$ \texttt{u} \textbf{or} \texttt{y} $\neq$ \texttt{v}) \textbf{implies} \texttt{CellNature(Dig(S,u,v)),x,y)} $=$ \texttt{CellNature(x,y)} \\
-                  \texttt{[Fill]}: & \texttt{CellNature(Fill(S,x,y),x,y)} $=$ \textbf{PLT} \\
-                  & \textbf{forall} $(x,y)$ \textbf{in} \texttt{[0;Width(S)[}$\times$ \texttt{[0;Height(S)[}, \\ & \quad\quad\quad\quad (\texttt{x} $\neq$ \texttt{u} \textbf{or} \texttt{y} $\neq$ \texttt{v}) \textbf{implies} \texttt{CellNature(Fill(S,u,v)),x,y)} $=$ \texttt{CellNature(x,y)} \\
-\end{tabular}}
+  \texttt{[Dig]}: & \texttt{CellNature(Dig(S,x,y)),x,y} $=$ \textbf{HOL} \\
+  & \textbf{forall} $(x,y)$ \textbf{in} \texttt{[0;Width(S)[} $\times$ \texttt{[0;Height(S)[}, \\
+  & \quad\quad\quad\quad (\texttt{x} $\neq$ \texttt{u} \textbf{or} \texttt{y} $\neq$ \texttt{v}) \textbf{implies} \texttt{CellNature(Dig(S,u,v)),x,y)} $=$ \texttt{CellNature(x,y)} \\
+  \texttt{[Fill]}: & \texttt{CellNature(Fill(S,x,y),x,y)} $=$ \textbf{PLT} \\
+  & \textbf{forall} $(x,y)$ \textbf{in} \texttt{[0;Width(S)[}$\times$ \texttt{[0;Height(S)[}, \\
+  & \quad\quad\quad\quad (\texttt{x} $\neq$ \texttt{u} \textbf{or} \texttt{y} $\neq$ \texttt{v}) \textbf{implies} \texttt{CellNature(Fill(S,u,v)),x,y)} $=$ \texttt{CellNature(x,y)} \\
+\end{longtable}}
 
 \subsection{EditableScreen}
 
 {\small
-\begin{tabular}{rl}
+\begin{longtable}{rl}
   \textbf{Service}: & \textrm{EditableScreen} {\bf includes} \textrm{Screen}  \\
   \textbf{Observators}: & \texttt{Playable}: \textrm{[EditableScreen]} $\rightarrow$ \textrm{bool} \\
   \textbf{Operators}: & \texttt{SetNature}: \textrm{[EditableScreen]} $\times$ \textrm{int} $\times$ \textrm{int} $\times$ \textrm{Cell}  $\rightarrow$ \textrm{[EditableScreen]} \\
@@ -49,95 +52,142 @@
           & \quad\quad\quad\quad \textbf{and} \textbf{forall} $x$ \textbf{in} \texttt{[0;Width(S)[}, \texttt{CellNature(S,x,0)} $=$ \textbf{MTL}  \\
               \texttt{[SetNature]}: & \texttt{CellNature(SetNature(S,x,y,C)),x,y} $=$ C \\
               & \textbf{forall} $(x,y)$ \textbf{in} \texttt{[0;Width(S)[}$\times$ \texttt{[0;Height(S)[}, \\ & \quad\quad\quad\quad (\texttt{x} $\neq$ \texttt{u} \textbf{or} \texttt{y} $\neq$ \texttt{v}) \textbf{implies} \texttt{CellNature(SetNature(S,u,v,C)),x,y)} $=$ \texttt{CellNature(x,y)} \\
-\end{tabular}}
+\end{longtable}}
 
 \subsection{Environment}
 
 {\small
-\begin{tabular}{rl}
+\begin{longtable}{rl}
   \textbf{Service}: & Environment \textbf{includes} Screen
   \\ \textbf{Observators} : & \texttt{CellContent}:
   \textrm{int} $\times$ \textrm{int} $\rightarrow$
   \textrm{Set\{Character + Item\}} \\
   & \quad \textbf{pre } \texttt{CellContent(E,x,y)} \textbf{ requires } 0 $\leq$ \texttt{y} $<$ \texttt{Height(S)} \textbf{ and } 0 $\leq$ \texttt{x} $<$ \texttt{Width(S)}\\
   \textbf{Constructors}: & \texttt{init}: \textrm{EditableScreen} $\rightarrow$ \textrm{Environment} \\
+  \textbf{Operators}: & \texttt{AddCellContent}: \textrm{[EditableScreen]} $\times$ \textrm{int} $\times$ \textrm{int} $\times$ \textrm{(Character + Item)} $\rightarrow$ \textrm{[EditableScreen]}\\
+  & \quad \textbf{pre} \texttt{AddCellContent(E, x, y, c)} \textbf{requires} \texttt{CellNature(E, Col(E), Hgt(E))} $=$ \textbf{EMP} \\ 
+  & \quad\quad\quad \textbf{and} \texttt{CellNature(E, Col(E), Hgt(E)-1)} \textbf{in} \{\textbf{PLT}, \textbf{MTL}  \} \\
+  & \texttt{RemoveCellContent}: \textrm{[EditableScreen]} $\times$ \textrm{int} $\times$ \textrm{int} $\times$ \textrm{(Character + Item)} $\rightarrow$ \textrm{[EditableScreen]} \\
+  & \quad \textbf{pre} \texttt{RemoveCellContent(E, x, y, c)} \textbf{requires} \texttt{c} \textbf{in} \texttt{CellContent(E, x, y)}
   \textbf{Observations}: \\
-  \texttt{[invariant]}: & \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(E)[}$\times$ \texttt{[0;Height(E)[},~\\ & \quad\quad \textbf{forall} \textrm{Character} \texttt{c1}, \texttt{c2} \textbf{in} \texttt{CellContent(E,x,y)}$^2$, \texttt{c1} $=$ \texttt{c2} \\
-          & \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(E)[}$\times$ \texttt{[0;Height(E)[},~\\ & \quad\quad \texttt{CellNature(E,x,y)} \textbf{in} \{\textbf{MTL}, \textbf{PLR}\} \textbf{implies} \texttt{CellContent(x,y)} $=$ $\emptyset$  \\
-                  & \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(E)[}$\times$ \texttt{[0;Height(E)[},~\\ & \quad\quad \textbf{exists} \textrm{Treasure} \texttt{t} \textbf{in} \texttt{CellContent(E,x,y)}  \\ & \quad\quad \textbf{implies} (\texttt{CellNature(E,x,y)} $=$ \textbf{EMP} \textbf{and} \texttt{CellNature(E,x,y-1)} \textbf{in} \{\textbf{PLT}, \textbf{MTL}\})\\
-                          \texttt{[init]}: & \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(E)[}$\times$ \texttt{[0;Height(E)[},~\\ & \quad\quad
-                                  \texttt{CellNature(init(S),x,y)} $=$ \textrm{EditableScreen}::\texttt{CellNature(S,x,y)} \\
-\end{tabular}}
+  \texttt{[invariant]}: & \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(E)[}$\times$ \texttt{[0;Height(E)[}, \\
+  & \quad\quad \textbf{forall} \textrm{Guard} \texttt{g1}, \texttt{g2} \textbf{in} \texttt{CellContent(E,x,y)}$^2$, \texttt{g1} $=$ \texttt{g2} \\
+  & \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(E)[}$\times$ \texttt{[0;Height(E)[},~\\
+  & \quad\quad \texttt{CellNature(E,x,y)} \textbf{in} \{\textbf{MTL}, \textbf{PLR}\} \textbf{implies} \texttt{CellContent(x,y)} $=$ $\emptyset$  \\
+  & \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(E)[}$\times$ \texttt{[0;Height(E)[},~\\ & \quad\quad \textbf{exists} \textrm{Treasure} \texttt{t} \textbf{in} \texttt{CellContent(E,x,y)}  \\
+  & \quad\quad \textbf{implies} (\texttt{CellNature(E,x,y)} $=$ \textbf{EMP} \textbf{and} \texttt{CellNature(E,x,y-1)} \textbf{in} \{\textbf{PLT}, \textbf{MTL}\})\\
+  \texttt{[init]}: & \texttt{Width(init(S))} $=$ \texttt{Width(S)} \\
+  & \texttt{Height(init(S))} $=$ \texttt{Height(S)} \\
+  & \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(E)[}$\times$ \texttt{[0;Height(E)[}, \\
+  & \quad\quad \texttt{CellNature(init(S),x,y)} $=$ \textrm{EditableScreen}::\texttt{CellNature(S,x,y)} \\
+  & \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(E)[}$\times$ \texttt{[0;Height(E)[}, \\
+  & \quad\quad \texttt{CellContent(init(S),x,y)} $=$ $\emptyset$ \\
+\end{longtable}}
 
 \subsection{Character}
 
 {\small
-\begin{tabular}{rl}
+\begin{longtable}{rl}
   \textbf{Service}: & \textrm{Character}  \\
   \textbf{Observators}: & \textbf{const}~\texttt{Envi}: \textrm{[Character]} $\rightarrow$ \textrm{Environment}  \\
   & \texttt{Hgt}: \textrm{[Character]} $\rightarrow$ \textrm{int}  \\
-  & \texttt{Wdt}: \textrm{[Character]} $\rightarrow$ \textrm{int}  \\
-  \textbf{Operators}: & \texttt{init}: \textrm{Screen} $\times$ \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{[Character]} \\
-  & \quad\textbf{pre} \textrm{init(S,x,y)} \textbf{requires} \textrm{Environment::CellNature(S,x,y)} $=$ \textbf{EMP} \\
+  & \texttt{Col}: \textrm{[Character]} $\rightarrow$ \textrm{int}  \\
+  \textbf{Operators}: & \texttt{init}: \textrm{Environment} $\times$ \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{[Character]} \\
+  & \quad\textbf{pre} \textrm{init(E,x,y)} \textbf{requires} \textrm{Environment::CellNature(E,x,y)} $=$ \textbf{EMP} \\
   & \texttt{GoLeft}: \textrm{[Character]} $\rightarrow$ \textrm{[Character]} \\
   & \texttt{GoRight}: \textrm{[Character]} $\rightarrow$ \textrm{[Character]} \\
   & \texttt{GoUp}: \textrm{[Character]} $\rightarrow$ \textrm{[Character]} \\
   & \texttt{GoDown}: \textrm{[Character]} $\rightarrow$ \textrm{[Character]} \\
   \textbf{Observations}: \\
-  \texttt{[invariant]}: & \textrm{Environment::CellNature(Envi(C),Wdt(C),Hgt(C))} \textbf{in} \{\textbf{EMP}, \textbf{HOL}, \textbf{LAD}, \textbf{HDR}\} \\
-  & \textbf{exists} \textrm{Character} \texttt{x} \textbf{in} \textrm{Environment::CellContent(Envi(C),Wdt(C),Hgt(C))} \textbf{implies} \texttt{x} $=$ \texttt{C}  \\
+  \texttt{[invariant]}: & \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C))} \textbf{in} \{\textbf{EMP}, \textbf{HOL}, \textbf{LAD}, \textbf{HDR}\} \\
+  & \textbf{exists} \textrm{Character} \texttt{x} \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C))} \textbf{implies} \texttt{x} $=$ \texttt{C}  \\
+  \texttt{[init]}: & \textrm{Envi(init(E, x, y))} $=$ \textrm{E} \\
+  & \textrm{Col(init(E, x, y))} $=$ \textrm{x} \\
+  & \textrm{Hgt(init(E, x, y))} $=$ \textrm{y} \\
   \texttt{[GoLeft]}: & \textrm{Hgt(GoLeft(C))} $=$ \textrm{Hgt(C)} \\
-  & \textrm{Wdt(C)} $=$ 0 \textbf{implies} \textrm{Wdt(GoLeft(C))} = \textrm{Wdt(C)} \\
-  & \textrm{Environment::CellNature(Envi(C),Wdt(C)-1,Hgt(C))} \textbf{in} \{\textbf{MTL}, \textbf{PLT} \} \textbf{implies} \textrm{Wdt(GoLeft(C))} = \textrm{Wdt(C)} \\
-  & \textrm{Environment::CellNature(Envi(C),Wdt(C),Hgt(C))} \textbf{not in} \{\textbf{LAD}, \textbf{HDR}\}
-  \\ & \quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(C),Wdt(C),Hgt(C)-1)} \textbf{not in} \{\textbf{PLT}, \textbf{MTL}, \textbf{LAD} \} \\
-  & \quad\quad \textbf{and} \textbf{not exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Wdt(C),Hgt(C)-1)} \\
-  & \quad\quad \textbf{implies} \textrm{Wdt(GoLeft(C))} = \textrm{Wdt(C)} \\
-  & \textbf{exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Wdt(C)-1,Hgt(C))} \\ & \quad\quad \textbf{implies} \textrm{Wdt(GoLeft(C))} = \textrm{Wdt(C)} \\
-  & (\textrm{Wdt(C)} $\neq$ 0) \textbf{and} \textrm{Environment::CellNature(Envi(C),Wdt(C)-1,Hgt(C))} \textbf{not in} \{\textbf{MTL}, \textbf{PLT} \} \\
-  & \quad\quad \textbf{and} (\textrm{Environment::CellNature(Envi(C),Wdt(C),Hgt(C))} \textbf{in} \{\textbf{LAD}, \textbf{HDR}\} \\
-  & \quad\quad\quad\quad \textbf{or} \textrm{Environment::CellNature(Envi(C),Wdt(C),Hgt(C)-1)} \textbf{in} \{\textbf{PLT}, \textbf{MTL}, \textbf{LAD}\} \\
-  & \quad\quad\quad\quad \textbf{or} \textbf{exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Wdt(C),Hgt(C)-1)} ) \\
-  & \quad\quad \textbf{and} \textbf{not} (\textbf{exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Wdt(C)-1,Hgt(C))}) \\
-  & \quad\quad \textbf{implies} \textrm{Wdt(GoLeft(C))} = \textrm{Wdt(C)}-1
-\end{tabular}}
+  & \textrm{Col(C)} $=$ 0 \textbf{implies} \textrm{Col(GoLeft(C))} = \textrm{Col(C)} \\
+  & \textrm{Environment::CellNature(Envi(C),Col(C)-1,Hgt(C))} \textbf{in} \{\textbf{MTL}, \textbf{PLT} \} \textbf{implies} \textrm{Col(GoLeft(C))} = \textrm{Col(C)} \\
+  & \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C))} \textbf{not in} \{\textbf{LAD}, \textbf{HDR}\}
+  \\ & \quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)-1)} \textbf{not in} \{\textbf{PLT}, \textbf{MTL}, \textbf{LAD} \} \\
+  & \quad\quad \textbf{and} \textbf{not exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)-1)} \\
+  & \quad\quad \textbf{implies} \textrm{Col(GoLeft(C))} = \textrm{Col(C)} \\
+  & \textrm{C} \textbf{in} \textrm{Guard} \textbf{and} \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C)-1,Hgt(C))} \\ & \quad\quad \textbf{implies} \textrm{Col(GoLeft(C))} = \textrm{Col(C)} \\
+  & (\textrm{Col(C)} $\neq$ 0) \textbf{and} \textrm{Environment::CellNature(Envi(C),Col(C)-1,Hgt(C))} \textbf{not in} \{\textbf{MTL}, \textbf{PLT} \} \\
+  & \quad\quad \textbf{and} (\textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C))} \textbf{in} \{\textbf{LAD}, \textbf{HDR}\} \\
+  & \quad\quad\quad\quad \textbf{or} \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)-1)} \textbf{in} \{\textbf{PLT}, \textbf{MTL}, \textbf{LAD}\} \\
+  & \quad\quad\quad\quad \textbf{or} \textbf{exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)-1)} ) \\
+  & \quad\quad \textbf{and} \textbf{not} (\textrm{C} \textbf{in} \textrm{Guard} \textbf{and} \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C)-1,Hgt(C))}) \\
+  & \quad\quad \textbf{implies} \textrm{Col(GoLeft(C))} = \textrm{Col(C)}-1 \\
+\texttt{[GoRight]}: & \textrm{Hgt(GoRight(C))} $=$ \textrm{Hgt(C)} \\
+  & \textrm{Col(C)} $=$ 0 \textbf{implies} \textrm{Col(GoRight(C))} = \textrm{Col(C)} \\
+  & \textrm{Environment::CellNature(Envi(C),Col(C)+1,Hgt(C))} \textbf{in} \{\textbf{MTL}, \textbf{PLT} \} \textbf{implies} \textrm{Col(GoRight(C))} = \textrm{Col(C)} \\
+  & \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C))} \textbf{not in} \{\textbf{LAD}, \textbf{HDR}\}
+  \\ & \quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)-1)} \textbf{not in} \{\textbf{PLT}, \textbf{MTL}, \textbf{LAD} \} \\
+  & \quad\quad \textbf{and} \textbf{not exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)-1)} \\
+  & \quad\quad \textbf{implies} \textrm{Col(GoRight(C))} = \textrm{Col(C)} \\
+  & \textrm{C} \textbf{in} \textrm{Guard} \textbf{and} \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C)+1,Hgt(C))} \\ & \quad\quad \textbf{implies} \textrm{Col(GoRight(C))} = \textrm{Col(C)} \\
+  & (\textrm{Col(C)} $\neq$ 0) \textbf{and} \textrm{Environment::CellNature(Envi(C),Col(C)+1,Hgt(C))} \textbf{not in} \{\textbf{MTL}, \textbf{PLT} \} \\
+  & \quad\quad \textbf{and} (\textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C))} \textbf{in} \{\textbf{LAD}, \textbf{HDR}\} \\
+  & \quad\quad\quad\quad \textbf{or} \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)-1)} \textbf{in} \{\textbf{PLT}, \textbf{MTL}, \textbf{LAD}\} \\
+  & \quad\quad\quad\quad \textbf{or} \textbf{exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)-1)} ) \\
+  & \quad\quad \textbf{and} \textbf{not} (\textrm{C} \textbf{in} \textrm{Guard} \textbf{and} \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C)+1,Hgt(C))}) \\
+  & \quad\quad \textbf{implies} \textrm{Col(GoRight(C))} = \textrm{Col(C)}+1 \\
+\texttt{[GoUp]}: & \textrm{Col(GoUp(C))} $=$ \textrm{Col(C)} \\
+  & \textrm{Hgt(C)} $=$ \textrm{Environment::Height(Envi(C))-1} \textbf{implies} \textrm{Hgt(GoUp(C))} = \textrm{Hgt(C)} \\
+  & \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C))} $=$ \textbf{LAD} \\
+  & \quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)+1)} \textbf{not in} \{\textbf{PLT}, \textbf{MTL} \} \\
+  & \quad\quad \textbf{and} (\textrm{C} \textbf{not in} \textrm{Guard} \textbf{or} \textbf{not exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)+1)}) \\
+  & \quad\quad \textbf{implies} \textrm{Hgt(GoUp(C))} = \textrm{Hgt(C)}+1 \\
+  & \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C))} $\neq$ \textbf{LAD} \\
+  & \quad\quad \textbf{or} \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)+1)} \textbf{in} \{\textbf{PLT}, \textbf{MTL} \} \\
+  & \quad\quad \textbf{or} (\textrm{C} \textbf{in} \textrm{Guard} \textbf{and} \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)+1)}) \\
+  & \quad\quad \textbf{implies} \textrm{Hgt(GoUp(C))} = \textrm{Hgt(C)} \\
+\texttt{[GoDown]}: & \textrm{Col(GoDown(C))} $=$ \textrm{Col(C)} \\
+  & \textrm{Hgt(C)} $=$ 0 \textbf{implies} \textrm{Hgt(GoDown(C))} = \textrm{Hgt(C)} \\
+  & \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)+1)} \textbf{not in} \{\textbf{PLT}, \textbf{MTL} \} \\
+  & \quad\quad \textbf{and} (\textrm{C} \textbf{not in} \textrm{Guard} \textbf{or} \textbf{not exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)+1)}) \\
+  & \quad\quad \textbf{implies} \textrm{Hgt(GoDown(C))} = \textrm{Hgt(C)}-1 \\
+  & \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)+1)} \textbf{in} \{\textbf{PLT}, \textbf{MTL} \} \\
+  & \quad\quad \textbf{or} (\textrm{C} \textbf{in} \textrm{Guard} \textbf{and} \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)+1)}) \\
+  & \quad\quad \textbf{implies} \textrm{Hgt(GoDown(C))} = \textrm{Hgt(C)} \\
+\end{longtable}}
 
 \subsection{Guard}
 
 {\small
-\begin{tabular}{rl}
+\begin{longtable}{rl}
   \textbf{Service}: & \textrm{Guard} \textbf{includes} \textrm{Character}  \\
   \textbf{Observators}: & \textbf{const} \texttt{Id}: \textrm{[Guard]} $\rightarrow$ \textrm{int}  \\
   & \texttt{Behaviour}: \textrm{[Guard]} $\rightarrow$ \textrm{Move}  \\
   & \texttt{Target}: \textrm{[Guard]} $\rightarrow$ \textrm{Character}  \\
   & \texttt{TimeInHole}: \textrm{[Guard]} $\rightarrow$ \textrm{int}  \\
   \textbf{Operators}: & \texttt{ClimbLeft}: \textrm{[Guard]} $\rightarrow$ \textrm{[Guard]}\\
-  & \quad\quad \textbf{pre} \texttt{ClimbLeft(G)} \textbf{requires} \texttt{Environment::CellNature(Envi(G),Hgt(G),Wdt(G))} $=$ \textbf{HOL} \\
+  & \quad\quad \textbf{pre} \texttt{ClimbLeft(G)} \textbf{requires} \texttt{Environment::CellNature(Envi(G),Hgt(G),Col(G))} $=$ \textbf{HOL} \\
   & \texttt{Step}: \textrm{[Guard]} $\rightarrow$ \textrm{[Guard]}\\
   \textbf{Observations}: & \\
-  \textrm{[invariant]}: & \textrm{Environment::CellNature(Envi(G),Wdt(G),Hgt(G))} $=$ \textbf{LAD} \\
+  \textrm{[invariant]}: & \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{LAD} \\
   & \quad\quad \textbf{and} \textrm{Hgt(G)} $<$ \textrm{Character::Hgt(Target(G))} \\
-  & \quad\quad \textbf{and} (\textrm{Environment::CellNature(Envi(G),Wdt(G),Hgt(G)-1)} \textbf{not in} \{\textbf{PLT}, \textbf{MTL}  \} \\
-  & \quad\quad\quad\quad \textbf{or} \textbf{exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(G),Wdt(G),Hgt(G)-1)} \\
-  & \quad\quad\quad\quad \textbf{implies} \textrm{Environment::Hgt(Target(G)) - Hgt(G)} $<$ $|$\textrm{Environment::Wdt(Target(G)) - Wdt(G)})$|$)\\
+  & \quad\quad \textbf{and} (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} \textbf{not in} \{\textbf{PLT}, \textbf{MTL}  \} \\
+  & \quad\quad\quad\quad \textbf{or} \textbf{exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(G),Col(G),Hgt(G)-1)} \\
+  & \quad\quad\quad\quad \textbf{implies} \textrm{Environment::Hgt(Target(G)) - Hgt(G)} $<$ $|$\textrm{Environment::Col(Target(G)) - Col(G)})$|$)\\
   & \quad\quad \textbf{implies} \textrm{Behaviour(G)} $=$ \textbf{Up} \\
   & $(\dots)$ \\
   \textrm{[init]}: & $(\dots)$ \\
   \textrm{[ClimbLeft]}: 
-  & \textrm{Wdt(C)} $=$ 0 \textbf{implies} \textrm{Wdt(ClimbLeft(C))} = \textrm{Wdt(C)} \textbf{and} \textrm{Hgt(ClimbLeft(C))} $=$ \textrm{Hgt(C)} \\
-  & \textrm{Screen::CellNature(Envi(C),Wdt(C)-1,Hgt(C) +1)} \textbf{in} \{\textbf{MTL}, \textbf{PLT} \} \\ & \quad\quad \textbf{implies} \textrm{Wdt(ClimbLeft(C))} = \textrm{Wdt(C)} \textbf{and} \textrm{Hgt(ClimbLeft(C))} $=$ \textrm{Hgt(C)} \\
-  & \textbf{exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Wdt(C)-1,Hgt(C)+1)} \\
-  & \quad\quad \textbf{implies} \textrm{Wdt(ClimbLeft(C))} = \textrm{Wdt(C)} \textbf{and} \textrm{Hgt(ClimbLeft(C))} $=$ \textrm{Hgt(C)} \\
-  & \textrm{Wdt(C)} $\neq$ 0 \textbf{and} \textrm{Screen::CellNature(Envi(C),Wdt(C)-1,Hgt(C)+1)} \textbf{notin} \{\textbf{MTL}, \textbf{PLT} \} \\
-  & \quad\quad \textbf{and} \textbf{not exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Wdt(C)-1,Hgt(C)+1)} \\
-  & \quad\quad \textbf{implies} \textrm{Wdt(ClimbLeft(C))} = \textrm{Wdt(C)}-1 \textbf{and} \textrm{Hgt(ClimbLeft(C))} = \textrm{Hgt(C)}+1 \\
+  & \textrm{Col(C)} $=$ 0 \textbf{implies} \textrm{Col(ClimbLeft(C))} = \textrm{Col(C)} \textbf{and} \textrm{Hgt(ClimbLeft(C))} $=$ \textrm{Hgt(C)} \\
+  & \textrm{Screen::CellNature(Envi(C),Col(C)-1,Hgt(C) +1)} \textbf{in} \{\textbf{MTL}, \textbf{PLT} \} \\ & \quad\quad \textbf{implies} \textrm{Col(ClimbLeft(C))} = \textrm{Col(C)} \textbf{and} \textrm{Hgt(ClimbLeft(C))} $=$ \textrm{Hgt(C)} \\
+  & \textbf{exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C)-1,Hgt(C)+1)} \\
+  & \quad\quad \textbf{implies} \textrm{Col(ClimbLeft(C))} = \textrm{Col(C)} \textbf{and} \textrm{Hgt(ClimbLeft(C))} $=$ \textrm{Hgt(C)} \\
+  & \textrm{Col(C)} $\neq$ 0 \textbf{and} \textrm{Screen::CellNature(Envi(C),Col(C)-1,Hgt(C)+1)} \textbf{notin} \{\textbf{MTL}, \textbf{PLT} \} \\
+  & \quad\quad \textbf{and} \textbf{not exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C)-1,Hgt(C)+1)} \\
+  & \quad\quad \textbf{implies} \textrm{Col(ClimbLeft(C))} = \textrm{Col(C)}-1 \textbf{and} \textrm{Hgt(ClimbLeft(C))} = \textrm{Hgt(C)}+1 \\
   \textrm{[Step]}: & $(\dots)$ \\
   & on définit le prédicat WillFall pour simplifier les équations suivantes: \\
-  & \textbf{WillFall}\texttt{(C)} \textbf{defined by} (\textrm{Environment::CellNature(Envi(C),Wdt(C),Hgt(C)-1)} \textbf{in} \{\textbf{HOL}, \textbf{EMP} \}  \\
-  & \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \textbf{not exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Wdt(C),Hgt(C)-1)} \\
-  & \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(C),Wdt(C),Hgt(C))} \textbf{not in} \{\textbf{LAD}, \textbf{HDR} \} ) \\
+  & \textbf{WillFall}\texttt{(C)} \textbf{defined by} (\textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)-1)} \textbf{in} \{\textbf{HOL}, \textbf{EMP} \}  \\
+  & \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \textbf{not exists} \textrm{Character} c \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)-1)} \\
+  & \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C))} \textbf{not in} \{\textbf{LAD}, \textbf{HDR} \} ) \\
   & $(\dots)$
-\end{tabular}}
+\end{longtable}}
 
 \subsection{Player}
 
