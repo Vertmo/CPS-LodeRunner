@@ -14,14 +14,15 @@ import loderunner.impl.EditableScreenImpl;
 import loderunner.services.Cell;
 import loderunner.services.Coord;
 import loderunner.services.EditableScreen;
+import loderunner.services.Level;
 
-public class Level implements loderunner.services.Level {
+public class LevelIO implements Level {
     private EditableScreen screen;
     private Coord playerCoord;
     private Set<Coord> guardCoords;
     private Set<Coord> treasureCoords;
 
-    public Level(File file) throws LevelLoadException {
+    public LevelIO(File file) throws LevelLoadException {
         screen = new EditableScreenImpl();
         guardCoords = new HashSet<>();
         treasureCoords = new HashSet<>();
@@ -63,11 +64,11 @@ public class Level implements loderunner.services.Level {
 
             br.close();
         } catch(Exception e) {
-            throw new LevelLoadException(file.getName());
+            throw new LevelLoadException(file.getName(), e.getMessage());
         }
     }
 
-    public Level(int w, int h) {
+    public LevelIO(int w, int h) {
         screen = new EditableScreenImpl();
         screen.init(w, h);
 

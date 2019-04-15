@@ -31,7 +31,8 @@
 
   <target name="run" depends="compile" description="run the game">
     <!--<echo>================ Run the main ================</echo>-->
-    <java classname="loderunner.main.Main" classpath="${build}">
+    <java classname="loderunner.main.Main" classpath="${build}:${java.home}/lib/ext/jfxrt.jar">
+      <arg value="./levels/first.lr"/>
     </java>
   </target>
 

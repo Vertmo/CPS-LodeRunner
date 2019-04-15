@@ -4,7 +4,7 @@ import loderunner.services.Item;
 import loderunner.services.ItemType;
 
 public class ItemImpl implements Item {
-    private static int idCounter = 0;
+    private static int idCounter = 1;
 
     private int id;
     private ItemType nature;
@@ -34,15 +34,37 @@ public class ItemImpl implements Item {
     @Override
     public int getHgt() {
         return hgt;
-	}
+    }
 
-	@Override
-	public void setCol(int col) {
-      this.col = col;
-	}
+    @Override
+    public void setCol(int col) {
+        this.col = col;
+    }
 
-	@Override
-	public void setHgt(int hgt) {
-      this.hgt = hgt;
-	}
+    @Override
+    public void setHgt(int hgt) {
+        this.hgt = hgt;
+    }
+
+    @Override
+    public Object clone() {
+        ItemImpl i = new ItemImpl(getNature(), getCol(), getHgt());
+        i.id = id;
+        return i;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(o == this) return true;
+        if(!(o instanceof Item)) return false;
+        Item i = (Item) o;
+        return i.getId() == getId() && i.getNature() == getNature()
+            && i.getCol() == getCol() && i.getHgt() == getHgt();
+    }
+
+    @Override
+    public int hashCode() {
+        return 41 + 31 * id;
+    }
 }

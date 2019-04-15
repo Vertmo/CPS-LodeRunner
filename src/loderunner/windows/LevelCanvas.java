@@ -1,17 +1,22 @@
 package loderunner.windows;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
-import loderunner.io.Level;
+import loderunner.impl.CoordImpl;
 import loderunner.services.Coord;
+import loderunner.services.Engine;
+import loderunner.services.Level;
 import loderunner.services.Screen;
 
-class LevelCanvas extends Canvas {
+public class LevelCanvas extends Canvas {
     public static final int CELL_W = 32;
 
     private static final Image pltImg = new Image("assets/img/plt.png", (double) CELL_W, (double) CELL_W, true, true);
@@ -95,5 +100,33 @@ class LevelCanvas extends Canvas {
     public void drawLevel(Level l) {
         drawCells(l.getScreen());
         drawContents(l.getScreen(), l.getPlayerCoord(), l.getGuardCoords(), l.getTreasureCoords());
+    }
+
+    public void drawEnvironment(Engine eng) {
+        // Draw environment
+        drawCells(eng.getEnvironment());
+
+        // Draw cell contents
+        Coord pCoord = new CoordImpl(eng.getPlayer().getCol(), eng.getPlayer().getHgt());
+        Set<Coord> gCoords = eng.getGuards().stream()
+            .map(g -> new CoordImpl(g.getCol(), g.getHgt()))
+            .collect(Collectors.toSet());
+        Set<Coord> tCoords = eng.getTreasures().stream()
+            .map(t -> new CoordImpl(t.getCol(), t.getHgt()))
+            .collect(Collectors.toSet());
+        drawContents(eng.getEnvironment(), pCoord, gCoords, tCoords);
+    }
+
+    public void drawGameOver(int score) {
+        GraphicsContext gc = getGraphicsContext2D();
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, getWidth(), getHeight());
+
+        gc.setFill(Color.WHITE);
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setFont(new Font(40));
+        gc.fillText("Game Over", getWidth()/2, getHeight()/3);
+        gc.setFont(new Font(20));
+        gc.fillText("Score: " + score, getWidth()/2, 2*getHeight()/3);
     }
 }

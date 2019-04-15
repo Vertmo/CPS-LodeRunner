@@ -97,4 +97,14 @@ public class CharacterImpl implements Character {
             || downNature == Cell.LAD || downNature == Cell.HDR)
            && !guardDown) hgt--;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(o == this) return true;
+        if(!(o instanceof Character)) return false;
+        Character c = (Character) o;
+        return c.getCol() == getCol() && c.getHgt() == getHgt();
+    }
+
 }

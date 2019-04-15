@@ -14,7 +14,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import loderunner.impl.CoordImpl;
-import loderunner.io.Level;
+import loderunner.io.LevelIO;
 import loderunner.io.LevelLoadException;
 import loderunner.services.Cell;
 import loderunner.services.Coord;
@@ -28,12 +28,12 @@ public class EditorWindow {
     private Label playableLbl;
     private LevelCanvas canvas;
 
-    private Level level;
+    private LevelIO level;
     private Tool currentTool;
 
     public EditorWindow(Stage stage) {
         // Create default (empty) screen
-        level = new Level(20, 10);
+        level = new LevelIO(20, 10);
 
         currentTool = Tool.EMP;
 
@@ -119,7 +119,7 @@ public class EditorWindow {
                 File file = new FileChooser().showOpenDialog(stage);
                 if(file == null) return;
                 try {
-                    level = new Level(file);
+                    level = new LevelIO(file);
                 } catch(LevelLoadException le) {}
                 stage.setTitle("Loderunner Maker - " + file.getName());
                 redrawCanvas();
@@ -130,7 +130,7 @@ public class EditorWindow {
                 NewDialog nd = new NewDialog();
                 nd.showAndWait();
                 if(nd.getResult() != null) {
-                    level = new Level(nd.getResult().getCol(), nd.getResult().getHgt());
+                    level = new LevelIO(nd.getResult().getCol(), nd.getResult().getHgt());
                     stage.setTitle("Loderunner Maker - <unnamed>");
                     redrawCanvas();
                     updateIsPlayableLbl();
