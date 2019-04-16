@@ -11,7 +11,8 @@ import org.junit.runners.Suite;
             EnvironmentTest.class,
             CharacterTest.class,
             EngineTest.class,
-            GameTest.class
+            GameTest.class,
+            PlayerTest.class
 })
 
 public class Tests {}

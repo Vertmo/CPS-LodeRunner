@@ -10,7 +10,8 @@ import org.junit.runners.Suite;
             EditableScreenTestBug.class,
             EnvironmentTestBug.class,
             CharacterTestBug.class,
-            GameTestBug.class
+            GameTestBug.class,
+            PlayerTestBug.class
 })
 
 public class TestsBug {}
