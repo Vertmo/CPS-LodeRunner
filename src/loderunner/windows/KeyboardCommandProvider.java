@@ -43,4 +43,9 @@ public class KeyboardCommandProvider implements CommandProvider {
         nextCmd = Command.Neutral;
         return currentCmd;
     }
+
+    @Override
+    public Command peekNextCommand() {
+        return nextCmd;
+    }
 }

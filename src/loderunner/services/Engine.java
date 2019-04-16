@@ -18,6 +18,7 @@ public interface Engine {
     public Status getStatus();
     public int getLevelScore();
     public Command getNextCommand();
+    public Command peekNextCommand();
 
     /* Constructors */
 

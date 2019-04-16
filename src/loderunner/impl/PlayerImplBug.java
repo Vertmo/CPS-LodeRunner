@@ -62,8 +62,8 @@ public class PlayerImplBug extends CharacterImpl implements Player{
 			Cell right_nat = getEnvi().getCellNature(getCol()+1, getHgt());
 			boolean right_content_is_empty = getEnvi().getCellContent(getCol()+1, getHgt()).isEmpty();
 			if(right_nat != Cell.PLT && right_nat != Cell.MTL && right_content_is_empty &&
-					getEnvi().getCellNature(getCol()-1, getHgt()-1) == Cell.PLT) {//bug
-				getEnvi().dig(getCol()+1, getHgt()-1);
+					getEnvi().getCellNature(getCol()+1, getHgt()-1) == Cell.PLT) {
+				getEnvi().dig(getCol()-1, getHgt()-1);//bug
 			}
 		}
 	}

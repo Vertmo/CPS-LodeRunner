@@ -16,4 +16,9 @@ public class TestCommandProvider implements CommandProvider {
     public Command getNextCommand() {
         return commands.remove(0);
     }
+
+    @Override
+    public Command peekNextCommand() {
+        return commands.get(0);
+    }
 }
