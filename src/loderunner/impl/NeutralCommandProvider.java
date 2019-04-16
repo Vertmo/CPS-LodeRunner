@@ -9,4 +9,9 @@ public class NeutralCommandProvider implements CommandProvider {
     public Command getNextCommand() {
         return Command.Neutral;
     }
+
+    @Override
+    public Command peekNextCommand() {
+        return Command.Neutral;
+    }
 }

@@ -65,6 +65,11 @@ public abstract class EngineDecorator implements Engine {
     }
 
     @Override
+    public Command peekNextCommand() {
+        return delegate.peekNextCommand();
+    }
+
+    @Override
     public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords) {
         delegate.init(screen, pCoord, gCoords, tCoords);
     }

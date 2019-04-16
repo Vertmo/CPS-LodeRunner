@@ -73,6 +73,11 @@ public class EngineImpl implements Engine {
     }
 
     @Override
+    public Command peekNextCommand() {
+        return cmdProvider.peekNextCommand();
+    }
+
+    @Override
     public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords) {
         env = new EnvironmentImpl();
         env.init(screen);

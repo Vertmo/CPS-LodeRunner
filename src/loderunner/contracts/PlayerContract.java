@@ -114,6 +114,7 @@ public class PlayerContract extends CharacterContract implements Player{
 				break;
 			}
 		}
+		Command cmd_pre = getEngine().peekNextCommand();
 		Player delegate_pre = delegate.clone();
 
 
@@ -142,28 +143,27 @@ public class PlayerContract extends CharacterContract implements Player{
 		//        && getEngine().getNextCommand() == Right => step() == goRight()
 		//        && getEngine().getNextCommand() == Up => step() == goUp()
 		//        && getEngine().getNextCommand() == Down => step() == goDown())
-		Command cmd = getEngine().getNextCommand();
 		Player clone = delegate_pre.clone();
 
-		if(cmd == Command.Left) {
+		if(cmd_pre == Command.Left) {
 			clone.goLeft();
 			if(!delegate.equals(clone))
 				throw new PostconditionError("Player", "step", "The player should have go left");
 			return;
 		}
-		if(cmd == Command.Right) {
+		if(cmd_pre == Command.Right) {
 			clone.goRight();
 			if(!delegate.equals(clone))
 				throw new PostconditionError("Player", "step", "The player should have gone right");
 			return;
 		}
-		if(cmd == Command.Up) {
+		if(cmd_pre == Command.Up) {
 			clone.goUp();
 			if(!delegate.equals(clone))
 				throw new PostconditionError("Player", "step", "The player should have gone up");
 			return;
 		}
-		if(cmd == Command.Down) {
+		if(cmd_pre == Command.Down) {
 			clone.goDown();
 			if(!delegate.equals(clone))
 				throw new PostconditionError("Player", "step", "The player should have gone down");
@@ -172,7 +172,7 @@ public class PlayerContract extends CharacterContract implements Player{
 
 		// post: getEngine().getNextCommand() \in { DigL, DigR, Neutral }
 		//       => getCol() == getCol()@pre && getHgt() == getHgt()@pre
-		if(cmd == Command.DigL || cmd == Command.DigR || cmd == Command.Neutral) {
+		if(cmd_pre == Command.DigL || cmd_pre == Command.DigR || cmd_pre == Command.Neutral) {
 			if(!(getCol() == col_pre && getHgt() == hgt_pre))
 				throw new PostconditionError("Player", "step", "The player shouldn't have moved");
 		}
@@ -185,7 +185,7 @@ public class PlayerContract extends CharacterContract implements Player{
 		//       && getEnvi().getCellContent(getCol()@pre-1,getHgt()@pre).isEmpty()
 		//       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre-1)@pre == PLT
 		//       => getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre-1) == HOL
-		if(cmd == Command.DigL && col_pre != 0
+		if(cmd_pre == Command.DigL && col_pre != 0
 				&& (down_nat_pre == Cell.PLT || down_nat_pre == Cell.MTL || down_nat_pre == Cell.LAD ||
 				down_character_present_pre)
 				&& (left_nat_pre != Cell.MTL && left_nat_pre != Cell.PLT)
@@ -204,7 +204,7 @@ public class PlayerContract extends CharacterContract implements Player{
 		//       && getEnvi().getCellContent(getCol()@pre+1,getHgt()@pre).isEmpty()
 		//       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre-1)@pre == PLT
 		//       => getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre-1) == HOL
-		if(cmd == Command.DigR && col_pre != getEnvi().getWidth()-1
+		if(cmd_pre == Command.DigR && col_pre != getEnvi().getWidth()-1
 				&& (down_nat_pre == Cell.PLT || down_nat_pre == Cell.MTL || down_nat_pre == Cell.LAD ||
 				down_character_present_pre)
 				&& (right_nat_pre != Cell.MTL && right_nat_pre != Cell.PLT)
