@@ -99,7 +99,7 @@ public interface Engine {
     //       => i \in getTreasures()
     // post: getTreasures().isEmpty() => getStatus() == Win
 
-    // Le joueur peut être tué par un garde, mais il gagne is il a attrapé le dernier trésor malgré tout (on est génereux)
+    // Le joueur peut être tué par un garde, mais il gagne si il a attrapé le dernier trésor malgré tout (on est génereux)
     // post: \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
     //       && !getTreasures().isEmpty()
     //       => getStatus() == Loss

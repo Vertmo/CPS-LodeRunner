@@ -264,6 +264,97 @@
 
 \subsection{Engine}
 
+{\small
+\begin{longtable}{rl}
+  \textbf{Service}: & \textrm{Engine}  \\
+  \textbf{Observators}: & \textbf{const} \texttt{Environment}: \textrm{[Engine]} $\rightarrow$ \textrm{Environment} \\
+  & \texttt{Player}: \textrm{[Engine]} $\rightarrow$ \textrm{Player} \\
+  & \textbf{const} \texttt{Guards}: \textrm{[Engine]} $\rightarrow$ \textrm{Set\{Guard\}} \\
+  & \texttt{Treasures}: \textrm{[Engine]} $\rightarrow$ \textrm{Set\{Item\}} \\
+  & \texttt{Status}: \textrm{[Engine]} $\rightarrow$ \textrm{Status} \\
+  & \texttt{LevelScore}: \textrm{[Engine]} $\rightarrow$ \textrm{int} \\
+  & \texttt{NextCommand}: \textrm{[Engine]} $\rightarrow$ \textrm{Command} \\
+  \textbf{Constructors}: &\texttt{init}: \textrm{EditableScreen} $\times$ \textrm{Coord} $\times$ \textrm{Set\{Coord\}} $\times$ \textrm{Set\{Coord\}} $\rightarrow$ \textrm{[Engine]} \\
+  & \quad \textbf{pre} \texttt{init(screen, pCoord, gCoords, tCoords)} \textbf{requires} \textrm{Playable(screen)}\\
+  & \quad\quad\quad \textbf{and} \textbf{forall} \textrm{Coord} c \textbf{in} \{pCoord\} \textbf{union} gCoords \textbf{union} tCoords \textrm{CellNature(screen, Col(c), Hgt(c))} = \textbf{EMP} \\
+  & \quad\quad\quad \textbf{and} \textbf{forall} \textrm{Coord} c1 \textbf{in} gCoords \textbf{forall} \textrm{Coord} c2 \textbf{in} gCoords \\
+  & \quad\quad\quad\quad\quad (\textrm{Col(c1)} $=$ \textrm{Col(c2))} \textbf{and} \textrm{Hgt(c1)} $=$ \textrm{Hgt(c2))}) \textbf{implies} c1 $=$ c2\\
+  & \quad\quad\quad \textbf{and} \textbf{forall} \textrm{Coord} c1 \textbf{in} tCoords \textbf{forall} \textrm{Coord} c2 \textbf{in} tCoords \\
+  & \quad\quad\quad\quad\quad (\textrm{Col(c1)} $=$ \textrm{Col(c2))} \textbf{and} \textrm{Hgt(c1)} $=$ \textrm{Hgt(c2))}) \textbf{implies} c1 $=$ c2\\
+  & \quad\quad\quad \textbf{and} \textbf{forall} \textrm{Coord} c \textbf{in} gCoords (\textrm{Col(c)} $\neq$ \textrm{Col(pCoord)} \textbf{or} \textrm{Hgt(c)} $\neq$ \textrm{Hgt(pCoord)})\\
+  & \quad\quad\quad \textbf{and} \textbf{forall} \textrm{Coord} c \textbf{in} tCoords (\textrm{Col(c)} $\neq$ \textrm{Col(pCoord)} \textbf{or} \textrm{Hgt(c)} $\neq$ \textrm{Hgt(pCoord)})\\
+  & \quad\quad\quad \textbf{and} \textbf{forall} \textrm{Coord} c \textbf{in} tCoords \textrm{CellNature(screen, Col(c), Hgt(c)-1)} \textbf{in} \{\textbf{PLT}, \textbf{MTL}\} \\
+  & \quad\quad\quad\quad\quad \textbf{or} c \textbf{in} gCoords \\
+  \textbf{Operators}: &\texttt{Step}: \textrm{[Engine]} $\rightarrow$ \textrm{[Engine]} \\
+  & \quad \textbf{pre} \textrm{Step(E)} \textbf{requires} \textrm{Status(E)} = \textbf{Playing}\\
+  \textbf{Observations}:&\\
+  \textrm{[invariant]}:& \textrm{Player(E)} \textbf{in} \textrm{CellContent(Environment(E), Col(Player(E)), Hgt(Player(E)))}\\
+  & \quad\quad \textbf{and} \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(Environment(E))[} $\times$ \texttt{[0;Height(Environment(E))[}\\
+  & \quad\quad\quad\quad \textrm{Player(E)} \textbf{in} \textrm{CellContent(Environment(E), x, y)} \textbf{implies} (\textrm{Col(Player(E))} $=$ x \textbf{and} \textrm{Hgt(Player(E))} $=$ y)\\
+  & \textbf{forall} \textrm{Guard} g \textbf{in} \textrm{Guards(E)} g \textbf{in} \textrm{CellContent(Environment(E), Col(g), Hgt(g))}\\
+  & \quad\quad \textbf{and} \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(Environment(E))[} $\times$ \texttt{[0;Height(Environment(E))[}\\
+  & \quad\quad\quad\quad \textbf{forall} \textrm{Guard} g \textbf{in} \textrm{CellContent(Environment(E), x, y)} \\
+  & \quad\quad\quad\quad\quad\quad \textbf{implies} (g \textbf{in} \textrm{Guards(E)} \textbf{and} \textrm{Col(g)} $=$ x \textbf{and} \textrm{Hgt(g)} $=$ y)\\
+  & \textbf{forall} \textrm{Item} i \textbf{in} \textrm{Treasures(E)} i \textbf{in} \textrm{CellContent(Environment(E), Col(i), Hgt(i))}\\
+  & \quad\quad \textbf{and} \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(Environment(E))[} $\times$ \texttt{[0;Height(Environment(E))[}\\
+  & \quad\quad\quad\quad \textbf{forall} \textrm{Treasures} i \textbf{in} \textrm{CellContent(Environment(E), x, y)} \\
+  & \quad\quad\quad\quad\quad\quad \textbf{implies} (i \textbf{in} \textrm{Treasures(E)} \textbf{and} \textrm{Col(i)} $=$ x \textbf{and} \textrm{Hgt(i)} $=$ y)\\
+  & \textbf{forall} \textrm{Hole} h \textbf{in} \textrm{Holes(E)} CellNature(Environment(E), Col(h), Hgt(h)) $=$ \textbf{HOL}\\
+  & \quad\quad \textbf{and} \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(Environment(E))[} $\times$ \texttt{[0;Height(Environment(E))[}\\
+  & \quad\quad\quad\quad \textrm{CellNature(Environment(E), x, y)} $=$ \textbf{HOL}\\
+  & \quad\quad\quad\quad\quad\quad \textbf{implies} (\textbf{exists} \textrm{Hole} h \textbf{in} \textrm{Holes(E)} \textrm{Col(h)} $=$ x \textbf{and} \textrm{Hgt(h)} $=$ y)\\
+  \textrm{[init]}:& \textrm{Status(init(s, pC, gC, tC))} $=$ \textbf{Playing}\\
+  & \textrm{LevelScore(init(s, pC, gC, tC))} $=$ 0\\
+  & \textrm{Width(Environment(init(s, pC, gC, tC)))} $=$ \textrm{Width(s)} \textbf{and} \textrm{Height(Environment(init(s, pC, gC, tC)))} $=$ \textrm{Height(s)} \\
+  & \quad\quad \textbf{and} \textbf{forall} $(\mathtt{x},\mathtt{y})$ \textbf{in} \texttt{[0;Width(s)[} $\times$ \texttt{[0;Height(s)[}\\
+  & \quad\quad\quad\quad \textrm{CellNature(Environment(init(s, pC, gC, tC)), x, y)} $=$ \textrm{CellNature(s, x, y)}\\
+  & \textrm{Col(Player(init(s, pC, gC, tC)))} $=$ \textrm{Col(pC)} \textbf{and} \textrm{Hgt(Player(init(s, pC, gC, tC)))} $=$ \textrm{Hgt(pC)}\\
+  & \textbf{forall} \textrm{Coord} c \textbf{in} gC \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{Guards(init(s, pC, gC, tC))} (\textrm{Col(g)} $=$ \textrm{Col(c)} \textbf{and} \textrm{Hgt(g)} $=$ \textrm{Hgt(c)})\\
+  & \quad\quad \textbf{and} \textbf{forall} \textrm{Guard} g \textbf{in} \textrm{Guards(init(s, pC, gC, tC))} \textbf{exists} \textrm{Coord} c \textbf{in} gC\\
+  & \quad\quad\quad\quad (\textrm{Col(g)} $=$ \textrm{Col(c)} \textbf{and} \textrm{Hgt(g)} $=$ \textrm{Hgt(c)})\\
+  & \textbf{forall} \textrm{Coord} c \textbf{in} tC \textbf{exists} \textrm{Item} t \textbf{in} \textrm{Treasures(init(s, pC, gC, tC))} (\textrm{Col(t)} $=$ \textrm{Col(c)} \textbf{and} \textrm{Hgt(t)} $=$ \textrm{Hgt(c)})\\
+  & \quad\quad \textbf{and} \textbf{forall} \textrm{Item} t \textbf{in} \textrm{Treasures(init(s, pC, gC, tC))} \textbf{exists} \textrm{Coord} c \textbf{in} tC\\
+  & \quad\quad\quad\quad (\textrm{Col(t)} $=$ \textrm{Col(c)} \textbf{and} \textrm{Hgt(t)} $=$ \textrm{Hgt(c)})\\
+  \textrm{[Step]}:&\\
+  & \textrm{Player(Step(E))} $=$ \textrm{Step(Player(E))}\\
+  & \textbf{forall} \textrm{Guard} g \textbf{in} \textrm{Guards(Step(E))} \textbf{exists} \textrm{Guard} g' \textbf{in} \textrm{Guards(E))} g $=$ \textrm{Step(g)}\\
+  & \textbf{forall} \textrm{Item} t \textbf{in} \textrm{Treasures(E)} \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{CellContent(Environment(S), Col(t), Hgt(t))}\\
+  & \quad\quad \textbf{and} \textrm{CellNature(Environment(E), Col(Step(G)), Hgt(Step(G))} $\ne$ \textbf{HOL}\\
+  & \quad\quad \textbf{implies} \textbf{exists} \textrm{Treasure} t2 \textbf{in} \textrm{Treasures(Step(E))}\\
+  & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} \textbf{and} \textrm{Col(t2)} $=$ \textrm{Col(Step(G))} \textbf{and} \textrm{Hgt(t2)} $=$ \textrm{Hgt(Step(G))}\\
+  & \textbf{forall} \textrm{Item} t \textbf{in} \textrm{Treasures(E)} \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{CellContent(Environment(S), Col(t), Hgt(t))}\\
+  & \quad\quad \textbf{and} \textrm{CellNature(Environment(E), Col(Step(G)), Hgt(Step(G))} $=$ \textbf{HOL}\\
+  & \quad\quad \textbf{implies} \textbf{exists} \textrm{Treasure} t2 \textbf{in} \textrm{Treasures(Step(E))}\\
+  & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} \textbf{and} \textrm{Col(t2)} $=$ \textrm{Col(Step(G))} \textbf{and} \textrm{Hgt(t2)} $=$ \textrm{Hgt(Step(G))} $+$ 1\\
+& \textbf{forall} \textrm{Item} t \textbf{in} \textrm{Treasures(E)} \textbf{not} \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{CellContent(Environment(S), Col(t), Hgt(t))}\\
+  & \quad\quad \textbf{and} t \textbf{in} \textrm{Treasures(Step(E))} \\
+  & \quad\quad \textbf{implies} \textbf{exists} \textrm{Treasure} t2 \textbf{in} \textrm{Treasures(Step(E))}\\
+  & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} \textbf{and} \textrm{Col(t2)} $=$ \textrm{Col(t)} \textbf{and} \textrm{Hgt(t2)} $=$ \textrm{Hgt(t)}\\
+  & \textbf{exists} \textrm{Item} t \textbf{in} \textrm{Treasures(E)} \textrm{Col(i)} $=$ \textrm{Col(Player(E))} \textbf{and} \textrm{Hgt(i)} $=$ \textrm{Hgt(Player(E))}\\
+  & \quad\quad \textbf{implies} (t \textbf{not in} Treasures(Step(E)) \textbf{and} \textrm{LevelScore(Step(E))} $=$ \textrm{LevelScore(E)} $+$ 1)\\
+  & \textbf{not exists} \textrm{Item} t \textbf{in} \textrm{Treasures(E)} \textrm{Col(i)} $=$ \textrm{Col(Player(E))} \textbf{and} \textrm{Hgt(i)} $=$ \textrm{Hgt(Player(E))}\\
+  & \quad\quad \textbf{implies} \textrm{LevelScore(Step(E))} $=$ \textrm{LevelScore(E)}\\
+  & \textbf{forall} \textrm{Item} t \textbf{in} \textrm{Treasures(E)} \textrm{Col(i)} $\ne$ \textrm{Col(Player(E))} \textbf{or} \textrm{Hgt(i)} $\ne$ \textrm{Hgt(Player(E))}\\
+  & \quad\quad \textbf{implies} t \textbf{in} \textrm{Treasures(Step(E))}\\
+  & \textrm{Treasures(Step(E))} $= \emptyset$ \textbf{implies} \textrm{Status(Step(E))} $=$ \textbf{Win}\\
+  & \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{Guards(Step(E))} (\textrm{Col(g)} $=$ \textrm{Col(Player(E))} \textbf{and} \textrm{Hgt(g)} $=$ \textrm{Hgt(Player(E))}) \\
+  & \quad\quad \textbf{and} \textrm{Treasures(Step(E))} $\neq \emptyset$\\
+  & \quad\quad \textbf{implies} \textrm{Status(Step(E))} $=$ \textbf{Loss}\\
+  & \textrm{Treasures(Step(E))} $\ne \emptyset$\\
+  & \quad\quad \textbf{and} \textbf{not exists} \textrm{Guard} g \textbf{in} \textrm{Guards(Step(E))} (\textrm{Col(g)} $=$ \textrm{Col(Player(E))} \textbf{and} \textrm{Hgt(g)} $=$ \textrm{Hgt(Player(E))}) \\
+  & \quad\quad \textbf{and} \textbf{not exists} \textrm{Hole} h \textbf{in} \textrm{Holes(E))} (\textrm(T(h) $=$ 15 \textbf{and} \textrm{Col(h)} $=$ \textrm{Col(Player(E))} \textbf{and} \textrm{Hgt(h)} $=$ \textrm{Hgt(Player(E))})\\
+  & \quad\quad \textbf{implies} \textrm{Status(Step(E))} $=$ \textbf{Playing}\\
+  & \textbf{forall} \textrm{Hole} h \textbf{in} \textrm{Holes(Step(E))} h \textbf{not in} \textrm{Holes(E)} \textbf{implies} \textrm{T(h)} $=$ 0.\\
+  & \textbf{forall} \textrm{Hole} h \textbf{in} \textrm{Holes(E)} h \textrm{T(h)} $<$ 15\\
+  & \quad\quad \textbf{implies} \textbf{exists} h2 \textbf{in} \textrm{Holes(Step(E))} \textrm{Col(h2)} $=$ \textrm{Col(h)} \textbf{and} \textrm{Hgt(h2)} $=$ \textrm{Hgt(h)} \textbf{and} \textrm{T(h2)} $=$ \textrm{T(h)} $+$ 1\\
+  & \textbf{forall} \textrm{Hole} h \textbf{in} \textrm{Holes(E)} h \textrm{T(h)} $=$ 15\\
+  & \quad\quad \textbf{implies} (h \textbf{not in} \textrm{Holes(Step(E))}\\
+  & \quad\quad\quad\quad \textbf{and} (\textrm{Col(Player(E))} $=$ \textrm{Col(h)} \textbf{and} \textrm{Hgt(Player(E))} $=$ \textrm{Hgt(h)}) \textbf{implies} \textrm{Status(Step(E))} $=$ \textbf{Loss}\\
+  & \quad\quad\quad\quad \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{CellContent(Environment(E), Col(h), Hgt(h))}\\
+  & \quad\quad\quad\quad\quad\quad \textbf{implies} \textbf{exists} \textrm{Guard} g2 \textbf{in} \textrm{Guards(Step(E))}\\
+  & \quad\quad\quad\quad\quad\quad\quad \textrm{Id(g2)} $=$ \textrm{Id(g)} \textbf{and} \textrm{Col(g2)} $=$ \textrm{InitCol(g2)} \textbf{and} \textrm{Hgt(g2)} $=$ \textrm{InitHgt(g2)}\\
+\end{longtable}}
+
 \subsection{Game}
 
 \section{Extensions}
