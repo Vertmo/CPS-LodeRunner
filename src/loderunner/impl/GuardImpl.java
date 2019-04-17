@@ -136,7 +136,7 @@ public class GuardImpl extends CharacterImpl implements Guard {
         if(o == this) return true;
         if(!(o instanceof Guard)) return false;
         Guard g = (Guard) o;
-        return g.getId() == getId() && g.getTarget() == getTarget() && g.getEnvi() == getEnvi()
+        return g.getTarget().equals(getTarget())
             && g.getCol() == getCol() && g.getHgt() == getHgt()
             && g.getInitCol() == getInitCol() && g.getInitHgt() == getInitHgt()
             && g.getTimeInHole() == getTimeInHole();
@@ -144,7 +144,7 @@ public class GuardImpl extends CharacterImpl implements Guard {
 
     @Override
     public int hashCode() {
-        return 29 + 31 * id;
+        return 31 + 27 * getId();
     }
 
     @Override

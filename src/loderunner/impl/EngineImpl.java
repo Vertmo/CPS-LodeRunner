@@ -189,10 +189,36 @@ public class EngineImpl implements Engine {
         if(o == this) return true;
         if(!(o instanceof Engine)) return false;
         Engine e = (Engine) o;
-        return e.getEnvironment().equals(getEnvironment())
-            && e.getPlayer().equals(getPlayer())
-            && e.getGuards().equals(getGuards())
-            && e.getTreasures().equals(getTreasures())
+        // Les égalités d'ensemble c'est compliqué...
+        for(Guard g1: getGuards()) {
+            boolean guard_found = false;
+            for(Guard g2: e.getGuards()) {
+                if(g1.equals(g2)) guard_found = true;
+            }
+            if(!guard_found) return false;
+        }
+        for(Guard g1: e.getGuards()) {
+            boolean guard_found = false;
+            for(Guard g2: getGuards()) {
+                if(g1.equals(g2)) guard_found = true;
+            }
+            if(!guard_found) return false;
+        }
+        for(Item t1: getTreasures()) {
+            boolean treasure_found = false;
+            for(Item t2: e.getTreasures()) {
+                if(t1.equals(t2)) treasure_found = true;
+            }
+            if(!treasure_found) return false;
+        }
+        for(Item t1: e.getTreasures()) {
+            boolean treasure_found = false;
+            for(Item t2: getTreasures()) {
+                if(t1.equals(t2)) treasure_found = true;
+            }
+            if(!treasure_found) return false;
+        }
+        return e.getPlayer().equals(getPlayer())
             && e.getHoles().equals(getHoles())
             && e.getStatus().equals(getStatus());
     }
