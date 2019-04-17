@@ -88,9 +88,10 @@ public class EngineImpl implements Engine {
 
         guards = new HashSet<>();
         for(Coord c: gCoords) {
-            // TODO les gardes
-            // guards.add(g);
-            // env.addCellContent(c.getCol(), c.getHgt(), g);
+            Guard g = new GuardImpl();
+            g.init(env, player, c.getCol(), c.getHgt());
+            guards.add(g);
+            env.addCellContent(c.getCol(), c.getHgt(), g);
         }
 
         treasures = new HashSet<>();
@@ -106,6 +107,37 @@ public class EngineImpl implements Engine {
 
     @Override
     public void step() {
+        // Step for player
+        env.removeCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
+        getPlayer().step();
+        env.addCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
+
+        // Step for guards
+        for(Guard g: getGuards()) {
+            Item transported = null;
+            for(InCell ic: env.getCellContent(g.getCol(), g.getHgt())) {
+                if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Treasure) {
+                    env.removeCellContent(g.getCol(), g.getHgt(), ic);
+                    transported = (Item)ic;
+                    break;
+                }
+            }
+            env.removeCellContent(g.getCol(), g.getHgt(), g);
+            g.step();
+            env.addCellContent(g.getCol(), g.getHgt(), g);
+            if(g.getCol() == player.getCol() && g.getHgt() == player.getHgt() && !treasures.isEmpty()) status = Status.Loss;
+
+            if(transported != null) {
+                if(env.getCellNature(g.getCol(), g.getHgt()) != Cell.HOL) {
+                    transported.setCol(g.getCol()); transported.setHgt(g.getHgt());
+                    env.addCellContent(g.getCol(), g.getHgt(), transported);
+                } else {
+                    transported.setCol(g.getCol()); transported.setHgt(g.getHgt()+1);
+                    env.addCellContent(g.getCol(), g.getHgt()+1, transported);
+                }
+            }
+        }
+
         // Update holes
         Set<Hole> newHoles = new HashSet<>(holes);
         for(Hole h: holes) {
@@ -114,36 +146,18 @@ public class EngineImpl implements Engine {
                 env.fill(h.getCol(), h.getHgt());
                 if(getPlayer().getCol() == h.getCol() && getPlayer().getHgt() == h.getHgt())
                     status = Status.Loss;
-                // TODO update guards in the hole
+                for(InCell ic: env.getCellContent(h.getCol(), h.getHgt())) {
+                    if(ic instanceof Guard) {
+                        Guard g = (Guard) ic;
+                        env.removeCellContent(g.getCol(), g.getHgt(), g);
+                        g.init(g.getEnvi(), g.getTarget(), g.getInitCol(), g.getInitHgt());
+                        env.addCellContent(g.getCol(), g.getHgt(), g);
+                    }
+                }
             }
         }
         holes = newHoles;
         for(Hole h: holes) h.incT();
-
-        // Step for everyone
-        getPlayer().step();
-        for(Guard g: getGuards()) {
-            g.step();
-            if(g.getCol() == player.getCol() && g.getHgt() == player.getHgt()) status = Status.Loss;
-        }
-
-        // Update environment
-        for(int x = 0; x < env.getWidth(); x++) {
-            for(int y = 0; y < env.getHeight(); y++) {
-                for(InCell ic: env.getCellContent(x, y)) {
-                    if(ic instanceof Player) env.removeCellContent(x, y, ic);
-                    if(ic instanceof Item && ((Item)ic).getNature()==ItemType.Treasure) {
-                        if(getPlayer().getCol() == x && getPlayer().getHgt() == y) {
-                            env.removeCellContent(x, y, ic);
-                            treasures.remove(ic);
-                            levelScore++;
-                        }
-                    }
-                    // TODO
-                }
-            }
-        }
-        env.addCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
 
         // Create eventual new holes
         for(int x = 0; x < env.getWidth(); x++) {
@@ -152,7 +166,20 @@ public class EngineImpl implements Engine {
             }
         }
 
-        // Update status TODO
+        // Update items if grabbed by the player
+        boolean guard_found = false;
+        for(Guard g: guards) {
+            if(g.getCol() == player.getCol() && g.getHgt() == player.getHgt()) guard_found = true;
+        }
+        Item toRemove = null;
+        for(Item t: getTreasures()) {
+            if(getPlayer().getCol() == t.getCol() && getPlayer().getHgt() == t.getHgt() && !guard_found) {
+                env.removeCellContent(t.getCol(), t.getHgt(), t);
+                toRemove = t;
+                levelScore++;
+            }
+        }
+        if(toRemove != null) treasures.remove(toRemove);
         if(treasures.isEmpty()) status = Status.Win;
     }
 

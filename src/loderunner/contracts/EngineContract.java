@@ -294,9 +294,14 @@ public class EngineContract extends EngineDecorator {
             }
         }
         // post: \exists Item i \in getTreasures()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
+        //       && \not \exists Guard g \in getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
         //       => i \notin getTreasures() && getLevelScore() == getLevelScore()@pre+1
+        boolean guard_found = false;
+        for(Guard g: getGuards()) {
+            if(g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt()) guard_found = true;
+        }
         for(Item i: treasures_pre) {
-            if(i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt()
+            if(i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt() && !guard_found
                && (getTreasures().contains(i) || getLevelScore() != levelScore_pre + 1))
                 throw new PostconditionError("Engine", "step", "The treasure should have been taken by the player");
         }
@@ -370,7 +375,15 @@ public class EngineContract extends EngineDecorator {
                     throw new PostconditionError("Engine", "step", "The hole should have been refilled");
                 if(h.getCol() == playerCol_pre && h.getHgt() == playerHgt_pre && getStatus() != Status.Loss)
                     throw new PostconditionError("Engine", "step", "The player should have been crushed by the hole");
-                // TODO
+                for(InCell ic: cellContent_pre[h.getCol()][h.getHgt()]) {
+                    if(ic instanceof Guard) {
+                        Guard g = (Guard) ic;
+                        for(Guard g2: getGuards()) {
+                            if(g2.getId() == g.getId() && (g2.getCol() != g2.getInitCol() || g2.getHgt() != g2.getInitHgt()))
+                                throw new PostconditionError("Engine", "step", "The guard should have been crushed by the hole"+g2.getCol());
+                        }
+                    }
+                }
             }
         }
     }

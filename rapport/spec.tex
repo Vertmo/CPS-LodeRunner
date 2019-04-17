@@ -38,7 +38,7 @@
   & \quad\quad\quad\quad (\texttt{x} $\neq$ \texttt{u} \textbf{or} \texttt{y} $\neq$ \texttt{v}) \textbf{implies} \texttt{CellNature(Fill(S,u,v)),x,y)} $=$ \texttt{CellNature(x,y)} \\
 \end{longtable}}
 
-\subsection{EditableScreen} % TODO
+\subsection{EditableScreen}
 
 {\small
 \begin{longtable}{rl}
@@ -331,6 +331,7 @@
   & \quad\quad \textbf{implies} \textbf{exists} \textrm{Treasure} t2 \textbf{in} \textrm{Treasures(Step(E))}\\
   & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} \textbf{and} \textrm{Col(t2)} $=$ \textrm{Col(t)} \textbf{and} \textrm{Hgt(t2)} $=$ \textrm{Hgt(t)}\\
   & \textbf{exists} \textrm{Item} t \textbf{in} \textrm{Treasures(E)} \textrm{Col(i)} $=$ \textrm{Col(Player(E))} \textbf{and} \textrm{Hgt(i)} $=$ \textrm{Hgt(Player(E))}\\
+  & \quad\quad \textbf{and} \textbf{not exists} \textrm{Guard} g \textbf{in} \textrm{Guards(E)} (\textrm{Col(g)} $=$ \textrm{Col(Player(E))} \textbf{and} \textrm{Hgt(g)} $=$ \textrm{Hgt(Player(E))})\\
   & \quad\quad \textbf{implies} (t \textbf{not in} Treasures(Step(E)) \textbf{and} \textrm{LevelScore(Step(E))} $=$ \textrm{LevelScore(E)} $+$ 1)\\
   & \textbf{not exists} \textrm{Item} t \textbf{in} \textrm{Treasures(E)} \textrm{Col(i)} $=$ \textrm{Col(Player(E))} \textbf{and} \textrm{Hgt(i)} $=$ \textrm{Hgt(Player(E))}\\
   & \quad\quad \textbf{implies} \textrm{LevelScore(Step(E))} $=$ \textrm{LevelScore(E)}\\

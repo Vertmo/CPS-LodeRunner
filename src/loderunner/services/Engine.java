@@ -90,8 +90,9 @@ public interface Engine {
     //         && t \in getTreasures()
     //         => t.getCol() == t.getCol()@pre && t.getHgt() = t.getHgt()@pre
 
-    // Le joueur peut récupérer un trésor, ce qui peut amener à la fin de la partie
+    // Le joueur peut récupérer un trésor, ce qui peut amener à la fin de la partie (seulement si le trésor n'est pas porté par un garde)
     // post: \exists Item i \in getTreasures()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
+    //       && \not \exists Guard g \in getGuards()@pre (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
     //       => i \notin getTreasures() && getLevelScore() == getLevelScore()@pre+1
     // post: \not exists Item i \in getTreasures()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
     //       => getLevelScore() == getLevelScore()@pre

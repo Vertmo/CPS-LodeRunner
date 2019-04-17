@@ -124,20 +124,19 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		assert(player.getHgt() == 4);
 	}
 
-	//	A faire quand Guard sera implementé
-	//	@Test
-	//	public void testStep4() {
-	//		//Conditions initiales
-	//		List<Command> cmd = new ArrayList<Command>();
-	//		cmd.add(Command.Neutral);
-	//		Engine eg = createEngine(cmd);
-	//		player.init(eg.getEnvironment(), eg, 2, 3);
-	//		//Opération
-	//		player.step();
-	//		//Oracle: vérifié par contrats + player ne doit pas tomber à cause de garde en (2,2)
-	//		assert(player.getCol() == 2);
-	//		assert(player.getHgt() == 3);
-	//	}
+		@Test
+		public void testStep4() {
+			//Conditions initiales
+			List<Command> cmd = new ArrayList<Command>();
+			cmd.add(Command.Neutral);
+			Engine eg = createEngine(cmd);
+			player.init(eg.getEnvironment(), eg, 2, 3);
+			//Opération
+			player.step();
+			//Oracle: vérifié par contrats + player ne doit pas tomber à cause de garde en (2,2)
+			assert(player.getCol() == 2);
+			assert(player.getHgt() == 3);
+		}
 
 	@Test
 	public void testStep5() {
