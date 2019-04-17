@@ -61,6 +61,15 @@ public abstract class AbstractCharacterTest {
     // Transitions
 
     @Test
+    public void testInitTrans1() {
+        // Conditions initiales
+        Environment env = new EnvironmentImpl(); env.init(10, 5);
+        // Opération
+        character.init(env, 5, 2);
+        // Oracle: vérifié par contrat
+    }
+
+    @Test
     public void testGoLeftTrans1() {
         // Conditions initiales
         EditableScreen es = new EditableScreenImpl(); es.init(10, 5);
@@ -288,16 +297,6 @@ public abstract class AbstractCharacterTest {
         character.goUp();
         // Oracle: vérifié par contrat + le personnage ne devrait pas avoir bougé
         assertEquals(4, character.getHgt());
-    }
-
-    @Test
-    public void testFarDown() {
-        EditableScreen es = new EditableScreenImpl(); es.init(10, 5);
-        Environment env = new EnvironmentImpl(); env.init(es);
-        character.init(env, 5, 0);
-        character.goDown();
-        // Oracle: vérifié par contrat + le personnage ne devrait pas avoir bougé
-        assertEquals(0, character.getHgt());
     }
 
     // Paires de transitions
