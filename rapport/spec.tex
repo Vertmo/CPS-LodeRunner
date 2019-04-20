@@ -357,6 +357,44 @@
 \end{longtable}}
 
 \subsection{Game}
+{\small
+\begin{longtable}{rl}
+  \textbf{Service}:&\textrm{Game}\\
+  \textbf{Observators}:& \textbf{const} \texttt{Levels}: \textrm{[Game]} $\rightarrow$ \textrm{List\{Level\}}\\
+  & \texttt{Engine}: \textrm{[Game]} $\rightarrow$ \textrm{Engine}\\
+  & \texttt{LevelIndex}: \textrm{[Game]} $\rightarrow$ \textrm{int}\\
+  & \texttt{Score}: \textrm{[Game]} $\rightarrow$ \textrm{int}\\
+  & \texttt{HP}: \textrm{[Game]} $\rightarrow$ \textrm{int}\\
+  \textbf{Constructors}:& \texttt{init}: \textrm{List\{Level\}} $\rightarrow$ \textrm{[Game]}\\
+  &\quad\quad \textbf{pre}: \textrm{init(levels)} \textbf{requires} \textrm{levels} $\neq \emptyset$\\
+  \textbf{Operators}:& \texttt{CheckStateAndUpdate}: \textrm{Game} $\rightarrow$ \textrm{Game}\\
+  & \quad\quad \textbf{pre}: \textrm{CheckStateAndUpdate(G)} \textbf{requires} \textrm{LevelIndex(G)} $<$ \textrm{$|$Levels(G)$|$}\\
+  & \quad\quad\quad\quad \textbf{and} \textrm{HP(G)} $> 0$.\\
+  \textbf{Observations}:&\\
+  \textrm{[init]}:& \textrm{Levels(init(levels))} $=$ \textrm{levels}\\
+  & \textrm{LevelIndex(init(levels))} $ = 0$\\
+  & \textrm{Engine(init(levels))} $ = $ \textrm{Engine::init(Screen(levels[0]), PlayerCoord(levels[0]),}\\
+  & \quad\quad\quad\quad \textrm{GuardCoords(levels[0]), TreasureCoords(levels[0]))}\\
+  & \textrm{Score(init(levels))} $ = 0$\\
+  & \textrm{HP(init(levels))} $ = 3$\\
+  \textrm{[CheckStateAndUpdate]}:& \textrm{Status(Engine(G))} $=$ \textbf{Loss}\\
+  & \quad\quad \textbf{implies} (\textrm{HP(CheckStateAndUpdate(G))} $=$ \textrm{HP(G)-1}\\
+  & \quad\quad\quad\quad \textbf{and} \textrm{Engine(CheckStateAndUpdate(G))} $=$ \\
+  & \quad\quad\quad\quad\quad\quad  \textrm{Engine::init(Screen(Levels(G)[LevelIndex(G)]), PlayerCoord(Levels(G)[LevelIndex(G)]),}\\
+  & \quad\quad\quad\quad\quad\quad  \textrm{GuardCoords(Levels(G)[LevelIndex(G)]), TreasureCoords(Levels(G)[LevelIndex(G)]))})\\
+  & \textrm{Status(Engine(CheckAndUpdate(G)))} $\neq$ \textbf{Loss} \textbf{implies} \textrm{HP(CheckAndUpdate(G))} $=$ \textrm{HP(G)}\\
+  & \textrm{Status(Engine(G))} $=$ \textbf{Win}\\
+  & \quad\quad \textbf{implies} (\textrm{Score(CheckStateAndUpdate(G))} $=$ \textrm{Score(G)} $+$ \textrm{LevelScore(Engine(G))}\\
+  & \quad\quad\quad\quad \textbf{and} \textrm{LevelIndex(CheckStateAndUpdate(G))} $=$ \textrm{LevelIndex(G)} $+$ 1\\
+  & \quad\quad\quad\quad \textbf{and} (\textrm{LevelIndex(CheckStateAndUpdate(G))} $<$ \textrm{$|$Levels(G)$|$} \textbf{implies}\\
+  & \quad\quad\quad\quad\quad\quad \textrm{Engine(CheckStateAndUpdate(G))} $=$\\
+  & \quad\quad\quad\quad\quad\quad  \textrm{Engine::init(Screen(Levels(G)[LevelIndex(CheckStateAndUpdate(G))]),}\\
+  & \quad\quad\quad\quad\quad\quad\quad\quad \textrm{PlayerCoord(Levels(G)[LevelIndex(CheckStateAndUpdate(G))]),}\\
+  & \quad\quad\quad\quad\quad\quad\quad\quad  \textrm{GuardCoords(Levels(G)[LevelIndex(CheckStateAndUpdate(G))]),}\\
+  & \quad\quad\quad\quad\quad\quad\quad\quad  \textrm{TreasureCoords(Levels(G)[LevelIndex(CheckStateAndUpdate(G))]))}))\\
+  & \textrm{Status(Engine(CheckAndUpdate(G)))} $\neq$ \textbf{Win} \textbf{implies} \textrm{LevelIndex(CheckAndUpdate(G))} $=$ \textrm{LevelIndex(G)}\\
+  & \textrm{Status(Engine(CheckAndUpdate(G)))} $=$ \textbf{Playing} \textbf{implies} \textrm{Engine(CheckAndUpdate(G))} $=$ \textrm{Engine(G)}\\
+\end{longtable}}
 
 \section{Extensions}
 
