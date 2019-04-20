@@ -5,12 +5,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import loderunner.contracts.errors.PreconditionError;
+import loderunner.impl.CoordImpl;
 import loderunner.io.LevelIO;
 import loderunner.services.Cell;
 import loderunner.services.Command;
@@ -44,6 +46,9 @@ public abstract class AbstractGameTest {
     private Level createPlayableLevel() {
         Level l = new LevelIO(10, 5);
         for(int i = 0; i < 10; i++) l.getScreen().setNature(i, 0, Cell.MTL);
+        l.getPlayerCoord().setCol(5); l.getPlayerCoord().setHgt(1);
+        l.getGuardCoords().add(new CoordImpl(3, 1));
+        l.getTreasureCoords().add(new CoordImpl(6, 1));
         return l;
     }
 
@@ -82,7 +87,7 @@ public abstract class AbstractGameTest {
     public void testCheckAndUpdatePre2() { // Négatif
         // Conditions initiales
         List<Level> levels = new ArrayList<>(); levels.add(createPlayableLevel());
-        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral)));
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Right)));
         game.init(levels);
         game.getEngine().step();
         game.checkStateAndUpdate(); // Ending first level
@@ -91,8 +96,6 @@ public abstract class AbstractGameTest {
         // Opération
         game.checkStateAndUpdate();
     }
-
-    // TODO
 
     // Transitions
 
@@ -113,19 +116,63 @@ public abstract class AbstractGameTest {
     public void testCheckAndUpdateTrans2() {
         // Conditions initiales
         List<Level> levels = new ArrayList<>(); levels.add(createPlayableLevel());
-        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral)));
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Right)));
         game.init(levels);
         game.getEngine().step();
         // Opération
         game.checkStateAndUpdate();
-        // Oracle: vérifié par les contrats
+        // Oracle: vérifié par les contrats + on a fini le jeu et gagné du score
+        Assert.assertEquals(1, game.getLevelIndex());
+        Assert.assertEquals(1, game.getScore());
     }
 
-    // TODO
+    @Test
+    public void testCheckAndUpdateTrans3() {
+        // Conditions initiales
+        List<Level> levels = new ArrayList<>(); levels.add(createPlayableLevel());
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral, Command.Neutral)));
+        game.init(levels);
+        game.getEngine().step(); game.getEngine().step();
+        // Opération
+        game.checkStateAndUpdate();
+        // Oracle: vérifié par les contrats + on a perdu une vie
+        Assert.assertEquals(2, game.getHP());
+    }
 
     // Etats remarquables
-    // TODO
+
+    @Test
+    public void testGameOver() {
+        // Conditions initiales
+        List<Level> levels = new ArrayList<>(); levels.add(createPlayableLevel());
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral, Command.Neutral,
+                                                      Command.Neutral, Command.Neutral,
+                                                      Command.Neutral, Command.Neutral)));
+        game.init(levels);
+        for(int i = 0; i < 3; i++) {
+            game.getEngine().step(); game.getEngine().step();
+            game.checkStateAndUpdate();
+        }
+        // Oracle: vérifié par les contrats + game over
+        Assert.assertEquals(0, game.getHP());
+    }
 
     // Scénarios
-    // TODO
+
+    @Test
+    public void testScenar() {
+        // Conditions initiales
+        List<Level> levels = new ArrayList<>(); levels.add(createPlayableLevel());
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral, Command.Neutral,
+                                                      Command.Right)));
+        game.init(levels);
+        game.getEngine().step(); game.getEngine().step();
+        game.checkStateAndUpdate();
+
+        game.getEngine().step(); game.checkStateAndUpdate();
+        // Oracle: vérifié par les contrats + on a perdu une vie puis gagné un point, et le jeu est fini
+        Assert.assertEquals(2, game.getHP());
+        Assert.assertEquals(1, game.getScore());
+        Assert.assertEquals(1, game.getLevelIndex());
+    }
 }

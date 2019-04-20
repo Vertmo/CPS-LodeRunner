@@ -59,7 +59,7 @@ public class ItemImpl implements Item {
         if(o == this) return true;
         if(!(o instanceof Item)) return false;
         Item i = (Item) o;
-        return i.getId() == getId() && i.getNature() == getNature()
+        return i.getNature() == getNature()
             && i.getCol() == getCol() && i.getHgt() == getHgt();
     }
 

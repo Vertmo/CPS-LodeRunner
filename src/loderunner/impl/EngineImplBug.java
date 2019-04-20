@@ -18,7 +18,7 @@ import loderunner.services.ItemType;
 import loderunner.services.Player;
 import loderunner.services.Status;
 
-public class EngineImpl implements Engine {
+public class EngineImplBug implements Engine {
     private CommandProvider cmdProvider;
     private Environment env;
     private Player player;
@@ -28,7 +28,7 @@ public class EngineImpl implements Engine {
     private Status status;
     private int levelScore;
 
-    public EngineImpl(CommandProvider cmdProvider) {
+    public EngineImplBug(CommandProvider cmdProvider) {
         this.cmdProvider = cmdProvider;
     }
 
@@ -129,7 +129,7 @@ public class EngineImpl implements Engine {
 
             if(transported != null) {
                 if(env.getCellNature(g.getCol(), g.getHgt()) != Cell.HOL) {
-                    transported.setCol(g.getCol()); transported.setHgt(g.getHgt());
+                    transported.setCol(g.getCol()); transported.setHgt(g.getCol()); // OUPS
                     env.addCellContent(g.getCol(), g.getHgt(), transported);
                 } else {
                     transported.setCol(g.getCol()); transported.setHgt(g.getHgt()+1);
@@ -171,15 +171,15 @@ public class EngineImpl implements Engine {
         for(Guard g: guards) {
             if(g.getCol() == player.getCol() && g.getHgt() == player.getHgt()) guard_found = true;
         }
-        Item toRemove = null;
+        // Item toRemove = null;
         for(Item t: getTreasures()) {
             if(getPlayer().getCol() == t.getCol() && getPlayer().getHgt() == t.getHgt() && !guard_found) {
                 env.removeCellContent(t.getCol(), t.getHgt(), t);
-                toRemove = t;
+                // toRemove = t; // OUPS
                 levelScore++;
             }
         }
-        if(toRemove != null) treasures.remove(toRemove);
+        //if(toRemove != null) treasures.remove(toRemove);
         if(treasures.isEmpty()) status = Status.Win;
     }
 
@@ -189,7 +189,6 @@ public class EngineImpl implements Engine {
         if(o == this) return true;
         if(!(o instanceof Engine)) return false;
         Engine e = (Engine) o;
-        // Les égalités d'ensemble c'est compliqué...
         for(Guard g1: getGuards()) {
             boolean guard_found = false;
             for(Guard g2: e.getGuards()) {
@@ -225,7 +224,7 @@ public class EngineImpl implements Engine {
 
     @Override
     public Engine clone() {
-        EngineImpl ei = new EngineImpl(cmdProvider);
+        EngineImplBug ei = new EngineImplBug(cmdProvider);
         ei.env = env;
         ei.player = player;
         ei.guards = new HashSet<>(guards);

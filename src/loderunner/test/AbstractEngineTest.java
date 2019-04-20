@@ -19,6 +19,7 @@ import loderunner.services.Cell;
 import loderunner.services.Command;
 import loderunner.services.EditableScreen;
 import loderunner.services.Engine;
+import loderunner.services.Guard;
 import loderunner.services.Status;
 
 public abstract class AbstractEngineTest {
@@ -50,6 +51,9 @@ public abstract class AbstractEngineTest {
         s.init(10, 5);
         for(int i = 0; i < 10; i++) s.setNature(i, 0, Cell.MTL);
         for(int i = 0; i < 10; i++) s.setNature(i, 1, Cell.PLT);
+        s.setNature(1, 2, Cell.LAD); s.setNature(1, 3, Cell.LAD);
+        s.setNature(2, 3, Cell.PLT); s.setNature(3, 3, Cell.PLT);
+        s.setNature(4, 4, Cell.HDR); s.setNature(5, 3, Cell.PLT);
         return s;
     }
 
@@ -107,24 +111,13 @@ public abstract class AbstractEngineTest {
         // Oracle: une exception
         exception.expect(PreconditionError.class);
         // Opération
-        engine.init(s, new CoordImpl(5, 2), new HashSet<>(),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2), new CoordImpl(6, 2))));
-    }
-
-    @Test
-    public void testInitPre6() { // Négatif
-        // Conditions initiales
-        EditableScreen s = createPlayableScreen();
-        // Oracle: une exception
-        exception.expect(PreconditionError.class);
-        // Opération
         engine.init(s, new CoordImpl(5, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(5, 2))),
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
     }
 
-    // TODO @Test
-    public void testInitPre7() { // Positif
+    @Test
+    public void testInitPre6() { // Positif
         // Conditions initiales
         EditableScreen s = createPlayableScreen();
         // Opération
@@ -132,18 +125,6 @@ public abstract class AbstractEngineTest {
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
         // Oracle: pas d'exception
-    }
-
-    @Test
-    public void testInitPre8() { // Négatif
-        // Conditions initiales
-        EditableScreen s = createPlayableScreen();
-        // Oracle: une exception
-        exception.expect(PreconditionError.class);
-        // Opération
-        engine.init(s, new CoordImpl(5, 2),
-                    new HashSet<>(Arrays.asList(new CoordImpl(2, 2), new CoordImpl(2, 2))),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
     }
 
     @Test
@@ -174,14 +155,14 @@ public abstract class AbstractEngineTest {
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
                     new HashSet<>(),
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
-                    tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Left, Command.Right)));
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Left, Command.Right)));
         engine.step();
         // Opération
         engine.step();
         // Oracle: pas d'exception
     }
 
-    // TODO @Test
+    @Test
     public void testStepPre4() { // Négatif
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
@@ -201,7 +182,7 @@ public abstract class AbstractEngineTest {
     public void testStepTrans1() {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
-                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(3, 2))),
                     new HashSet<>(Arrays.asList(new CoordImpl(7, 2))));
         tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Right, Command.Right)));
         // Opération
@@ -225,7 +206,7 @@ public abstract class AbstractEngineTest {
     public void testStepTrans3() {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
-                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(2, 2), new CoordImpl(5, 4))),
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
         tcp.setCommands(new ArrayList<>(Arrays.asList(Command.DigL)));
         // Opération
@@ -274,7 +255,36 @@ public abstract class AbstractEngineTest {
         Assert.assertEquals(Cell.PLT, engine.getEnvironment().getCellNature(4, 1));
     }
 
-    // TODO
+    @Test
+    public void testStepTrans7() {
+        // Conditions initiales
+        engine.init(createPlayableScreen(), new CoordImpl(4, 2),
+                    new HashSet<>(Arrays.asList(new CoordImpl(7, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+        List<Command> coms = new ArrayList<>();
+        for(int i = 0; i < 2; i++) coms.add(Command.Neutral);
+        tcp.setCommands(coms);
+        engine.step();
+        // Opération
+        engine.step();
+        // Oracle: vérifié par contrat
+    }
+
+    @Test
+    public void testStepTrans8() {
+        // Conditions initiales
+        engine.init(createPlayableScreen(), new CoordImpl(4, 2),
+                    new HashSet<>(Arrays.asList(new CoordImpl(7, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+        List<Command> coms = new ArrayList<>(); coms.add(Command.DigR);
+        for(int i = 0; i < 6; i++) coms.add(Command.Neutral);
+        tcp.setCommands(coms);
+        engine.step(); engine.step(); engine.step();
+        // Opération
+        engine.step();
+        // Oracle: vérifié par contrat + le trésor est tombé au dessus du garde
+        Assert.assertEquals(1, engine.getEnvironment().getCellContent(5, 2).size());
+    }
 
     // Etats remarquables
     @Test
@@ -285,7 +295,7 @@ public abstract class AbstractEngineTest {
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
         List<Command> coms = new ArrayList<>(); coms.add(Command.DigL); coms.add(Command.Left);
         for(int i = 0; i < 15; i++) coms.add(Command.Neutral);
-        tcp.setCommands(new ArrayList<>(coms));
+        tcp.setCommands(coms);
         for(int i = 0; i < 16; i++) engine.step();
         // Opération
         engine.step();
@@ -294,8 +304,83 @@ public abstract class AbstractEngineTest {
         Assert.assertEquals(Status.Loss, engine.getStatus());
     }
 
-    // TODO
+    @Test
+    public void testGuardWithTreasureCaughtPlayer() {
+        // Conditions initiales
+        engine.init(createPlayableScreen(), new CoordImpl(5, 2),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+        List<Command> coms = new ArrayList<>(); coms.add(Command.Neutral);
+        tcp.setCommands(coms);
+
+        // Opération
+        engine.step();
+
+        // Oracle: vérifié par contrat + le joueur a été tué par le garde
+        Assert.assertEquals(Status.Loss, engine.getStatus());
+    }
+
+    @Test
+    public void testGuardCrushedInHole() {
+        // Conditions initiales
+        engine.init(createPlayableScreen(), new CoordImpl(7, 2),
+                    new HashSet<>(Arrays.asList(new CoordImpl(9, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(0, 3))));
+        Guard g = engine.getGuards().iterator().next();
+        List<Command> coms = new ArrayList<>();
+        coms.add(Command.DigR); coms.add(Command.Left); coms.add(Command.Left);
+        coms.add(Command.DigR); coms.add(Command.Left); coms.add(Command.Left);
+        coms.add(Command.DigR);
+        for(int i = 0; i < 25; i++) coms.add(Command.Neutral);
+        tcp.setCommands(coms);
+
+        // Opération
+        for(int i = 0; i < 23; i++) engine.step();
+
+        // Oracle: vérifié par contrat + le garde est revenu a sa position de départ
+        Assert.assertEquals(2, g.getHgt());
+        Assert.assertEquals(9, g.getCol());
+    }
+
+    @Test
+    public void testAllTreasures() {
+        // Conditions initiales
+        engine.init(createPlayableScreen(), new CoordImpl(7, 2),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+        List<Command> coms = new ArrayList<>();
+        coms.add(Command.Left);
+        tcp.setCommands(coms);
+
+        // Opération
+        engine.step();
+
+        // Oracle: vérifié par contrat + le niveau est gagné
+        Assert.assertEquals(Status.Win, engine.getStatus());
+    }
 
     // Scénarios
-    // TODO
+
+    @Test
+    public void testScenar() {
+        engine.init(createPlayableScreen(), new CoordImpl(3, 2),
+                    new HashSet<>(Arrays.asList(new CoordImpl(5, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(5, 4))));
+        List<Command> coms = new ArrayList<>();
+        coms.add(Command.Left); coms.add(Command.Left);
+        coms.add(Command.Up); coms.add(Command.Up);
+        coms.add(Command.Right); coms.add(Command.Right); coms.add(Command.Right); coms.add(Command.Right);
+        tcp.setCommands(coms);
+
+        engine.step(); engine.step();
+        engine.step(); engine.step();
+        engine.step(); engine.step(); engine.step(); engine.step();
+
+        // Oracle: vérifié par contrats + le joueur a gagné
+        Assert.assertEquals(Status.Win, engine.getStatus());
+
+        Assert.assertEquals(4, engine.getPlayer().getHgt());
+        Assert.assertEquals(5, engine.getPlayer().getCol());
+    }
+
 }

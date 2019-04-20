@@ -97,7 +97,7 @@ public class GameContract extends GameDecorator {
                     throw new PostconditionError("Game", "checkAndUpdate", "the engine was not correctly updated");
             }
         }
-        // post: getEngine().getStatus() != Loss => getHP() == getHP()@pre
+        // post: getEngine().getStatus()@pre != Loss => getHP() == getHP()@pre
         if(status_pre != Status.Loss && getHP() != hp_pre)
             throw new PostconditionError("Game", "checkAndUpdate", "hp has changed while it shouldn't have");
         // post: getEngine().getStatus()@pre == Win

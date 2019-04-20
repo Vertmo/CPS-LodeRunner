@@ -31,10 +31,10 @@ public interface Game {
     // post: getEngine().getStatus()@pre == Loss
     //       => (
     //           getHP() = getHP()@pre - 1 &&
-    //           getEngine() ==
+    //           getEngine().equals(
     //           Engine::init(getLevels().get(getLevelIndex()).getScreen(), getLevels().get(getLevelIndex()).getPlayerCoord(),
-    //                        getLevels().get(getLevelIndex()).getGuardCoords(), getLevels().get(getLevelIndex()).getTreasureCoords()))
-    // post: getEngine().getStatus() != Loss => getHP() == getHP()@pre
+    //                        getLevels().get(getLevelIndex()).getGuardCoords(), getLevels().get(getLevelIndex()).getTreasureCoords())))
+    // post: getEngine().getStatus()@pre != Loss => getHP() == getHP()@pre
     // post: getEngine().getStatus()@pre == Win
     //       => (getScore() == getScore()@pre + getEngine.getLevelScore()@pre &&
     //           getLevelIndex() == getLevelIndex()@pre + 1 &&
