@@ -27,6 +27,7 @@ public class EngineImpl implements Engine {
     private Set<Hole> holes;
     private Status status;
     private int levelScore;
+    private boolean guardTurn;
 
     public EngineImpl(CommandProvider cmdProvider) {
         this.cmdProvider = cmdProvider;
@@ -78,6 +79,11 @@ public class EngineImpl implements Engine {
     }
 
     @Override
+    public boolean isGuardTurn() {
+        return guardTurn;
+    }
+
+    @Override
     public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords) {
         env = new EnvironmentImpl();
         env.init(screen);
@@ -103,6 +109,7 @@ public class EngineImpl implements Engine {
 
         holes = new HashSet<>();
         status = Status.Playing;
+        guardTurn = false;
     }
 
     @Override
@@ -123,7 +130,7 @@ public class EngineImpl implements Engine {
                 }
             }
             env.removeCellContent(g.getCol(), g.getHgt(), g);
-            g.step();
+            if(guardTurn) g.step();
             env.addCellContent(g.getCol(), g.getHgt(), g);
             if(g.getCol() == player.getCol() && g.getHgt() == player.getHgt() && !treasures.isEmpty()) status = Status.Loss;
 
@@ -137,6 +144,7 @@ public class EngineImpl implements Engine {
                 }
             }
         }
+        guardTurn = !guardTurn;
 
         // Update holes
         Set<Hole> newHoles = new HashSet<>(holes);
@@ -233,5 +241,6 @@ public class EngineImpl implements Engine {
         ei.holes = new HashSet<>(holes);
         ei.status = status;
         return ei;
-    }
+	}
+
 }
