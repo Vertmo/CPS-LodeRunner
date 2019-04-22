@@ -412,4 +412,35 @@ Dans le service Engine, on ajoute et modifie:
   & \textbf{not} \textrm{GuardTurn(E)} \textbf{implies} \textbf{forall} \textrm{Guard} g \textbf{in} \textrm{Guards(Step(E))} \textbf{exists} \textrm{Guard} g' \textbf{in} \textrm{Guards(E))} g' $=$ \textrm{g}\\
 \end{longtable}}
 
+\subsubsection{Descendre les échelles}
+Dans le service Guard, on modifie:
+{\small
+\begin{longtable}{rl}
+  \textbf{Observations}:&\\
+  \textrm{[invariant]}:& (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{LAD} \\
+  & \quad\quad\quad\quad \textbf{or} (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $=$ \textbf{LAD}\\
+  & \quad\quad\quad\quad\quad\quad \textbf{and} \textbf{not exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(G),Col(G),Hgt(G)-1)}))\\
+  & \quad\quad \textbf{and} \textrm{Hgt(G)} $>$ \textrm{Character::Hgt(Target(G))} \\
+  & \quad\quad \textbf{and} (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} \textbf{not in} \{\textbf{PLT}, \textbf{MTL}  \} \\
+  & \quad\quad\quad\quad \textbf{or} \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(G),Col(G),Hgt(G)-1)} \\
+  & \quad\quad\quad\quad \textbf{implies} \textrm{Hgt(G) - Character::Hgt(Target(G))} $<$ $|$\textrm{Character::Col(Target(G)) - Col(G)})$|$)\\
+  & \quad\quad \textbf{implies} \textrm{Behaviour(G)} $=$ \textbf{Down} \\
+
+  & \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{LAD} \\
+  & \quad\quad \textbf{and} \textrm{Hgt(G)} $=$ \textrm{Character::Hgt(Target(G))} \\
+  & \quad\quad \textbf{and} ( \textrm{Col(G)} $=$ \textrm{Character::Col(Target(G))}\\
+  & \quad\quad\quad\quad \textbf{or} $|$\textrm{Character::Hgt(G) - Hgt(Target(G))}$|$ $<$ $|$\textrm{Character::Col(Target(G)) - Col(G)})$|$) \\
+  & \quad\quad \textbf{implies} \textrm{Behaviour(G)} $=$ \textbf{Neutral} \\
+
+  & (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} \textbf{in} \{\textbf{PLT}, \textbf{MTL}  \} \\
+  & \quad\quad\quad\quad \textbf{or} ( \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{LAD} \\
+  & \quad\quad\quad\quad\quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $\neq$ \textbf{LAD}) \\
+  & \quad\quad\quad\quad \textbf{or} \textbf{exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(G),Col(G),Hgt(G)-1)}) \\
+  & \quad\quad \textbf{and} \textrm{Col(G)} $=$ \textrm{Character::Col(Target(G))} \\
+  & \quad\quad \textbf{and} (\textrm{Hgt(G)} $=$ \textrm{Character::Hgt(Target(G))} \\
+  & \quad\quad\quad\quad \textbf{or} (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $\neq$ \textbf{LAD})\\
+  & \quad\quad\quad\quad\quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $\neq$ \textbf{LAD}) \\
+  & \quad\quad \textbf{implies} \textrm{Behaviour(G)} $=$ \textbf{Neutral} \\
+\end{longtable}}
+
 \end{document}

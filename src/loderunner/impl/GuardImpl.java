@@ -43,17 +43,21 @@ public class GuardImpl extends CharacterImpl implements Guard {
         for(InCell ic: getEnvi().getCellContent(getCol(), getHgt()-1)) {
             if(ic instanceof Guard) guard_below = true;
         }
+        if(cell_below == Cell.LAD && !guard_below
+           && getHgt() > getTarget().getHgt() && (hDist > vDist || hDist == 0)) {
+            return Move.Down;
+        }
         if(cell == Cell.LAD) {
             if((cell_below == Cell.PLT || cell_below == Cell.MTL || guard_below) && (hDist < vDist || vDist == 0)) {
                 if(getTarget().getCol() < getCol()) return Move.Left;
                 if(getTarget().getCol() > getCol()) return Move.Right;
             }
             if(getTarget().getHgt() < getHgt()) return Move.Down;
-            if(getTarget().getHgt() > getHgt()) return Move.Up;
+            if(cell == Cell.LAD && getTarget().getHgt() > getHgt()) return Move.Up;
             return Move.Neutral;
         }
-        else if(cell_below == Cell.PLT || cell_below == Cell.MTL || cell_below == Cell.LAD
-                || cell == Cell.HDR || cell == Cell.HOL || guard_below) {
+        if(cell_below == Cell.PLT || cell_below == Cell.MTL || cell_below == Cell.LAD
+           || cell == Cell.HDR || cell == Cell.HOL || guard_below) {
             if(getTarget().getCol() < getCol()) return Move.Left;
             if(getTarget().getCol() > getCol()) return Move.Right;
             return Move.Neutral;
@@ -155,4 +159,5 @@ public class GuardImpl extends CharacterImpl implements Guard {
         g.col = getCol(); g.hgt = getHgt(); g.timeInHole = getTimeInHole();
         return g;
     }
+
 }
