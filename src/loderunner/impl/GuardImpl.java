@@ -47,6 +47,7 @@ public class GuardImpl extends CharacterImpl implements Guard {
            && getHgt() > getTarget().getHgt() && (hDist > vDist || hDist == 0)) {
             return Move.Down;
         }
+        if(cell == Cell.HDR && (vDist < hDist || hDist == 0) && getHgt() > getTarget().getHgt()) return Move.Down;
         if(cell == Cell.LAD) {
             if((cell_below == Cell.PLT || cell_below == Cell.MTL || guard_below) && (hDist < vDist || vDist == 0)) {
                 if(getTarget().getCol() < getCol()) return Move.Left;

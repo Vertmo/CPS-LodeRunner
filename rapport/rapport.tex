@@ -1,4 +1,5 @@
 \documentclass{article}
+\usepackage[a4paper, margin=1in]{geometry}
 \usepackage{listings}
 
 \title{CPS - Projet - LodeRunner\\Rapport}
@@ -6,5 +7,16 @@
 
 \begin{document}
 \maketitle
+
+\section{Extensions}
+
+\subsection{Améliorations des gardes}
+Dans la spécification actuelle du jeu, les gardes ne sont pas très astucieux: ils refusent parfois de prendre une route allant en ligne droite jusqu'au joueur, et de faire certains mouvements assez simples. Sans aller jusqu'à programmer un algorithme de path-finding pour les gardes, on va améliorer quelques peu ces mouvements simples.
+
+\subsubsection{Descendre les échelles, tomber des rails}
+Deux des positions les plus facilement repérable dans lesquels les gardes sont bloqués est au sommet d'une échelle, ou accroché à un rail: en effet, dans la spécification actuelle, dans aucun de ces deux cas le comportement du garde n'est \textbf{Down} si le joueur se trouve en dessous de lui. On peut donc ajouter ces cas à la disjonction pour le \textbf{Down} dans les invariants du garde. On remarque que ces invariants sont déjà assez complexes, et l'ajout de ces cas spéciaux les rends de plus en plus difficiles à lire.
+
+\subsubsection{Un pas sur deux}
+Après toutes ces améliorations faites aux gardes, ceux-ci deviennent de plus en plus dangereux pour le joueur. Pour contrebalancer ce danger, on décide d'affaiblir considérablement les gardes en divisant par deux leur capacité d'action: autrement dit, les gardes n'agissent plus qu'un \textrm{step} de l'\textrm{Engine} sur deux, plutôt que tous les \textrm{step}. Pour cela, on doit modifier le service \textrm{Engine} plutôt que le service \textrm{Guard}, en introduisant un nouvel observateur \textrm{GuardTurn: [Engine] $\rightarrow$ boolean} qui s'inverse à chaque \textrm{step}. Le \textrm{Guard::step} n'est alors déclenché que si cet observateur est vrai. On observe que modifier l'appel des \textrm{step} de cette façon modifie double aussi le temps potentiel passé dans un trou par le garde (puisque \textrm{Guard::TimeInHole} augmente deux fois moins vite), et donc diminue les chances du garde de se sortir du trou. On pourrait si on voulait tout simplement diviser par 2 le seuil au delà duquel le garde sort du trou, mais cet équilibrage nous paraît correct.
 
 \end{document}

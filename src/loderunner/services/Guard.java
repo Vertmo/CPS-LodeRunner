@@ -28,8 +28,8 @@ public interface Guard extends /* refine */ Character, Cloneable {
     //          => getTarget().getHgt() - getHgt() < |getTarget().getCol() - getCol()|)
     //      => getBehaviour() == Up
 
-    // inv: (getEnvi().getCellNature(getCol(), getHgt()) == LAD ||
-    //        (cell_below == Cell.LAD && \not \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1)))
+    // inv: (getEnvi().getCellNature(getCol(), getHgt()) \in { LAD, HDR }
+    //        (cell_below == Cell.LAD && \not \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //      && getHgt() > getTarget().getHgt()
     //      && (getCol() != getTarget().getCol() && (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
     //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))

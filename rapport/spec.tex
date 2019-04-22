@@ -400,24 +400,12 @@
 
 \subsection{Gardes améliorés}
 
-\subsubsection{Un pas sur deux}
-Dans le service Engine, on ajoute et modifie:
-{\small
-\begin{longtable}{rl}
-  \textbf{Observators}:&\texttt{GuardTurn}: \textrm{[Engine]} $\rightarrow$ \textrm{boolean}\\
-  \textbf{Observations}:&\\
-  \textrm{[init]}:& \textrm{GuardTurn(init(screen, pCoord, gCoords, tCoords))} $=$ \textrm{false}\\
-  \textrm{[step]}:& \textrm{GuardTurn(step(E))} $=$ \textbf{not} \texttt{GuardTurn(E)}\\
-  & \textrm{GuardTurn(E)} \textbf{implies} \textbf{forall} \textrm{Guard} g \textbf{in} \textrm{Guards(Step(E))} \textbf{exists} \textrm{Guard} g' \textbf{in} \textrm{Guards(E))} g' $=$ \textrm{Step(g)}\\
-  & \textbf{not} \textrm{GuardTurn(E)} \textbf{implies} \textbf{forall} \textrm{Guard} g \textbf{in} \textrm{Guards(Step(E))} \textbf{exists} \textrm{Guard} g' \textbf{in} \textrm{Guards(E))} g' $=$ \textrm{g}\\
-\end{longtable}}
-
-\subsubsection{Descendre les échelles}
+\subsubsection{Descendre les échelles, tomber des rails}
 Dans le service Guard, on modifie:
 {\small
 \begin{longtable}{rl}
   \textbf{Observations}:&\\
-  \textrm{[invariant]}:& (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{LAD} \\
+  \textrm{[invariant]}:& (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} \textbf{in} \{ \textbf{LAD}, \textbf{HDR} \}\\
   & \quad\quad\quad\quad \textbf{or} (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $=$ \textbf{LAD}\\
   & \quad\quad\quad\quad\quad\quad \textbf{and} \textbf{not exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(G),Col(G),Hgt(G)-1)}))\\
   & \quad\quad \textbf{and} \textrm{Hgt(G)} $>$ \textrm{Character::Hgt(Target(G))} \\
@@ -441,6 +429,18 @@ Dans le service Guard, on modifie:
   & \quad\quad\quad\quad \textbf{or} (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $\neq$ \textbf{LAD})\\
   & \quad\quad\quad\quad\quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $\neq$ \textbf{LAD}) \\
   & \quad\quad \textbf{implies} \textrm{Behaviour(G)} $=$ \textbf{Neutral} \\
+\end{longtable}}
+
+\subsubsection{Un pas sur deux}
+Dans le service Engine, on ajoute et modifie:
+{\small
+\begin{longtable}{rl}
+  \textbf{Observators}:&\texttt{GuardTurn}: \textrm{[Engine]} $\rightarrow$ \textrm{boolean}\\
+  \textbf{Observations}:&\\
+  \textrm{[init]}:& \textrm{GuardTurn(init(screen, pCoord, gCoords, tCoords))} $=$ \textrm{false}\\
+  \textrm{[step]}:& \textrm{GuardTurn(step(E))} $=$ \textbf{not} \texttt{GuardTurn(E)}\\
+  & \textrm{GuardTurn(E)} \textbf{implies} \textbf{forall} \textrm{Guard} g \textbf{in} \textrm{Guards(Step(E))} \textbf{exists} \textrm{Guard} g' \textbf{in} \textrm{Guards(E))} g' $=$ \textrm{Step(g)}\\
+  & \textbf{not} \textrm{GuardTurn(E)} \textbf{implies} \textbf{forall} \textrm{Guard} g \textbf{in} \textrm{Guards(Step(E))} \textbf{exists} \textrm{Guard} g' \textbf{in} \textrm{Guards(E))} g' $=$ \textrm{g}\\
 \end{longtable}}
 
 \end{document}

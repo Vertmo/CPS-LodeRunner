@@ -80,14 +80,14 @@ public class GuardContract extends CharacterContract implements Guard {
            (hDist == 0 || !(cell_below == Cell.PLT || cell_below == Cell.MTL || guard_below) || hDist > vDist) &&
            getBehaviour() != Move.Up)
             throw new InvariantError("Guard", "getBehaviour() should be Up");
-        // inv: (getEnvi().getCellNature(getCol(), getHgt()) == LAD ||
+        // inv: (getEnvi().getCellNature(getCol(), getHgt()) \in { LAD, HDR }
         //        (cell_below == Cell.LAD && \not \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
         //      && getHgt() > getTarget().getHgt()
         //      && (getCol() != getTarget().getCol() && (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
         //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
         //          => getHgt() - getTarget().getHgt() < |getTarget().getCol() - getCol()|)
         //      => getBehaviour() == Down
-        if((cell == Cell.LAD || (cell_below == Cell.LAD && !guard_below)) &&
+        if((cell == Cell.LAD || cell == Cell.HDR || (cell_below == Cell.LAD && !guard_below)) &&
            getHgt() > getTarget().getHgt() &&
            (hDist == 0 || hDist > vDist) &&
            getBehaviour() != Move.Down)
