@@ -342,8 +342,8 @@ public abstract class AbstractGuardTest extends AbstractCharacterTest {
         // Opération
         guard.step();
         // Oracle: garde en (3, 2)
-        assertEquals(3, guard.getCol());
-        assertEquals(2, guard.getHgt());
+        assertEquals(p.getCol(), guard.getCol());
+        assertEquals(p.getHgt(), guard.getHgt());
     }
 
     // Scénarios

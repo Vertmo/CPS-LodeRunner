@@ -1,5 +1,7 @@
 \documentclass{article}
+\usepackage[a4paper, margin=1in]{geometry}
 \usepackage{listings}
+\usepackage{longtable}
 
 \title{CPS - Projet - LodeRunner\\Rapport de test}
 \author{Basile Pesin, David Sreng\\Sorbonne Université}
@@ -7,24 +9,227 @@
 \begin{document}
 \maketitle
 
-\section{Jeu (partie commune)}
+On trouvera ici des spécifications de quelque-uns des tests que nous avons écrit pour les différents services (pour des raisons de temps nous n'avons traduit qu'une partie des tests).
 
-\subsection{Screen}
+\section{Screen}
 
-\subsection{EditableScreen}
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Screen::testCellNaturePre1}\\
+    \texttt{Objectif}: & Test de précondition\\
+    \texttt{Conditions init}: & $S_0$ = \textrm{init(10, 5)}\\
+    \texttt{Opération}: &\textrm{CellNature($S_0$, 2, 3)}\\
+    \texttt{Oracle}: & Pas de levée d'exception\\
+  \end{longtable}}
 
-\subsection{Environment}
+\section{EditableScreen}
 
-\subsection{Character}
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{EditableScreen::testSetNaturePre2}\\
+    \texttt{Objectif}: & Test de précondition\\
+    \texttt{Conditions init}: & $S_0$ = \textrm{init(10, 5)}\\
+    \texttt{Opération}: &$S_1$ $=$ \textrm{SetNature($S_0$, -2, 3, \textbf{PLT})}\\
+    \texttt{Oracle}: & Levée d'une \textrm{PreconditionError} dans les contrats\\
+  \end{longtable}}
 
-\subsection{Guard}
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{EditableScreen::testFillTrans}\\
+    \texttt{Objectif}: & Test de transition\\
+    \texttt{Conditions init}: & $S_0$ = \textrm{SetNature(init(10, 5), 6, 1, \textbf{HOL})}\\
+    \texttt{Opération}: &$S_1$ $=$ \textrm{Fill($S_0$, 6, 1)}\\
+    \texttt{Oracle}: &\textrm{CellNature($S_1$, 6, 1)} $=$ \textbf{PLT}\\
+  \end{longtable}}
 
-\subsection{Player}
+\section{Environment}
 
-\subsection{Engine}
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Environment::testItemInCell}\\
+    \texttt{Objectif}: & Test d'état remarquable \\
+    \texttt{Conditions init}: & ES $=$ \textrm{EditableScreen::SetNature(EditableScreen::init(10,5), 5, 2, \textbf{MTL})}\\
+    & $S_0$ = \textrm{init(ES)}\\
+    & T = \textrm{Item::init(\textbf{Treasure}, 5, 3)}\\
+    \texttt{Opération}: &$S_1$ $=$ \textrm{AddCellContent($S_0$, 5, 3, T)}\\
+    \texttt{Oracle}: T $\in$ &\textrm{CellContent($S_1$, 5, 3)}\\
+  \end{longtable}}
 
-\subsection{Game}
+\section{Character}
 
-\section{Extensions}
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Character::testGoRightTrans4}\\
+    \texttt{Objectif}: & Test de transition\\
+    \texttt{Conditions init}: & $ES_0$ $=$ \textrm{EditableScreen::init(10,5)}\\
+    & $ES_1$ $=$ \textrm{EditableScreen::SetNature(EditableScreen::SetNature($ES_0$, 5, 3, \textbf{PLT}), 4, 4, \textbf{HDR})}\\
+    & $S$ = \textrm{Environment::init($ES_1$)}\\
+    & $C_0$ = \textrm{GoLeft(init($S$, 5, 4))}\\
+    \texttt{Opération}: &$C_1$ $=$ \textrm{GoRight($C_0$)}\\
+    \texttt{Oracle}: &\textrm{Col($C_1$)} $=$ 5 $\land$ \textrm{Hgt($C_1$)} $=$ 4\\
+  \end{longtable}}
+
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Character::testDownUp}\\
+    \texttt{Objectif}: & Test de paire de transitions\\
+    \texttt{Conditions init}: & $ES_0$ $=$ \textrm{EditableScreen::init(10,5)}\\
+    & $ES_1$ $=$ \textrm{EditableScreen::SetNature(EditableScreen::SetNature($ES_0$, 5, 1, \textbf{MTL}), 4, 1, \textbf{LAD})}\\
+    & $S$ = \textrm{Environment::init($ES_1$)}\\
+    & $C_0$ = \textrm{GoLeft(init($S$, 5, 2))}\\
+    \texttt{Opération}: &$C_1$ $=$ \textrm{GoUp(GoDown($C_0$))}\\
+    \texttt{Oracle}: &\textrm{Col($C_1$)} $=$ 4 $\land$ \textrm{Hgt($C_1$)} $=$ 2\\
+  \end{longtable}}
+
+\section{Guard}
+
+Pour les tests sur Guard, on a défini la fonction $createEnvironment$ suivante créant l'environment suivant:\\
+\begin{tabular}{cccccccccc}
+   & & & & & & & & & \\
+   & & & & & & & & & \\
+   &H&H& & &P&P&L&P&P\\
+   & & & & & & &L& & \\
+   & & & & & & &L& & \\
+  P&P&P&P&P&P&P&P&P&P\\
+  M&M&M&M&M&M&M&M&M&M
+\end{tabular}\\
+\noindent Ou toutes les cases sont vides ($\forall$ (x, y) $\in$ [0..10[$\times$[0..7[ \textrm{CellContent(createEnvironment(), x, y)} $= \emptyset$.
+
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Character::testClimbLeftTrans1}\\
+    \texttt{Objectif}: & Test de transition \\
+    \texttt{Conditions init}: & $ES_0$ $=$ \textrm{createEnvironment()}\\
+    & $P$ $=$ \textrm{Player::init($ES_1$, 3, 2)}\\
+    & $G_0$ $=$ \textrm{GoDown(init($ES_1$, $P$, 5, 2))}\\
+    \texttt{Opération}: &$G_1$ $=$ \textrm{ClimbLeft($G_0$)}\\
+    \texttt{Oracle}: &\textrm{Col($G_1$)} $=$ 4 $\land$ \textrm{Hgt($G_1$)} $=$ 2\\
+  \end{longtable}}
+
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Guard::testStepTrans6}\\
+    \texttt{Objectif}: & Test de transition \\
+    \texttt{Conditions init}: & $ES_0$ $=$ \textrm{createEnvironment()}\\
+    & $P$ $=$ \textrm{Player::init($ES_1$, 7, 5)}\\
+    & $G_0$ $=$ \textrm{GoRight(init($ES_1$, $P$, 6, 2))}\\
+    \texttt{Opération}: &$G_1$ $=$ \textrm{Step($G_0$)}\\
+    \texttt{Oracle}: &\textrm{Col($G_1$)} $=$ 7 $\land$ \textrm{Hgt($G_1$)} $=$ 3\\
+  \end{longtable}}
+
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Guard::testGuardCaughtPlayer}\\
+    \texttt{Objectif}: & Test d'état remarquable \\
+    \texttt{Conditions init}: & $ES_0$ $=$ \textrm{createEnvironment()}\\
+    & $ES_1$ $=$ \textrm{Environment::AddCellContent($ES_0$, 7, 3, init(7, 3))}\\
+    & $P$ $=$ \textrm{Player::init($ES_1$, 3, 2)}\\
+    & $G_0$ $=$ \textrm{Step(init($ES_1$, $P$, 4, 2))}\\
+    \texttt{Opération}: &$G_1$ $=$ \textrm{Step($G_0$)}\\
+    \texttt{Oracle}: &\textrm{Col($G_1$)} $=$ \textrm{Col($P$)} $\land$ \textrm{Hgt($G_1$)} $=$ \textrm{Hgt($P$)}\
+  \end{longtable}}
+
+\section{Player}
+
+Pour les tests sur Guard, on a défini la fonction $createEnvironment$ suivante créant l'environment suivant:\\
+\begin{tabular}{cccccccccc}
+   & & & & & & & & & \\
+   & & & & & & & & & \\
+   &H&H& & &P&P&L&P&P\\
+   & & & & & & &L& & \\
+   & & & & & & &L& & \\
+  P&P&P&P&P&P&P&P&P&P\\
+  M&M&M&M&M&M&M&M&M&M
+\end{tabular}\\
+De plus, on défini la fonction $createEngine(List<Command>)$, qui renvoie un Engine avec cet environmment, un Player en (9,6), un Guard en (2,2) et un Treasure en (4,5).
+
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Player::testStep8}\\
+    \texttt{Objectif}: & Test d'état remarquable \\
+    \texttt{Conditions init}: & $ES_0$ $=$ \textrm{createEnvironment()}\\
+    & $E$ $=$ \textrm{createEngine([\textbf{Down}])}\\
+    & $P_0$ $=$ \textrm{Player::init($ES_1$, 7, 5)}\\
+    \texttt{Opération}: &$P_1$ $=$ \textrm{Step($P_0$)}\\
+    \texttt{Oracle}: &\textrm{Col($P_1$)} $=$ 7 $\land$ \textrm{Hgt($P_1$)} $=$ 4\\
+  \end{longtable}}
+
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Player::testStep8}\\
+    \texttt{Objectif}: & Test de scénario\\
+    \texttt{Conditions init}: & $ES_0$ $=$ \textrm{createEnvironment()}\\
+    & $E$ $=$ \textrm{createEngine([\textbf{DigL}, \textbf{Left}, \textbf{DigR}, \textbf{Left}, \textbf{Up}, \textbf{Up}, \textbf{Up}, \textbf{Left}, \textbf{Left}])}\\
+    & $P_0$ $=$ \textrm{Player::init($ES_1$, 9, 5)}\\
+    \texttt{Opération}: &$P_1$ $=$ \textrm{Step(Step(Step(Step(Step(Step(Step(Step(Step(Step(Step(Step($P_0$))))))))))))}\\
+    \texttt{Oracle}: &\textrm{Col($P_1$)} $=$ 5 $\land$ \textrm{Hgt($P_1$)} $=$ 5 $\land$ \textrm{CellNature(E, 8, 4)} $=$ \textbf{HOL} $\land$ \textrm{CellNature(E, 9, 1)} $=$ \textbf{HOL}\\
+  \end{longtable}}
+
+\section{Engine}
+
+Pour les tests sur Engine, on a défini la fonction $createPlayableScreen$ suivante créant l'environment suivant:\\
+\begin{tabular}{cccccccccc}
+   & & & &H& & & & & \\
+   &L&P&P& &P& & & & \\
+   &L& & & & & & & & \\
+  P&P&P&P&P&P&P&P&P&P\\
+  M&M&M&M&M&M&M&M&M&M
+\end{tabular}\\
+\noindent Ou toutes les cases sont vides ($\forall$ (x, y) $\in$ [0..10[$\times$[0..7[ \textrm{CellContent(createEnvironment(), x, y)} $= \emptyset$.\\
+De plus \textrm{tcp.setCommands(List<Command>)} permet de donner les commandes auxquelles répondront le joueur.
+
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Engine::testStepPre2}\\
+    \texttt{Objectif}: & Test de précondition\\
+    \texttt{Conditions init}: & \textrm{tcp.setCommands([\textbf{Left}, \textbf{Left}])}\\
+    & $E_0$ $=$ \textrm{Step(init(createPlayableScreen(), (5, 2), \{\}, \{\}))}\\
+    \texttt{Opération}: &\ $E_1$ $=$ \textrm{Step($E_0$)}\\
+    \texttt{Oracle}: & Levée d'une \textrm{PreconditionError} dans les contrats\\
+  \end{longtable}}
+
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Engine::testStepTrans8}\\
+    \texttt{Objectif}: & Test de transition \\
+    \texttt{Conditions init}: & \textrm{tcp.setCommands([\textbf{DigR}, \textbf{Neutral}, \textbf{Neutral}, \textbf{Neutral}])}\\
+    & $E_0$ $=$ \textrm{Step(Step(Step(init(createPlayableScreen(), (4, 2), \{(7, 2)\}, \{(6, 2)\}))))}\\
+    \texttt{Opération}: &$E_1$ $=$ \textrm{Step($E_0$)}\\
+    \texttt{Oracle}: &\textrm{$|$Environment::CellContent(Environment($E_1$), 5, 2)$|$} $=$ 1\\
+  \end{longtable}}
+
+\section{Game}
+
+Pour les tests sur Engine, on a défini la fonction $createPlayableScreen$ suivante créant le niveau avec le Screen suivant:\\
+\begin{tabular}{cccccccccc}
+   & & & & & & & & & \\
+   & & & & & & & & & \\
+   & & & & & & & & & \\
+   & & & & & & & & &\\
+  M&M&M&M&M&M&M&M&M&M
+\end{tabular}\\
+\noindent Et pour contenu des cases: le joueur en (5, 1), un garde ne (3, 1), un trésor en (6, 1).
+
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Game::testCheckAndUpdateTrans2}\\
+    \texttt{Objectif}: & Test de transition\\
+    \texttt{Conditions init}: & \textrm{tcp.setCommands([\textbf{Right}]}\\
+    & $G_0$ = \textrm{Step(init([createPlayableLevel()]))}\\
+    \texttt{Opération}: &$S_1$ $=$ \textrm{CheckStateAndUpdate($S_0$))}\\
+    \texttt{Oracle}: &\textrm{LevelIndex($S_1$)} $=$ 1 $\land$ \textrm{Score($S_1$)} $=$ 1\\
+  \end{longtable}}
+
+{\small
+  \begin{longtable}{rl}
+    \texttt{Cas de test}: &\textrm{Game::testGameOver}\\
+    \texttt{Objectif}: & Test d'état remarquable \\
+    \texttt{Conditions init}: & \textrm{tcp.setCommands([\textbf{Neutral}, \textbf{Neutral}, \textbf{Neutral}, \textbf{Neutral}, \textbf{Neutral}, \textbf{Neutral}])}\\
+    & $G_0$ = \textrm{init([createPlayableLevel()])}\\
+    \texttt{Opération}: &$S_1$ $=$ \textrm{CheckStateAndUpdate(Step(Step($S_0$)))}\\
+    &$S_2$ $=$ \textrm{CheckStateAndUpdate(Step(Step($S_1$)))}\\
+    &$S_3$ $=$ \textrm{CheckStateAndUpdate(Step(Step($S_2$)))}\\
+    \texttt{Oracle}: &\textrm{HP($S_3$)} $=$ 0\\
+  \end{longtable}}
 
 \end{document}

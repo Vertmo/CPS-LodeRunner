@@ -141,7 +141,7 @@ public abstract class AbstractEngineTest {
     public void testStepPre2() { // Négatif
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2), new HashSet<>(), new HashSet<>());
-        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Left)));
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Left, Command.Left)));
         engine.step();
         // Oracle: une exception
         exception.expect(PreconditionError.class);
@@ -277,7 +277,7 @@ public abstract class AbstractEngineTest {
                     new HashSet<>(Arrays.asList(new CoordImpl(7, 2))),
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
         List<Command> coms = new ArrayList<>(); coms.add(Command.DigR);
-        for(int i = 0; i < 6; i++) coms.add(Command.Neutral);
+        for(int i = 0; i < 3; i++) coms.add(Command.Neutral);
         tcp.setCommands(coms);
         engine.step(); engine.step(); engine.step();
         // Opération
