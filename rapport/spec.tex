@@ -472,4 +472,21 @@ Dans le service Engine, on ajoute et modifie:
   & $\neg$ \textrm{GuardTurn(E)} $\Rightarrow$ $\forall$ \textrm{Guard} g $\in$ \textrm{Guards(Step(E))} $\exists$ \textrm{Guard} g' $\in$ \textrm{Guards(E))} g' $=$ \textrm{g}\\
 \end{longtable}}
 
+\section{Plus de cellules}
+
+\subsection{Pièges}
+
+Dans le service \textrm{Screen}, on ajoute l'opérator:
+
+{\small
+  \begin{longtable}{rl}
+    \textbf{Operators}: & \texttt{TriggerTrap}: \textrm{[Screen]} $\times$ \textrm{int} $\times$ \textrm{int}  $\rightarrow$ \textrm{[Screen]} \\
+    & \quad\quad \textbf{pre}: \textrm{TriggerTrap(S, x, y)} \textbf{require} \textrm{CellNature(X, x, y)} $=$ \textbf{TRP}\\
+    \textbf{Observations}:&\\
+    \texttt{[TriggerTrap]}: & \texttt{CellNature(TriggerTrap(S,x,y),x,y)} $=$ \textbf{EMP} \\
+    & $\forall$ $(x,y)$ $\in$ \texttt{[0;Width(S)[}$\times$ \texttt{[0;Height(S)[}, \\
+    & \quad\quad (\texttt{x} $\neq$ \texttt{u} $\lor$ \texttt{y} $\neq$ \texttt{v}) $\Rightarrow$ \texttt{CellNature(TriggerTrap(S,u,v)),x,y)} $=$ \texttt{CellNature(x,y)} \\
+  \end{longtable}
+}
+
 \end{document}

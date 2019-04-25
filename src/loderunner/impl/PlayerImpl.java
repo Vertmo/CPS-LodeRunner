@@ -31,7 +31,7 @@ public class PlayerImpl extends CharacterImpl implements Player{
      */
     private boolean willFall() {
         Cell cell_below = getEnvi().getCellNature(getCol(), getHgt()-1);
-        if(cell_below == Cell.MTL || cell_below == Cell.PLT || cell_below == Cell.LAD ) return false;
+        if(cell_below == Cell.MTL || cell_below == Cell.PLT || cell_below == Cell.LAD || cell_below == Cell.TRP) return false;
         for(InCell ic: getEnvi().getCellContent(getCol(), getHgt()-1)) {
             if(ic instanceof loderunner.services.Character) return false;
         }

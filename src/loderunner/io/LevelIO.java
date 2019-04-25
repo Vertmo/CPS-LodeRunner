@@ -43,6 +43,7 @@ public class LevelIO implements Level {
                     case 'L': screen.setNature(x, y, Cell.LAD); break;
                     case 'R': screen.setNature(x, y, Cell.HDR); break;
                     case 'M': screen.setNature(x, y, Cell.MTL); break;
+                    case 'T': screen.setNature(x, y, Cell.TRP); break;
                     }
                 }
                 br.read();
@@ -103,6 +104,7 @@ public class LevelIO implements Level {
                     case LAD: bw.write("L"); break;
                     case HDR: bw.write("R"); break;
                     case MTL: bw.write("M"); break;
+                    case TRP: bw.write("T"); break;
                     }
                 }
                 bw.write("\n");

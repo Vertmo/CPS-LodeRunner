@@ -28,7 +28,7 @@ public interface Player extends /* refine */ Character {
     //        && getEngine().getNextCommand() == Down => step() == goDown())
     // post: \not willFall()
     //       && getEngine().getNextCommand() == DigL
-    //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD}
+    //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
     //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
     //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) \in { EMP, HOL, LAD, HDR }
     //       && getEnvi().getCellContent(getCol()@pre-1,getHgt()@pre).isEmpty()

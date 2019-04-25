@@ -101,7 +101,7 @@ public class ScreenContract extends ScreenDecorator {
     public void fill(int x, int y) {
         // pre: getCellNature(x, y) == HOL
         if(getCellNature(x, y) != Cell.HOL)
-            throw new PreconditionError("Screen", "dig", "getCellNature(x, y) == HOL");
+            throw new PreconditionError("Screen", "fill", "getCellNature(x, y) == HOL");
 
         // captures
         int width_pre = getWidth();
@@ -139,6 +139,52 @@ public class ScreenContract extends ScreenDecorator {
             for(int j = 0; j < getHeight(); j++) {
                 if((i != x || j != y) && getCellNature(i, j) != cellNature_pre[i][j])
                     throw new PostconditionError("Screen", "fill", "One of the other cells has changed");
+            }
+        }
+    }
+
+    @Override
+    public void triggerTrap(int x, int y) {
+        // pre: getCellNature(x, y) == TRP
+        if(getCellNature(x, y) != Cell.TRP)
+            throw new PreconditionError("Screen", "triggerTrap", "getCellNature(x, y) == HOL");
+
+        // captures
+        int width_pre = getWidth();
+        int height_pre = getHeight();
+        Cell[][] cellNature_pre = new Cell[getWidth()][getHeight()];
+        for(int i = 0; i < getWidth(); i++) {
+            for(int j = 0; j < getHeight(); j++) {
+                cellNature_pre[i][j] = getCellNature(i, j);
+            }
+        }
+
+        // pre-invariant
+        checkInvariant();
+
+        // run
+        super.triggerTrap(x, y);
+
+        // post-invariant
+        checkInvariant();
+
+        // const: getWidth()
+        if(getWidth() != width_pre)
+            throw new PostconditionError("Screen", "triggerTrap", "getWidth() is supposed to be constant");
+        // const: getHeight()
+        if(getHeight() != height_pre)
+            throw new PostconditionError("Screen", "triggerTrap", "getHeight() is supposed to be constant");
+
+        // post: getCellNature(x, y) == EMP
+        if(getCellNature(x, y) != Cell.EMP)
+            throw new PostconditionError("Screen", "triggerTrap", "getCellNature(x, y) == EMP");
+
+        // post: \forall i \in [0..getWidth()[ \forall j \in [0..getHeight()[
+        //         (i != x || j != y) => getCellNature(i, j) == getCellNature(i, j)@pre
+        for(int i = 0; i < getWidth(); i++) {
+            for(int j = 0; j < getHeight(); j++) {
+                if((i != x || j != y) && getCellNature(i, j) != cellNature_pre[i][j])
+                    throw new PostconditionError("Screen", "triggerTrap", "One of the other cells has changed");
             }
         }
     }

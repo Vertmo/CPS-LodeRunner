@@ -23,6 +23,7 @@ public class LevelCanvas extends Canvas {
     private static final Image ladImg = new Image("assets/img/lad.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image hdrImg = new Image("assets/img/hdr.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image mtlImg = new Image("assets/img/mtl.png", (double) CELL_W, (double) CELL_W, true, true);
+    private static final Image trpImg = new Image("assets/img/trp.png", (double) CELL_W, (double) CELL_W, true, true);
 
     private static final Image playerImg = new Image("assets/img/player.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image guardImg = new Image("assets/img/guard.png", (double) CELL_W, (double) CELL_W, true, true);
@@ -50,7 +51,7 @@ public class LevelCanvas extends Canvas {
         return getHeight();
     }
 
-    public void drawCells(Screen s) {
+    public void drawCells(Screen s, boolean editorMode) {
         GraphicsContext gc = getGraphicsContext2D();
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, s.getWidth()*CELL_W, s.getHeight()*CELL_W);
@@ -70,6 +71,10 @@ public class LevelCanvas extends Canvas {
                     break;
                 case MTL:
                     gc.drawImage(mtlImg, x*CELL_W, (s.getHeight()-1-y)*CELL_W);
+                    break;
+                case TRP:
+                    if(editorMode) gc.drawImage(trpImg, x*CELL_W, (s.getHeight()-1-y)*CELL_W);
+                    else gc.drawImage(pltImg, x*CELL_W, (s.getHeight()-1-y)*CELL_W);
                     break;
                 }
             }
@@ -98,13 +103,13 @@ public class LevelCanvas extends Canvas {
     }
 
     public void drawLevel(Level l) {
-        drawCells(l.getScreen());
+        drawCells(l.getScreen(), true);
         drawContents(l.getScreen(), l.getPlayerCoord(), l.getGuardCoords(), l.getTreasureCoords());
     }
 
     public void drawEnvironment(Engine eng) {
         // Draw environment
-        drawCells(eng.getEnvironment());
+        drawCells(eng.getEnvironment(), false);
 
         // Draw cell contents
         Coord pCoord = new CoordImpl(eng.getPlayer().getCol(), eng.getPlayer().getHgt());

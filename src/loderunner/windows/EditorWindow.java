@@ -20,7 +20,7 @@ import loderunner.services.Cell;
 import loderunner.services.Coord;
 
 enum Tool {
-    EMP, PLT, LAD, HDR, MTL, Player, Guard, Treasure
+    EMP, PLT, LAD, HDR, MTL, TRP, Player, Guard, Treasure
 }
 
 public class EditorWindow {
@@ -67,6 +67,9 @@ public class EditorWindow {
                     break;
                 case HDR:
                     level.getScreen().setNature(x, y, Cell.HDR);
+                    break;
+                case TRP:
+                    level.getScreen().setNature(x, y, Cell.TRP);
                     break;
                 case Player:
                     level.getPlayerCoord().setCol(x); level.getPlayerCoord().setHgt(y);
@@ -151,6 +154,8 @@ public class EditorWindow {
         hdrButton.setOnAction(e -> { currentTool = Tool.HDR; });
         Button mtlButton = new Button("MTL");
         mtlButton.setOnAction(e -> { currentTool = Tool.MTL; });
+        Button trpButton = new Button("TRP");
+        trpButton.setOnAction(e -> { currentTool = Tool.TRP; });
 
         Button playerButton = new Button("Player");
         playerButton.setOnAction(e -> { currentTool = Tool.Player; });
@@ -159,7 +164,7 @@ public class EditorWindow {
         Button treasureButton = new Button("Treasure");
         treasureButton.setOnAction(e -> { currentTool = Tool.Treasure; });
 
-        return new ToolBar(empButton, pltButton, ladButton, hdrButton, mtlButton,
+        return new ToolBar(empButton, pltButton, ladButton, hdrButton, mtlButton, trpButton,
                            playerButton, guardButton, treasureButton);
     }
 

@@ -39,4 +39,9 @@ public class ScreenImplBug implements Screen {
         cells[y][x] = Cell.PLT;
         cells[0][0] = Cell.PLT; // Oups !
     }
+
+    @Override
+    public void triggerTrap(int x, int y) {
+        cells[y][x] = Cell.HOL;
+    }
 }

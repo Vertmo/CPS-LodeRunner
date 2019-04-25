@@ -38,4 +38,9 @@ public class ScreenImpl implements Screen {
     public void fill(int x, int y) {
         cells[y][x] = Cell.PLT;
     }
+
+    @Override
+    public void triggerTrap(int x, int y) {
+        cells[y][x] = Cell.EMP;
+    }
 }

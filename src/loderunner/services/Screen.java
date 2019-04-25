@@ -33,4 +33,10 @@ public interface Screen {
     // post: \forall i \in [0..getWidth()[ \forall j \in [0..getHeight()[
     //         (i != x || j != y) => getCellNature(i, j) == getCellNature(i, j)@pre
     public void fill(int x, int y);
+
+    // pre: getCellNature(x, y) = TRP
+    // post: getCellNature(x, y) = EMP
+    // post: \forall i \in [0..getWidth()[ \forall j \in [0..getHeight()[
+    //         (i != x || j != y) => getCellNature(i, j) == getCellNature(i, j)@pre
+    public void triggerTrap(int x, int y);
 }
