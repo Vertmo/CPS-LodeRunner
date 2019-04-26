@@ -359,6 +359,26 @@ public abstract class AbstractEngineTest {
         Assert.assertEquals(Status.Win, engine.getStatus());
     }
 
+    @Test
+    public void testTriggerTrap() {
+        // Conditions initiales
+        EditableScreen es = createPlayableScreen();
+        es.setNature(8, 1, Cell.TRP);
+        engine.init(es, new CoordImpl(9, 2),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+        List<Command> coms = new ArrayList<>();
+        coms.add(Command.Left); coms.add(Command.Neutral);
+        tcp.setCommands(coms);
+
+        // Opération
+        engine.step(); engine.step();
+
+        // Oracle: vérifié par contrat + le piege s'est déclenché et le joueur est tombé dedans
+        Assert.assertEquals(Cell.EMP, engine.getEnvironment().getCellNature(8, 1));
+        Assert.assertEquals(1, engine.getPlayer().getHgt());
+    }
+
     // Scénarios
 
     @Test

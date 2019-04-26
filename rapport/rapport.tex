@@ -1,5 +1,5 @@
 \documentclass{article}
-\usepackage[a4paper, margin=1in]{geometry}
+\usepackage[a4paper,margin=1in]{geometry}
 \usepackage{listings}
 
 \title{CPS - Projet - LodeRunner\\Rapport}
@@ -22,5 +22,14 @@ Dernière faiblesse de nos gardes: ils ne savent pas quitter les échelles autre
 
 \subsubsection{Un pas sur deux}
 Après toutes ces améliorations faites aux gardes, ceux-ci deviennent de plus en plus dangereux pour le joueur. Pour contrebalancer ce danger, on décide d'affaiblir considérablement les gardes en divisant par deux leur capacité d'action: autrement dit, les gardes n'agissent plus qu'un \textrm{step} de l'\textrm{Engine} sur deux, plutôt que tous les \textrm{step}. Pour cela, on doit modifier le service \textrm{Engine} plutôt que le service \textrm{Guard}, en introduisant un nouvel observateur \textrm{GuardTurn: [Engine] $\rightarrow$ boolean} qui s'inverse à chaque \textrm{step}. Le \textrm{Guard::step} n'est alors déclenché que si cet observateur est vrai. On observe que modifier l'appel des \textrm{step} de cette façon modifie double aussi le temps potentiel passé dans un trou par le garde (puisque \textrm{Guard::TimeInHole} augmente deux fois moins vite), et donc diminue les chances du garde de se sortir du trou. On pourrait si on voulait tout simplement diviser par 2 le seuil au delà duquel le garde sort du trou, mais cet équilibrage nous paraît correct.
+
+\subsection{Plus de cellules}
+Dans cette extension, on décide de complexifier le gameplay de notre jeu en ajoutant de nouvelles variantes de cellules permettant de créer des puzzle plus complexes.
+
+\subsubsection{Pièges}
+La première case qu'on ajoute est assez simple: il s'agit d'un piège, c'est à dire une case \textbf{TRP} ressemblant au premier abord à une plateforme normale, mais se dérobant dès que le joueur (ou un garde) marche dessus.
+L'implémentation du piège nécessite principalement des modifications dans le service \textrm{Screen}, ou l'on ajoute un nouvel opérateur \textrm{TriggerTrap: [Screen] $\times$ int $\times$ int $\rightarrow$ [Screen]} déclenchant un des pièges, c'est à dire transformant la case \textbf{TRP} en case \textbf{EMP}. De plus, il faut aussi effectuer des modifications au niveau du service \textrm{Engine}, principalement dans les post-conditions de \textrm{Step}, pour que le passage du joueur ou d'un garde au dessus de la case du piège déclenche effectivement celui-ci. Il est intéressant de remarquer que, pour conserver la cohérence de la spécification, le piège se déclenche après le \textrm{Step} du joueur ou garde qui l'a déclenché (sinon il y aurait une confusion sur le contenu de la case sous les pieds du personnage à l'instant du déclenchement).\\
+
+On note également des modifications dans les services \textrm{Character} et \textrm{Guard}, pour que les pièges soient considérés comme des plateformes avant d'être déclenchés (entre autres pour qu'ils bloquent un mouvement latéral). Ces changements étant peu intéressants d'un point de vue de la spécification, on n'a pas pris la peine de recopier les nouvelles spécifications de ces services dans le fichier \textit{spec.pdf}.
 
 \end{document}

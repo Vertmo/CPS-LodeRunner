@@ -127,6 +127,12 @@ public interface Engine {
     //           && (getPlayer.getCol()@pre == h.getCol() && getPlayer().getHgt()@pre == h.getHgt() => getStatus() == Loss)
     //           && (\exists Guard g \in getEnvironment().getCellContent(h.getCol(), h.getHgt())@pre
     //               => g.getCol() == g.getInitCol() && g.getHgt() == g.getInitHgt()))
+
+    // Gestion des pieges
+    // post: getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()-1)@pre == TRP
+    //       => getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()-1) == EMP
+    // post: \forall Guard g: getGuards() getEnvironment().getCellNature(g.getCol(), g.getHgt()-1)@pre == TRP
+    //       => getEnvironment().getCellNature(g.getCol(), g.getHgt()-1) == EMP
     public void step();
 
     public Engine clone();

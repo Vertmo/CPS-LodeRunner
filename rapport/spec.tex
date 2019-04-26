@@ -472,9 +472,9 @@ Dans le service Engine, on ajoute et modifie:
   & $\neg$ \textrm{GuardTurn(E)} $\Rightarrow$ $\forall$ \textrm{Guard} g $\in$ \textrm{Guards(Step(E))} $\exists$ \textrm{Guard} g' $\in$ \textrm{Guards(E))} g' $=$ \textrm{g}\\
 \end{longtable}}
 
-\section{Plus de cellules}
+\subsection{Plus de cellules}
 
-\subsection{Pièges}
+\subsubsection{Pièges}
 
 Dans le service \textrm{Screen}, on ajoute l'opérator:
 
@@ -483,10 +483,19 @@ Dans le service \textrm{Screen}, on ajoute l'opérator:
     \textbf{Operators}: & \texttt{TriggerTrap}: \textrm{[Screen]} $\times$ \textrm{int} $\times$ \textrm{int}  $\rightarrow$ \textrm{[Screen]} \\
     & \quad\quad \textbf{pre}: \textrm{TriggerTrap(S, x, y)} \textbf{require} \textrm{CellNature(X, x, y)} $=$ \textbf{TRP}\\
     \textbf{Observations}:&\\
-    \texttt{[TriggerTrap]}: & \texttt{CellNature(TriggerTrap(S,x,y),x,y)} $=$ \textbf{EMP} \\
-    & $\forall$ $(x,y)$ $\in$ \texttt{[0;Width(S)[}$\times$ \texttt{[0;Height(S)[}, \\
-    & \quad\quad (\texttt{x} $\neq$ \texttt{u} $\lor$ \texttt{y} $\neq$ \texttt{v}) $\Rightarrow$ \texttt{CellNature(TriggerTrap(S,u,v)),x,y)} $=$ \texttt{CellNature(x,y)} \\
-  \end{longtable}
-}
+    \texttt{[TriggerTrap]}: & \textrm{CellNature(TriggerTrap(S,x,y),x,y)} $=$ \textbf{EMP} \\
+    & $\forall$ $(x,y)$ $\in$ \textrm{[0;Width(S)[}$\times$ \textrm{[0;Height(S)[}, \\
+    & \quad\quad (\textrm{x} $\neq$ \textrm{u} $\lor$ \textrm{y} $\neq$ \textrm{v}) $\Rightarrow$ \textrm{CellNature(TriggerTrap(S,u,v)),x,y)} $=$ \textrm{CellNature(x,y)} \\
+  \end{longtable}}
+          
+Et dans le service \textrm{Engine}, on ajoute les observations:
+{\small
+  \begin{longtable}{rl}
+    \textbf{Observations}:&\\
+    \texttt{[Step]}:& \textrm{CellNature(E, Col(Player(Step(E))), Hgt(Player(Step(E)))-1)} $=$ \textbf{TRP}\\
+    & \quad\quad $\Rightarrow$ \textrm{CellNature(Step(E), Col(Player(Step(E))), Hgt(Player(Step(E)))-1)} $=$ \textbf{EMP}\\
+    & $\forall$ \textrm{Guard} g $\in$ \textrm{Guards(Step(E))}\\
+    & \quad\quad \textrm{CellNature(E, Col(g), Hgt(g)-1)} $=$ \textbf{TRP} $\Rightarrow$ \textrm{CellNature(Step(E), Col(g), Hgt(g)-1)} $=$ \textbf{EMP}\\
+  \end{longtable}}
 
 \end{document}

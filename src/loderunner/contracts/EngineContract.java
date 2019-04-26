@@ -240,6 +240,10 @@ public class EngineContract extends EngineDecorator {
             }
         }
         boolean guardTurn_pre = isGuardTurn();
+        Cell[][] cellNature_pre = new Cell[getEnvironment().getWidth()][getEnvironment().getHeight()];
+        for(int x = 0; x < getEnvironment().getWidth(); x++) {
+            for(int y = 0; y < getEnvironment().getHeight(); y++) cellNature_pre[x][y] = getEnvironment().getCellNature(x, y);
+        }
 
         // run
         super.step();
@@ -393,6 +397,19 @@ public class EngineContract extends EngineDecorator {
                     }
                 }
             }
+        }
+
+        // post: getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()-1)@pre == TRP
+        //       => getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()-1) == EMP
+        if(cellNature_pre[getPlayer().getCol()][getPlayer().getHgt()] == Cell.TRP
+           && getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()) != Cell.EMP)
+            throw new PostconditionError("Engine", "step", "The trap underneath the player should have triggered");
+        // post: \forall Guard g: getGuards() getEnvironment().getCellNature(g.getCol(), g.getHgt()-1)@pre == TRP
+        //       => getEnvironment().getCellNature(g.getCol(), g.getHgt()-1) == EMP
+        for(Guard g: getGuards()) {
+            if(cellNature_pre[g.getCol()][g.getHgt()] == Cell.TRP
+               && getEnvironment().getCellNature(g.getCol(), g.getHgt()) != Cell.EMP)
+                throw new PostconditionError("Engine", "step", "The trap underneath the guard should have triggered");
         }
     }
 

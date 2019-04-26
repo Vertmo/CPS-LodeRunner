@@ -189,6 +189,16 @@ public class EngineImpl implements Engine {
         }
         if(toRemove != null) treasures.remove(toRemove);
         if(treasures.isEmpty()) status = Status.Win;
+
+        // Trigger traps
+        if(getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()-1) == Cell.TRP) {
+            getEnvironment().triggerTrap(getPlayer().getCol(), getPlayer().getHgt()-1);
+        }
+        for(Guard g: getGuards()) {
+            if(getEnvironment().getCellNature(g.getCol(), g.getHgt()-1) == Cell.TRP) {
+                getEnvironment().triggerTrap(g.getCol(), g.getHgt()-1);
+            }
+        }
     }
 
     @Override
