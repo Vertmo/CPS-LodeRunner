@@ -108,6 +108,11 @@ public class PlayerImpl extends CharacterImpl implements Player{
         }
     }
 
+    @Override
+    public void teleport(int x, int y) {
+        col = x; hgt = y;
+    }
+
     /**
      * Clone l'instance courant mais l'environnement et l'engine ne sont pas cloné
      */
@@ -130,5 +135,6 @@ public class PlayerImpl extends CharacterImpl implements Player{
     @Override
     public int hashCode() {
         return -1; // Pour les gardes ce sera leur id
-    }
+	}
+
 }

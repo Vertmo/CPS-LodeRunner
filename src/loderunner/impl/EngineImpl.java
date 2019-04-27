@@ -124,7 +124,16 @@ public class EngineImpl implements Engine {
     public void step() {
         // Step for player
         env.removeCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
-        getPlayer().step();
+        PortalPair portal = null;
+        for(PortalPair pp: getPortals()) {
+            if(pp.getInPCoord().getCol() == getPlayer().getCol() && pp.getInPCoord().getHgt() == getPlayer().getHgt())
+                portal = pp;
+        }
+        if(portal != null) {
+            getPlayer().teleport(portal.getOutPCoord().getCol(), portal.getOutPCoord().getHgt());
+        } else {
+            getPlayer().step();
+        }
         env.addCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
 
         // Step for guards

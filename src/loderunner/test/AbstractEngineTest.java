@@ -406,6 +406,27 @@ public abstract class AbstractEngineTest {
         Assert.assertEquals(1, engine.getPlayer().getHgt());
     }
 
+    @Test
+    public void testPortal() {
+        // Conditions initiales
+        EditableScreen es = createPlayableScreen();
+        PortalPair pp = new PortalPairImpl(new CoordImpl(8, 2));
+        pp.setOutPCoord(new CoordImpl(5, 2));
+        engine.init(es, new CoordImpl(9, 2),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(Arrays.asList(pp)));
+        List<Command> coms = new ArrayList<>();
+        coms.add(Command.Left); coms.add(Command.Neutral);
+        tcp.setCommands(coms);
+
+        // Opération
+        engine.step(); engine.step();
+
+        // Oracle: vérifié par contrat + le piege a traversé le portail
+        Assert.assertEquals(5, engine.getPlayer().getCol());
+        Assert.assertEquals(2, engine.getPlayer().getHgt());
+    }
+
     // Scénarios
 
     @Test

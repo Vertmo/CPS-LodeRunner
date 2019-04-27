@@ -215,4 +215,25 @@ public class PlayerContract extends CharacterContract implements Player{
 			return;
 		}
 	}
+
+    @Override
+    public void teleport(int x, int y) {
+        // pre: getEnvi().getCellNature(x, y) == EMP
+        if(getEnvi().getCellNature(x, y) != Cell.EMP)
+            throw new PreconditionError("Player", "teleport", "getEnvi().getCellNature(x, y) == EMP");
+
+        // pre-invariant
+        checkInvariant();
+
+        // run
+        delegate.teleport(x, y);
+
+        // post-invariant
+        checkInvariant();
+
+        // post: getCol() == x
+        if(getCol() != x) throw new PostconditionError("Player", "teleport", "getCol() == x");
+        // post: getHgt() == y
+        if(getHgt() != y) throw new PostconditionError("Player", "teleport", "getHgt() == y");
+    }
 }

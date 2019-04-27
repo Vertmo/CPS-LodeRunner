@@ -500,6 +500,16 @@ Et dans le service \textrm{Engine}, on ajoute les observations:
 
 \subsubsection{Portails}
 
+Dans le service \textrm{Player}, on ajoute:
+{\small
+  \begin{longtable}{rl}
+    \textbf{Operators}: & \texttt{Teleport}: \textrm{[Player]} $\times$ \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{[Player]}\\
+    & \quad \textbf{pre} \textrm{Teleport(P, x, y)} \textbf{requires} \textrm{CellNature(Envi(P), x, y)} $=$ \textbf{EMP}\\
+    \textbf{Observations}:&\\
+    \textrm{[Teleport]}:& \textrm{Col(Teleport(P, x, y))} $=$ x $\land$ \textrm{Hgt(Teleport(P, x, y))} $=$ y\\
+  \end{longtable}
+}
+
 Dans le service \textrm{Engine}, on ajoute et modifie:
 
 {\small
@@ -512,6 +522,10 @@ Dans le service \textrm{Engine}, on ajoute et modifie:
     \textbf{Observations}: &\\
     \textrm{[init]}: & $\forall$ \textrm{PortalPair} pp $\in$ \textrm{portals} pp $\in$ \textrm{Portals(init(screen, pCoord, gCoords, tCoords, portals))}\\
     & $\land$ $\forall$ \textrm{PortalPair} pp $\in$ \textrm{Portals(init(screen, pCoord, gCoords, tCoords, portals))} pp $\in$ portals\\
+    \textrm{[Step]}: & $\exists$ \textrm{PortalPair} pp $\in$ \textrm{Portals(E)} (\textrm{Col(CoordPIn(pp))} $=$ \textrm{Col(Player(E))} $land$ \textrm{Hgt(CoordPIn(pp))} $=$ \textrm{Hgt(Player(E))})\\
+    & \quad\quad $\Rightarrow$ \textrm{Player(Step(E))} $=$ \textrm{Teleport(Player(E), Col(CoordPOut(pp)), Hgt(CoordPOut(pp)))}\\
+    \textrm{[Step]}: & $\neg\exists$ \textrm{PortalPair} pp $\in$ \textrm{Portals(E)} (\textrm{Col(CoordPIn(pp))} $=$ \textrm{Col(Player(E))} $land$ \textrm{Hgt(CoordPIn(pp))} $=$ \textrm{Hgt(Player(E))})\\
+    & \quad\quad $\Rightarrow$ \textrm{Player(Step(E))} $=$ \textrm{Step(Player(E))}\\
   \end{longtable}}
 
 \end{document}

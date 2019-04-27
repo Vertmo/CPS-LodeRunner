@@ -15,6 +15,11 @@ public interface Player extends /* refine */ Character {
     // post: getEngine() == eg
     public void init(Environment e, Engine eg, int x, int y);
 
+    // pre: getEnvi().getCellNature(x, y) == EMP
+    // post: getCol() == x
+    // post: getHgt() == y
+    public void teleport(int x, int y);
+
     /* Operators */
 
     // def: willFall() = getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { HOL, EMP, HDR }

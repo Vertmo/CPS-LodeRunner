@@ -108,6 +108,11 @@ public class PlayerImplBug extends CharacterImpl implements Player{
 		}
 	}
 
+    @Override
+    public void teleport(int x, int y) {
+        col = x; hgt = y;
+    }
+
 	/**
 	 * Vérifie l'égalité de l'instance avec l'instance o
 	 */

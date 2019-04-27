@@ -76,6 +76,27 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		//Oracle: PreconditoinError
 	}
 
+    @Test
+    public void testTeleportPre1() { // Positif
+        // Conditions initiales
+        Engine eg = createEngine(new ArrayList<>());
+        player.init(eg.getEnvironment(), eg, 0, 2);
+        // Opération
+        player.teleport(7, 5);
+        // Oracle: pas d'exception
+    }
+
+    @Test
+    public void testTeleportPre2() { // Négatif
+        // Conditions initiales
+        Engine eg = createEngine(new ArrayList<>());
+        player.init(eg.getEnvironment(), eg, 0, 2);
+        // Oracle: PreconditionError
+        exception.expect(PreconditionError.class);
+        // Opération
+        player.teleport(7, 2);
+    }
+
 	//============
 	// Transitions
 	//============
@@ -273,6 +294,16 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		player.step();
 		//Oracle: vérifié par contrats
 	}
+
+    @Test
+    public void testTeleportTrans1() { // Positif
+        // Conditions initiales
+        Engine eg = createEngine(new ArrayList<>());
+        player.init(eg.getEnvironment(), eg, 0, 2);
+        // Opération
+        player.teleport(8, 5);
+        // Oracle: vérifié par les contrats
+    }
 
 	//==================
 	//Etats remarquables

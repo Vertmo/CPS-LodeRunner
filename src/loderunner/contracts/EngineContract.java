@@ -269,7 +269,10 @@ public class EngineContract extends EngineDecorator {
         // post-invariant
         checkInvariant();
 
-        // post: getPlayer() == (getPlayer()@pre).step()
+        // post: \exists pp \in getPortals() (pp.getCoordPIn().getCol() == (getPlayer()@pre).getCol() && pp.getCoordPIn().getHgt() == (getPlayer()@pre).getHgt())
+        //       => getPlayer() == (getPlayer()@pre).teleport(pp.getCoordPOut().getCol(), pp.getCoordPOut().getHgt())
+        // post: \not \exists pp \in getPortals() (pp.getCoordPIn().getCol() == (getPlayer()@pre).getCol() && pp.getCoordPIn().getHgt() == (getPlayer()@pre).getHgt())
+        //       => getPlayer() == (getPlayer()@pre).step()
         // Il n'est pas raisonnable de chercher à tester cela (ça voudrait dire cloner l'état entier)
         // post: isGuardTurn()@pre => \forall Guard g: getGuards() g == (g@pre).step()
         //       && !isGuardTurn()@pre => \forall Guard g: getGuards() g == g@pre

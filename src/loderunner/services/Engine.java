@@ -84,6 +84,10 @@ public interface Engine {
 
     // Gestion des déplacements
     // post: getPlayer() == (getPlayer()@pre).step()
+    // post: \exists pp \in getPortals() (pp.getCoordPIn().getCol() == (getPlayer()@pre).getCol() && pp.getCoordPIn().getHgt() == (getPlayer()@pre).getHgt())
+    //       => getPlayer() == (getPlayer()@pre).teleport(pp.getCoordPOut().getCol(), pp.getCoordPOut().getHgt())
+    // post: \not \exists pp \in getPortals() (pp.getCoordPIn().getCol() == (getPlayer()@pre).getCol() && pp.getCoordPIn().getHgt() == (getPlayer()@pre).getHgt())
+    //       => getPlayer() == (getPlayer()@pre).step()
     // post: isGuardTurn()@pre => \forall Guard g: getGuards() g == (g@pre).step()
     //       && !isGuardTurn()@pre => \forall Guard g: getGuards() g == g@pre
     // post: isGuardTurn() = !isGuardTurn()@pre
