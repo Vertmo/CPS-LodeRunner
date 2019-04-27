@@ -17,6 +17,7 @@ import loderunner.services.InCell;
 import loderunner.services.Item;
 import loderunner.services.ItemType;
 import loderunner.services.Player;
+import loderunner.services.PortalPair;
 import loderunner.services.Status;
 
 public class EngineContract extends EngineDecorator {
@@ -101,7 +102,7 @@ public class EngineContract extends EngineDecorator {
     }
 
     @Override
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords) {
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<PortalPair> portals) {
         // pre: screen.isPlayable()
         if(!screen.isPlayable())
             throw new PreconditionError("Engine", "init", "screen.isPlayable()");
@@ -146,8 +147,17 @@ public class EngineContract extends EngineDecorator {
                 throw new PreconditionError("Engine", "init", "A treasure is on the same cell as the player");
         }
 
+        // pre: \forall PortalPair pp \in portals
+        //        screen.getCellNature(pp.getInPCoord().getCol(), pp.getInPCoord().getHgt()) == EMP
+        //        && screen.getCellNature(pp.getOutPCoord().getCol(), pp.getOutPCoord().getHgt()) == EMP
+        for(PortalPair pp: portals) {
+            if(screen.getCellNature(pp.getInPCoord().getCol(), pp.getInPCoord().getHgt()) != Cell.EMP
+               || screen.getCellNature(pp.getOutPCoord().getCol(), pp.getOutPCoord().getHgt()) != Cell.EMP)
+                throw new PreconditionError("Engine", "init", "Every portal should be on an empty cell");
+        }
+
         // run
-        super.init(screen, pCoord, gCoords, tCoords);
+        super.init(screen, pCoord, gCoords, tCoords, portals);
 
         // post-invariant
         checkInvariant();
@@ -213,6 +223,14 @@ public class EngineContract extends EngineDecorator {
             }
             if(!found)
                 throw new PostconditionError("Engine", "init", "There are too much treasures");
+        }
+        // post: \forall PortalPair pp \in portals pp \in getPortals()
+        //       && \forall PortalPair pp \in getPortals() pp \in portals
+        for(PortalPair pp: portals) {
+            if(!getPortals().contains(pp)) throw new PostconditionError("Engine", "init", "A portal is missing");
+        }
+        for(PortalPair pp: getPortals()) {
+            if(!portals.contains(pp)) throw new PostconditionError("Engine", "init", "There are too much portals");
         }
     }
 

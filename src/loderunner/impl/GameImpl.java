@@ -51,7 +51,8 @@ public class GameImpl implements Game {
         levelIndex = 0;
         engine = new EngineImpl(cp);
         engine.init(levels.get(0).getScreen(), levels.get(0).getPlayerCoord(),
-                    levels.get(0).getGuardCoords(), levels.get(0).getTreasureCoords());
+                    levels.get(0).getGuardCoords(), levels.get(0).getTreasureCoords(),
+                    levels.get(0).getPortals());
         score = 0;
         hp = 3;
     }
@@ -66,7 +67,8 @@ public class GameImpl implements Game {
                 engine.init(levels.get(getLevelIndex()).getScreen(),
                             levels.get(getLevelIndex()).getPlayerCoord(),
                             levels.get(getLevelIndex()).getGuardCoords(),
-                            levels.get(getLevelIndex()).getTreasureCoords());
+                            levels.get(getLevelIndex()).getTreasureCoords(),
+                            levels.get(getLevelIndex()).getPortals());
             }
         }
 
@@ -77,7 +79,8 @@ public class GameImpl implements Game {
                 engine.init(levels.get(getLevelIndex()).getScreen(),
                             levels.get(getLevelIndex()).getPlayerCoord(),
                             levels.get(getLevelIndex()).getGuardCoords(),
-                            levels.get(getLevelIndex()).getTreasureCoords());
+                            levels.get(getLevelIndex()).getTreasureCoords(),
+                            levels.get(getLevelIndex()).getPortals());
             }
         }
     }

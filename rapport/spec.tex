@@ -498,4 +498,20 @@ Et dans le service \textrm{Engine}, on ajoute les observations:
     & \quad\quad \textrm{CellNature(E, Col(g), Hgt(g)-1)} $=$ \textbf{TRP} $\Rightarrow$ \textrm{CellNature(Step(E), Col(g), Hgt(g)-1)} $=$ \textbf{EMP}\\
   \end{longtable}}
 
+\subsubsection{Portails}
+
+Dans le service \textrm{Engine}, on ajoute et modifie:
+
+{\small
+  \begin{longtable}{rl}
+    \textbf{Observators}: & \textbf{const} \texttt{Portals}: \textrm{[Engine]} $\rightarrow$ \textrm{Set\{PortalPari\}} \\
+    \textbf{Constructors}: &\texttt{init}: \textrm{EditableScreen} $\times$ \textrm{Coord} $\times$ \textrm{Set\{Coord\}} $\times$ \textrm{Set\{Coord\}} $\times$ \textrm{Set\{PortalPair\}} $\rightarrow$ \textrm{[Engine]} \\
+      & \quad \textbf{pre} $\ldots$\\
+      & \quad\quad\quad $\land$ $\forall$ \textrm{PortalPair} pp $\in$ \textrm{portals} \textrm{CellNature(screen, Col(InPCoord(pp)), Hgt(InPCoord(pp)))} $=$ \textbf{EMP}\\
+    & \quad\quad\quad\quad\quad $\land$ \textrm{CellNature(screen, Col(OutPCoord(pp)), Hgt(OutPCoord(pp)))}\\
+    \textbf{Observations}: &\\
+    \textrm{[init]}: & $\forall$ \textrm{PortalPair} pp $\in$ \textrm{portals} pp $\in$ \textrm{Portals(init(screen, pCoord, gCoords, tCoords, portals))}\\
+    & $\land$ $\forall$ \textrm{PortalPair} pp $\in$ \textrm{Portals(init(screen, pCoord, gCoords, tCoords, portals))} pp $\in$ portals\\
+  \end{longtable}}
+
 \end{document}

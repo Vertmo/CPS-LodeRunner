@@ -46,7 +46,7 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		gCoords.add(new CoordImpl(2, 2));
 		Set<Coord> tCoords = new HashSet<Coord>();
 		tCoords.add(new CoordImpl(4, 5));
-		eg.init(screen, pCoord, gCoords, tCoords);
+		eg.init(screen, pCoord, gCoords, tCoords, new HashSet<>());
 		return eg;
 	}
 

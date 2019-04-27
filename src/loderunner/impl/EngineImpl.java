@@ -16,6 +16,7 @@ import loderunner.services.InCell;
 import loderunner.services.Item;
 import loderunner.services.ItemType;
 import loderunner.services.Player;
+import loderunner.services.PortalPair;
 import loderunner.services.Status;
 
 public class EngineImpl implements Engine {
@@ -28,6 +29,7 @@ public class EngineImpl implements Engine {
     private Status status;
     private int levelScore;
     private boolean guardTurn;
+    private Set<PortalPair> portals;
 
     public EngineImpl(CommandProvider cmdProvider) {
         this.cmdProvider = cmdProvider;
@@ -84,13 +86,19 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords) {
+    public Set<PortalPair> getPortals() {
+        return portals;
+    }
+
+    @Override
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<PortalPair> portals) {
         env = new EnvironmentImpl();
         env.init(screen);
         player = new PlayerImpl();
         player.init(env, this, pCoord.getCol(), pCoord.getHgt());
         env.addCellContent(pCoord.getCol(), pCoord.getHgt(), player);
         levelScore = 0;
+        this.portals = new HashSet<>(portals);
 
         guards = new HashSet<>();
         for(Coord c: gCoords) {

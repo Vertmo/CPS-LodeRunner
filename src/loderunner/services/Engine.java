@@ -19,14 +19,19 @@ public interface Engine {
     public int getLevelScore();
     public Command getNextCommand();
     public Command peekNextCommand();
-
     public boolean isGuardTurn();
+
+    // const
+    public Set<PortalPair> getPortals();
 
     /* Constructors */
 
     // pre: screen.isPlayable()
     // pre: \forall Coord c \in { pCoord } union gCoords union tCoords
     //        screen.getCellNature(c.getCol(), c.getHgt()) == EMP
+    // pre: \forall PortalPair pp \in portals
+    //        screen.getCellNature(pp.getInPCoord().getCol(), pp.getInPCoord().getHgt()) == EMP
+    //        && screen.getCellNature(pp.getOutPCoord().getCol(), pp.getOutPCoord().getHgt()) == EMP
     // pre: \forall Coord c1 \in gCoords \forall Coord c2 \in gCoords
     //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
     // pre: \forall Coord c1 \in tCoords \forall Coord c2 \in tCoords
@@ -50,7 +55,9 @@ public interface Engine {
     //       && \forall Guard g \in getGuards() \exists Coord c \in gCoords (g.getCol() == c.getCol() && g.getHgt() == c.getHgt())
     // post: \forall Coord c \in tCoords \exists Item i \in getTreasures() (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
     //       && \forall Item i \in getTreasures() \exists Coord c \in tCoords (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords);
+    // post: \forall PortalPair pp \in portals pp \in getPortals()
+    //       && \forall PortalPair pp \in getPortals() pp \in portals
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<PortalPair> portals);
 
     /* Invariants */
 

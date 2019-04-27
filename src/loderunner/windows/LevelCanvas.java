@@ -14,6 +14,7 @@ import loderunner.impl.CoordImpl;
 import loderunner.services.Coord;
 import loderunner.services.Engine;
 import loderunner.services.Level;
+import loderunner.services.PortalPair;
 import loderunner.services.Screen;
 
 public class LevelCanvas extends Canvas {
@@ -29,6 +30,8 @@ public class LevelCanvas extends Canvas {
     private static final Image guardImg = new Image("assets/img/guard.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image treasureImg = new Image("assets/img/treasure.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image treaGuardImg = new Image("assets/img/treasureGuard.png", (double) CELL_W, (double) CELL_W, true, true);
+    private static final Image portalInImg = new Image("assets/img/portalIn.png", (double) CELL_W, (double) CELL_W, true, true);
+    private static final Image portalOutImg = new Image("assets/img/portalOut.png", (double) CELL_W, (double) CELL_W, true, true);
 
     @Override
     public boolean isResizable() {
@@ -81,7 +84,7 @@ public class LevelCanvas extends Canvas {
         }
     }
 
-    public void drawContents(Screen s, Coord pc, Set<Coord> gCoords, Set<Coord> tCoords) {
+    public void drawContents(Screen s, Coord pc, Set<Coord> gCoords, Set<Coord> tCoords, Set<PortalPair> portals) {
         GraphicsContext gc = getGraphicsContext2D();
 
         // Draw player
@@ -100,11 +103,18 @@ public class LevelCanvas extends Canvas {
             else
                 gc.drawImage(treasureImg, t.getCol()*CELL_W, (s.getHeight()-1-t.getHgt())*CELL_W);
         }
+
+        // Draw portals
+        for(PortalPair pp: portals) {
+            gc.drawImage(portalInImg, pp.getInPCoord().getCol()*CELL_W, (s.getHeight()-1-pp.getInPCoord().getHgt())*CELL_W);
+            if(pp.getOutPCoord() != null)
+                gc.drawImage(portalOutImg, pp.getOutPCoord().getCol()*CELL_W, (s.getHeight()-1-pp.getOutPCoord().getHgt())*CELL_W);
+        }
     }
 
     public void drawLevel(Level l) {
         drawCells(l.getScreen(), true);
-        drawContents(l.getScreen(), l.getPlayerCoord(), l.getGuardCoords(), l.getTreasureCoords());
+        drawContents(l.getScreen(), l.getPlayerCoord(), l.getGuardCoords(), l.getTreasureCoords(), l.getPortals());
     }
 
     public void drawEnvironment(Engine eng) {
@@ -119,7 +129,7 @@ public class LevelCanvas extends Canvas {
         Set<Coord> tCoords = eng.getTreasures().stream()
             .map(t -> new CoordImpl(t.getCol(), t.getHgt()))
             .collect(Collectors.toSet());
-        drawContents(eng.getEnvironment(), pCoord, gCoords, tCoords);
+        drawContents(eng.getEnvironment(), pCoord, gCoords, tCoords, eng.getPortals());
     }
 
     public void drawGameOver(int score) {
