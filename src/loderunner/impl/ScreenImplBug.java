@@ -44,4 +44,9 @@ public class ScreenImplBug implements Screen {
     public void triggerTrap(int x, int y) {
         cells[y][x] = Cell.HOL;
     }
+
+    @Override
+    public void openDoor(int x, int y) {
+        cells[y][x] = Cell.DOR;
+    }
 }

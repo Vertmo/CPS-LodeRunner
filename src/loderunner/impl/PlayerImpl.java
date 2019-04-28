@@ -9,6 +9,7 @@ import loderunner.services.Player;
 
 public class PlayerImpl extends CharacterImpl implements Player{
     private Engine engine;
+    private int nbKeys;
 
     @Override
     public Engine getEngine() {
@@ -22,6 +23,7 @@ public class PlayerImpl extends CharacterImpl implements Player{
     public void init(Environment e, Engine eg, int x, int y) {
         super.init(e, x, y);
         engine = eg;
+        nbKeys = 0;
     }
 
     /**
@@ -135,6 +137,16 @@ public class PlayerImpl extends CharacterImpl implements Player{
     @Override
     public int hashCode() {
         return -1; // Pour les gardes ce sera leur id
+	}
+
+	@Override
+	public int getNbKeys() {
+		return nbKeys;
+	}
+
+	@Override
+	public void grabKey() {
+      nbKeys++;
 	}
 
 }

@@ -44,4 +44,9 @@ public abstract class ScreenDecorator implements Screen {
     public void triggerTrap(int x, int y) {
         delegate.triggerTrap(x, y);
     }
+
+    @Override
+    public void openDoor(int x, int y) {
+        delegate.openDoor(x, y);
+    }
 }

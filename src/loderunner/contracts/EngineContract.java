@@ -301,6 +301,8 @@ public class EngineContract extends EngineDecorator {
 
         // captures
         Set<Item> treasures_pre = new HashSet<>(getTreasures());
+        Set<Item> keys_pre = new HashSet<>(getKeys());
+        int nbKeys_pre = getPlayer().getNbKeys();
         int levelScore_pre = getLevelScore();
         Set<Hole> holes_pre = new HashSet<>();
         for(Hole h: getHoles()) holes_pre.add(h.clone());
@@ -410,6 +412,23 @@ public class EngineContract extends EngineDecorator {
         // post: getTreasures().isEmpty() => getStatus() == Win
         if(getTreasures().isEmpty() && getStatus() != Status.Win)
             throw new PostconditionError("Engine", "step", "getTreasures().isEmpty() => getStatus() == Win");
+
+        // post: \exists Item i \in getKeys()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
+        //       => i \notin getKeys() && getPlayer().getNbKeys() == getPlayer().getNbKeys()@pre + 1
+        for(Item i: keys_pre) {
+            if(i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt() && !guard_found
+               && (getKeys().contains(i) || getPlayer().getNbKeys() != nbKeys_pre + 1))
+                throw new PostconditionError("Engine", "step", "The key should have been taken by the player");
+        }
+        // post: \not \exists Item i \in getKeys()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
+        //       => getPlayer().getNbKeys() == getPlayer().getNbKeys()@pre
+        found = false;
+        for(Item i: keys_pre) {
+            if(i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt()) found = true;
+        }
+        if(!found && getPlayer().getNbKeys() != nbKeys_pre)
+            throw new PostconditionError("Engine", "step", "The number of keys was updated when it should not have been");
+
         // post: \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
         //       && !getTreasures().isEmpty()
         //       => getStatus() == Loss

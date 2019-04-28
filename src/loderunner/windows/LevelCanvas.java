@@ -126,6 +126,12 @@ public class LevelCanvas extends Canvas {
         drawContents(l.getScreen(), l.getPlayerCoord(), l.getGuardCoords(), l.getTreasureCoords(), l.getKeyCoords(), l.getPortals());
     }
 
+    public void drawKeys(int nbKeys) {
+        for(int i = 0; i < nbKeys; i++) {
+            getGraphicsContext2D().drawImage(keyImg, i*CELL_W/1.4, 0, CELL_W/1.5, CELL_W/1.5);
+        }
+    }
+
     public void drawEnvironment(Engine eng) {
         // Draw environment
         drawCells(eng.getEnvironment(), false);

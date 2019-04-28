@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
+import org.junit.Assert;
 
 import loderunner.contracts.errors.PreconditionError;
 import loderunner.impl.CoordImpl;
@@ -296,13 +297,24 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 	}
 
     @Test
-    public void testTeleportTrans1() { // Positif
+    public void testTeleportTrans1() {
         // Conditions initiales
         Engine eg = createEngine(new ArrayList<>());
         player.init(eg.getEnvironment(), eg, 0, 2);
         // Opération
         player.teleport(8, 5);
         // Oracle: vérifié par les contrats
+    }
+
+    @Test
+    public void testGrabKeyTrans1() {
+        // Conditions initiales
+        Engine eg = createEngine(new ArrayList<>());
+        player.init(eg.getEnvironment(), eg, 0, 2);
+        // Opération
+        player.grabKey();
+        // Oracle: vérifié par les contrats + le joueur à une clé en plus
+        Assert.assertEquals(1, player.getNbKeys());
     }
 
 	//==================

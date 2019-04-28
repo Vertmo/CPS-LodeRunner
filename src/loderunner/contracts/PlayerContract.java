@@ -31,6 +31,10 @@ public class PlayerContract extends CharacterContract implements Player{
 		return delegate.getEngine();
 	}
 
+    @Override
+    public int getNbKeys() {
+        return delegate.getNbKeys();
+    }
 
 	@Override
 	public void init(Environment e, Engine eg, int x, int y) {
@@ -62,6 +66,10 @@ public class PlayerContract extends CharacterContract implements Player{
 		// post: getEngine() == eg
 		if(!(getEngine() == eg))
 			throw new PostconditionError("Player", "init", "getEngine() == eg");
+
+    // post: getNbKeys() == 0
+    if(getNbKeys() != 0)
+        throw new PostconditionError("Player", "init", "getNbKeys() == 0");
 	}
 
 
@@ -225,6 +233,9 @@ public class PlayerContract extends CharacterContract implements Player{
         // pre-invariant
         checkInvariant();
 
+        // captures
+        int nbKeys_pre = getNbKeys();
+
         // run
         delegate.teleport(x, y);
 
@@ -235,5 +246,28 @@ public class PlayerContract extends CharacterContract implements Player{
         if(getCol() != x) throw new PostconditionError("Player", "teleport", "getCol() == x");
         // post: getHgt() == y
         if(getHgt() != y) throw new PostconditionError("Player", "teleport", "getHgt() == y");
+
+        // post: getNbKeys() == getNbKeys()@pre
+        if(getNbKeys() != nbKeys_pre)
+            throw new PostconditionError("Player", "teleport", "etNbKeys() == getNbKeys()@pre");
+    }
+
+    @Override
+    public void grabKey() {
+        // pre-invariant
+        checkInvariant();
+
+        // captures
+        int nbKeys_pre = getNbKeys();
+
+        // run
+        delegate.grabKey();
+
+        // post-invariant
+        checkInvariant();
+
+        // post: getNbKeys() = getNbKeys()@pre + 1
+        if(getNbKeys() != nbKeys_pre + 1)
+            throw new PostconditionError("Player", "grabKey", "getNbKeys() = getNbKeys()@pre + 1");
     }
 }

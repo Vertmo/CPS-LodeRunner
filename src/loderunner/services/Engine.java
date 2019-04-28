@@ -130,6 +130,12 @@ public interface Engine {
     //       => i \in getTreasures()
     // post: getTreasures().isEmpty() => getStatus() == Win
 
+    // Le joueur peut récupérer une clé
+    // post: \exists Item i \in getKeys()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
+    //       => i \notin getKeys() && getPlayer().getNbKeys() == getPlayer().getNbKeys()@pre + 1
+    // post: \not \exists Item i \in getKeys()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
+    //       => getPlayer().getNbKeys() == getPlayer().getNbKeys()@pre
+
     // Le joueur peut être tué par un garde, mais il gagne si il a attrapé le dernier trésor malgré tout (on est génereux)
     // post: \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
     //       && !getTreasures().isEmpty()

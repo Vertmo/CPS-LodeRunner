@@ -188,4 +188,50 @@ public class ScreenContract extends ScreenDecorator {
             }
         }
     }
+
+    @Override
+    public void openDoor(int x, int y) {
+        // pre: getCellNature(x, y) = DOR
+        if(getCellNature(x, y) != Cell.DOR)
+            throw new PreconditionError("Screen", "openDoor", "getCellNature(x, y) = DOR");
+
+        // pre-invariant
+        checkInvariant();
+
+        // captures
+        int width_pre = getWidth();
+        int height_pre = getHeight();
+        Cell[][] cellNature_pre = new Cell[getWidth()][getHeight()];
+        for(int i = 0; i < getWidth(); i++) {
+            for(int j = 0; j < getHeight(); j++) {
+                cellNature_pre[i][j] = getCellNature(i, j);
+            }
+        }
+
+        // run
+        super.openDoor(x, y);
+
+        // post-invariant
+        checkInvariant();
+
+        // const: getWidth()
+        if(getWidth() != width_pre)
+            throw new PostconditionError("Screen", "openDoor", "getWidth() is supposed to be constant");
+        // const: getHeight()
+        if(getHeight() != height_pre)
+            throw new PostconditionError("Screen", "openDoor", "getHeight() is supposed to be constant");
+
+        // post: getCellNature(x, y) = EMP
+        if(getCellNature(x, y) != Cell.EMP)
+            throw new PostconditionError("Screen", "openDoor", "getCellNature(x, y) = EMP");
+
+        // post: \forall i \in [0..getWidth()[ \forall j \in [0..getHeight()[
+        //         (i != x || j != y) => getCellNature(i, j) == getCellNature(i, j)@pre
+        for(int i = 0; i < getWidth(); i++) {
+            for(int j = 0; j < getHeight(); j++) {
+                if((i != x || j != y) && getCellNature(i, j) != cellNature_pre[i][j])
+                    throw new PostconditionError("Screen", "openDoor", "One of the other cells has changed");
+            }
+        }
+    }
 }

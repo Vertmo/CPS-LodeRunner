@@ -530,7 +530,30 @@ Dans le service \textrm{Engine}, on ajoute et modifie:
 
 \subsubsection{Portes et clés}
 
-Dans le service \textrm{Engine}, on ajoute et modifie:
+Dans le service \textrm{Screen}, on ajoute:
+{\small
+  \begin{longtable}{rl}
+    \textbf{Operators}: & \texttt{OpenDoor}: \textrm{[Screen]} $\times$ \textrm{int} $\times$ \textrm{int}  $\rightarrow$ \textrm{[Screen]} \\
+    & \quad\quad \textbf{pre}: \textrm{OpenDoor(S, x, y)} \textbf{require} \textrm{CellNature(X, x, y)} $=$ \textbf{DOR}\\
+    \textbf{Observations}:&\\
+    \textrm{[OpenDoor]}: & \textrm{CellNature(OpenDoor(S,x,y),x,y)} $=$ \textbf{EMP} \\
+    & $\forall$ $(x,y)$ $\in$ \textrm{[0;Width(S)[}$\times$ \textrm{[0;Height(S)[}, \\
+    & \quad\quad (\textrm{x} $\neq$ \textrm{u} $\lor$ \textrm{y} $\neq$ \textrm{v}) $\Rightarrow$ \textrm{CellNature(OpenDoor(S,u,v)),x,y)} $=$ \textrm{CellNature(x,y)} \\
+  \end{longtable}}
+
+Dans le service \textrm{Player}, on ajoute:
+
+{\small
+  \begin{longtable}{rl}
+    \textbf{Observators}:& \texttt{NbKeys}: \textrm{[Player]} $\rightarrow$ \textrm{int}\\
+    \textbf{Operators}: & \texttt{GrabKey}: \textrm{[Player]} $\rightarrow$ \textrm{[Player]} \\
+    \textbf{Observations}:&\\
+    \textrm{[init]}:& \textrm{NbKeys(init(e, eg, x, y))} $= 0$\\
+    \textrm{[GrabKey]}:& \textrm{NbKeys(GrabKey(P))} $=$ \textrm{NbKeys(P)} $+ 1$ \\
+    \textrm{[Teleport]}:& \textrm{NbKeys(Teleport(P, x, y))} $=$ \textrm{NbKeys(P)}\\
+  \end{longtable}}
+
+Et dans le service \textrm{Engine}, on ajoute et modifie:
 {\small
   \begin{longtable}{rl}
     \textbf{Observators}: & \textbf{const} \texttt{Keys}: \textrm{[Engine]} $\rightarrow$ \textrm{Set\{Item\}} \\
@@ -548,6 +571,10 @@ Dans le service \textrm{Engine}, on ajoute et modifie:
     \textrm{[init]}: & $\forall$ \textrm{Coord} c $\in$ tC $\exists$ \textrm{Item} t $\in$ \textrm{Keys(init(s, pC, gC, tC))} (\textrm{Col(t)} $=$ \textrm{Col(c)} $\land$ \textrm{Hgt(t)} $=$ \textrm{Hgt(c)})\\
   & \quad\quad $\land$ $\forall$ \textrm{Item} t $\in$ \textrm{Keys(init(s, pC, gC, tC))} $\exists$ \textrm{Coord} c $\in$ tC\\
   & \quad\quad\quad\quad (\textrm{Col(t)} $=$ \textrm{Col(c)} $\land$ \textrm{Hgt(t)} $=$ \textrm{Hgt(c)})\\
+    \textrm{[step]}:& $\exists$ \textrm{Item} k $\in$ \textrm{Keys(E)} \textrm{Col(k)} $=$ \textrm{Col(Player(E))} $\land$ \textrm{Hgt(k)} $=$ \textrm{Hgt(Player(E))}\\
+  & \quad\quad $\Rightarrow$ (k $\notin$ Keys(Step(E)) $\land$ \textrm{NbKeys(Player(Step(E)))} $=$ \textrm{NbKeys(Player(E))} $+$ 1)\\
+  & $\neg$$\exists$ \textrm{Item} k $\in$ \textrm{Treasures(E)} \textrm{Col(k)} $=$ \textrm{Col(Player(E))} $\land$ \textrm{Hgt(k)} $=$ \textrm{Hgt(Player(E))}\\
+  & \quad\quad $\Rightarrow$ \textrm{NbKeys(Player(Step(E)))} $=$ \textrm{NbKeys(Player(E))}\\
   \end{longtable}}
 
 \end{document}

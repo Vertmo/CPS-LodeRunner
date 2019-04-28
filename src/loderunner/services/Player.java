@@ -6,6 +6,8 @@ public interface Player extends /* refine */ Character {
     // const
     public Engine getEngine();
 
+    public int getNbKeys();
+
     /* Constructors */
 
     // pre: e.getCellNature(x, y) == EMP
@@ -13,12 +15,17 @@ public interface Player extends /* refine */ Character {
     // post: getCol() == x
     // post: getHgt() == y
     // post: getEngine() == eg
+    // post: getNbKeys() == 0
     public void init(Environment e, Engine eg, int x, int y);
 
     // pre: getEnvi().getCellNature(x, y) == EMP
     // post: getCol() == x
     // post: getHgt() == y
+    // post: getNbKeys() == getNbKeys()@pre
     public void teleport(int x, int y);
+
+    // post: getNbKeys() = getNbKeys()@pre + 1
+    public void grabKey();
 
     /* Operators */
 

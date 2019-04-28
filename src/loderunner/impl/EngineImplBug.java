@@ -210,6 +210,17 @@ public class EngineImplBug implements Engine {
         }
         //if(toRemove != null) treasures.remove(toRemove);
         if(treasures.isEmpty()) status = Status.Win;
+
+        Item toRemove = null;
+        for(Item t: getKeys()) {
+            if(getPlayer().getCol() == t.getCol() && getPlayer().getHgt() == t.getHgt()) {
+                env.removeCellContent(t.getCol(), t.getHgt(), t);
+                toRemove = t;
+                player.grabKey();
+            }
+        }
+        if(toRemove != null) keys.remove(toRemove);
+
     }
 
     @Override

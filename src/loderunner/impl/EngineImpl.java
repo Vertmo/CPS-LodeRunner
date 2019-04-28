@@ -220,6 +220,16 @@ public class EngineImpl implements Engine {
         if(toRemove != null) treasures.remove(toRemove);
         if(treasures.isEmpty()) status = Status.Win;
 
+        toRemove = null;
+        for(Item t: getKeys()) {
+            if(getPlayer().getCol() == t.getCol() && getPlayer().getHgt() == t.getHgt()) {
+                env.removeCellContent(t.getCol(), t.getHgt(), t);
+                toRemove = t;
+                player.grabKey();
+            }
+        }
+        if(toRemove != null) keys.remove(toRemove);
+
         // Trigger traps
         if(getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()-1) == Cell.TRP) {
             getEnvironment().triggerTrap(getPlayer().getCol(), getPlayer().getHgt()-1);

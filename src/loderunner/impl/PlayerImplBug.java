@@ -9,6 +9,7 @@ import loderunner.services.Player;
 
 public class PlayerImplBug extends CharacterImpl implements Player{
 	private Engine engine;
+    private int nbKeys;
 
 	@Override
 	public Engine getEngine() {
@@ -22,6 +23,7 @@ public class PlayerImplBug extends CharacterImpl implements Player{
 	public void init(Environment e, Engine eg, int x, int y) {
 		super.init(e, x, y);
 		engine = eg;
+    nbKeys = 0;
 	}
 
 	/**
@@ -140,5 +142,15 @@ public class PlayerImplBug extends CharacterImpl implements Player{
 		PlayerImpl clone = new PlayerImpl();
 		clone.init(getEnvi(), getEngine(), getCol(), getHgt());;
 		return clone;
+	}
+
+	@Override
+	public int getNbKeys() {
+		return nbKeys;
+	}
+
+	@Override
+	public void grabKey() {
+      // nbKeys++; // OUPS
 	}
 }

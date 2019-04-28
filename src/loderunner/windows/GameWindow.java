@@ -58,6 +58,7 @@ public class GameWindow {
         stage.sizeToScene();
 
         canvas.drawEnvironment(eng);
+        canvas.drawKeys(eng.getPlayer().getNbKeys());
     }
 
     public void redrawHp(int hp) {

@@ -136,6 +136,16 @@ public abstract class AbstractScreenTest {
         screen.triggerTrap(2, 3);
     }
 
+    @Test
+    public void testOpenDoorPre1() { // Negatif
+        // Conditions initiales
+        screen.init(10, 5);
+        // Oracle: une exception
+        exception.expect(PreconditionError.class);
+        // Opération
+        screen.openDoor(2, 3);
+    }
+
     // Transitions
 
     @Test

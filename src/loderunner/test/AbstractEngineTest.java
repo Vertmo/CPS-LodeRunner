@@ -443,6 +443,25 @@ public abstract class AbstractEngineTest {
         Assert.assertEquals(2, engine.getPlayer().getHgt());
     }
 
+    @Test
+    public void testGrabKey() {
+        // Conditions initiales
+        EditableScreen es = createPlayableScreen();
+        engine.init(es, new CoordImpl(9, 2),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(8, 2))), new HashSet<>());
+        List<Command> coms = new ArrayList<>();
+        coms.add(Command.Left);
+        tcp.setCommands(coms);
+
+        // Opération
+        engine.step();
+
+        // Oracle: vérifié par contrat + le joueur a attrapé la clé
+        Assert.assertEquals(1, engine.getPlayer().getNbKeys());
+    }
+
     // Scénarios
 
     @Test

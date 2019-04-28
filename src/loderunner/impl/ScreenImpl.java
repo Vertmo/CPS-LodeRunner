@@ -43,4 +43,9 @@ public class ScreenImpl implements Screen {
     public void triggerTrap(int x, int y) {
         cells[y][x] = Cell.EMP;
     }
+
+    @Override
+    public void openDoor(int x, int y) {
+        cells[y][x] = Cell.EMP;
+    }
 }
