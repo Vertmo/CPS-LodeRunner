@@ -47,7 +47,7 @@ public class PlayerImpl extends CharacterImpl implements Player{
         if(getCol() != 0) {
             Cell left_nat = getEnvi().getCellNature(getCol()-1, getHgt());
             boolean left_content_is_empty = getEnvi().getCellContent(getCol()-1, getHgt()).isEmpty();
-            if(left_nat != Cell.PLT && left_nat != Cell.MTL && left_content_is_empty &&
+            if((left_nat == Cell.EMP || left_nat == Cell.HOL) && left_content_is_empty &&
                getEnvi().getCellNature(getCol()-1, getHgt()-1) == Cell.PLT) {
                 getEnvi().dig(getCol()-1, getHgt()-1);
             }
@@ -61,7 +61,7 @@ public class PlayerImpl extends CharacterImpl implements Player{
         if(getCol() != getEnvi().getWidth()-1) {
             Cell right_nat = getEnvi().getCellNature(getCol()+1, getHgt());
             boolean right_content_is_empty = getEnvi().getCellContent(getCol()+1, getHgt()).isEmpty();
-            if(right_nat != Cell.PLT && right_nat != Cell.MTL && right_content_is_empty &&
+            if((right_nat == Cell.EMP || right_nat == Cell.HOL) && right_content_is_empty &&
                getEnvi().getCellNature(getCol()+1, getHgt()-1) == Cell.PLT) {
                 getEnvi().dig(getCol()+1, getHgt()-1);
             }

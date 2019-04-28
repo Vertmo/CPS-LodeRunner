@@ -514,7 +514,7 @@ Dans le service \textrm{Engine}, on ajoute et modifie:
 
 {\small
   \begin{longtable}{rl}
-    \textbf{Observators}: & \textbf{const} \texttt{Portals}: \textrm{[Engine]} $\rightarrow$ \textrm{Set\{PortalPari\}} \\
+    \textbf{Observators}: & \textbf{const} \texttt{Portals}: \textrm{[Engine]} $\rightarrow$ \textrm{Set\{PortalPair\}} \\
     \textbf{Constructors}: &\texttt{init}: \textrm{EditableScreen} $\times$ \textrm{Coord} $\times$ \textrm{Set\{Coord\}} $\times$ \textrm{Set\{Coord\}} $\times$ \textrm{Set\{PortalPair\}} $\rightarrow$ \textrm{[Engine]} \\
       & \quad \textbf{pre} $\ldots$\\
       & \quad\quad\quad $\land$ $\forall$ \textrm{PortalPair} pp $\in$ \textrm{portals} \textrm{CellNature(screen, Col(InPCoord(pp)), Hgt(InPCoord(pp)))} $=$ \textbf{EMP}\\
@@ -526,6 +526,28 @@ Dans le service \textrm{Engine}, on ajoute et modifie:
     & \quad\quad $\Rightarrow$ \textrm{Player(Step(E))} $=$ \textrm{Teleport(Player(E), Col(CoordPOut(pp)), Hgt(CoordPOut(pp)))}\\
     \textrm{[Step]}: & $\neg\exists$ \textrm{PortalPair} pp $\in$ \textrm{Portals(E)} (\textrm{Col(CoordPIn(pp))} $=$ \textrm{Col(Player(E))} $land$ \textrm{Hgt(CoordPIn(pp))} $=$ \textrm{Hgt(Player(E))})\\
     & \quad\quad $\Rightarrow$ \textrm{Player(Step(E))} $=$ \textrm{Step(Player(E))}\\
+  \end{longtable}}
+
+\subsubsection{Portes et clés}
+
+Dans le service \textrm{Engine}, on ajoute et modifie:
+{\small
+  \begin{longtable}{rl}
+    \textbf{Observators}: & \textbf{const} \texttt{Keys}: \textrm{[Engine]} $\rightarrow$ \textrm{Set\{Item\}} \\
+    \textbf{Constructors}: &\texttt{init}: \textrm{EditableScreen} $\times$ \textrm{Coord} $\times$ \textrm{Set\{Coord\}} $\times$ \textrm{Set\{Coord\}} $\times$ \textrm{Set\{Coord\}} $\times$ \textrm{Set\{PortalPair\}} $\rightarrow$ \textrm{[Engine]} \\
+    & \quad \textbf{pre} $\ldots$\\
+    & \quad\quad\quad $\land$ $\forall$ \textrm{Coord} c $\in$ \{pCoord\} \textbf{union} gCoords \textbf{union} tCoords \textbf{union} kcoords\\
+    & \quad\quad\quad\quad\quad \textrm{CellNature(screen, Col(c), Hgt(c))} = \textbf{EMP} \\
+    & \quad\quad\quad $\land$ $\forall$ \textrm{Coord} c $\in$ kCoords (\textrm{Col(c)} $\neq$ \textrm{Col(pCoord)} $\lor$ \textrm{Hgt(c)} $\neq$ \textrm{Hgt(pCoord)})\\
+    & \quad\quad\quad $\land$ $\forall$ \textrm{Coord} c $\in$ lCoords \textrm{CellNature(screen, Col(c), Hgt(c)-1)} $\in$ \{\textbf{PLT}, \textbf{MTL}\} \\
+    \textbf{Observations}: &\\
+    \textrm{[invariant]}: & $\forall$ \textrm{Item} i $\in$ \textrm{Keys(E)} i $\in$ \textrm{CellContent(Environment(E), Col(i), Hgt(i))}\\
+    & \quad\quad $\land$ $\forall$ $(\mathtt{x},\mathtt{y})$ $\in$ \texttt{[0;Width(Environment(E))[} $\times$ \texttt{[0;Height(Environment(E))[}\\
+    & \quad\quad\quad\quad $\forall$ \textrm{Key} i $\in$ \textrm{CellContent(Environment(E), x, y)} \\
+    & \quad\quad\quad\quad\quad\quad $\Rightarrow$ (i $\in$ \textrm{Keys(E)} $\land$ \textrm{Col(i)} $=$ x $\land$ \textrm{Hgt(i)} $=$ y)\\
+    \textrm{[init]}: & $\forall$ \textrm{Coord} c $\in$ tC $\exists$ \textrm{Item} t $\in$ \textrm{Keys(init(s, pC, gC, tC))} (\textrm{Col(t)} $=$ \textrm{Col(c)} $\land$ \textrm{Hgt(t)} $=$ \textrm{Hgt(c)})\\
+  & \quad\quad $\land$ $\forall$ \textrm{Item} t $\in$ \textrm{Keys(init(s, pC, gC, tC))} $\exists$ \textrm{Coord} c $\in$ tC\\
+  & \quad\quad\quad\quad (\textrm{Col(t)} $=$ \textrm{Col(c)} $\land$ \textrm{Hgt(t)} $=$ \textrm{Hgt(c)})\\
   \end{longtable}}
 
 \end{document}

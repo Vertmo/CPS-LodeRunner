@@ -7,5 +7,6 @@ public enum Cell {
     LAD,
     HDR,
     MTL,
-    TRP
+    TRP,
+    DOR
 }

@@ -14,6 +14,7 @@ public interface Engine {
     public Set<Guard> getGuards();
 
     public Set<Item> getTreasures();
+    public Set<Item> getKeys();
     public Set<Hole> getHoles();
     public Status getStatus();
     public int getLevelScore();
@@ -27,7 +28,7 @@ public interface Engine {
     /* Constructors */
 
     // pre: screen.isPlayable()
-    // pre: \forall Coord c \in { pCoord } union gCoords union tCoords
+    // pre: \forall Coord c \in { pCoord } union gCoords union tCoords union kCoords
     //        screen.getCellNature(c.getCol(), c.getHgt()) == EMP
     // pre: \forall PortalPair pp \in portals
     //        screen.getCellNature(pp.getInPCoord().getCol(), pp.getInPCoord().getHgt()) == EMP
@@ -36,11 +37,18 @@ public interface Engine {
     //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
     // pre: \forall Coord c1 \in tCoords \forall Coord c2 \in tCoords
     //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
+    // pre: \forall Coord c1 \in tCoords \forall Coord c2 \in kCoords
+    //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
     // pre: \forall Coord c \in gCoords
     //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
     // pre: \forall Coord c \in tCoords
     //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
     // pre: \forall Coord c \in tCoords
+    //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL }
+    //        || c \in gCoords
+    // pre: \forall Coord c \in kCoords
+    //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
+    // pre: \forall Coord c \in kCoords
     //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL }
     //        || c \in gCoords
     // post: getStatus() == Playing
@@ -55,9 +63,11 @@ public interface Engine {
     //       && \forall Guard g \in getGuards() \exists Coord c \in gCoords (g.getCol() == c.getCol() && g.getHgt() == c.getHgt())
     // post: \forall Coord c \in tCoords \exists Item i \in getTreasures() (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
     //       && \forall Item i \in getTreasures() \exists Coord c \in tCoords (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
+    // post: \forall Coord c \in kCoords \exists Item i \in getKeys() (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
+    //       && \forall Item i \in getKeys() \exists Coord c \in kCoords (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
     // post: \forall PortalPair pp \in portals pp \in getPortals()
     //       && \forall PortalPair pp \in getPortals() pp \in portals
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<PortalPair> portals);
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals);
 
     /* Invariants */
 
@@ -73,6 +83,10 @@ public interface Engine {
     //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
     //           \forall Item i \in getEnvironment().getCellContent(x, y) i.getNature() == Treasure
     //           => i \in getTreasures() && (i.getCol() == x && i.getHgt() == y)
+    // inv: \forall Item i \in getKeys() i \in getEnvironment().getCellContent(i.getCol(), i.getHgt())
+    //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
+    //           \forall Item i \in getEnvironment().getCellContent(x, y) i.getNature() == Key
+    //           => i \in getKeys() && (i.getCol() == x && i.getHgt() == y)
     // inv: \forall Hole h \in getHoles() getEnvironment().getCellNature(h.getCol(), g.getHgt()) == HOL
     //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
     //           getEnvironment().getCellNature(x, y) == HOL

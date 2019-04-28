@@ -45,7 +45,7 @@ public class GameContract extends GameDecorator {
         Engine eng = new EngineImpl(new NeutralCommandProvider());
         eng.init(levels.get(0).getScreen(), levels.get(0).getPlayerCoord(),
                  levels.get(0).getGuardCoords(), levels.get(0).getTreasureCoords(),
-                 getLevels().get(0).getPortals());
+                 getLevels().get(0).getKeyCoords(), getLevels().get(0).getPortals());
         if(!getEngine().equals(eng))
             throw new PostconditionError("Game", "init", "The engine is not as it should be");
         // post: getScore() == 0
@@ -94,7 +94,7 @@ public class GameContract extends GameDecorator {
                 Engine eng = new EngineImpl(new NeutralCommandProvider());
                 eng.init(getLevels().get(getLevelIndex()).getScreen(), getLevels().get(getLevelIndex()).getPlayerCoord(),
                          getLevels().get(getLevelIndex()).getGuardCoords(), getLevels().get(getLevelIndex()).getTreasureCoords(),
-                         getLevels().get(getLevelIndex()).getPortals());
+                         getLevels().get(getLevelIndex()).getKeyCoords(), getLevels().get(getLevelIndex()).getPortals());
                 if(!getEngine().equals(eng))
                     throw new PostconditionError("Game", "checkAndUpdate", "the engine was not correctly updated");
             }
@@ -116,7 +116,7 @@ public class GameContract extends GameDecorator {
                 Engine eng = new EngineImpl(new NeutralCommandProvider());
                 eng.init(getLevels().get(getLevelIndex()).getScreen(), getLevels().get(getLevelIndex()).getPlayerCoord(),
                          getLevels().get(getLevelIndex()).getGuardCoords(), getLevels().get(getLevelIndex()).getTreasureCoords(),
-                         getLevels().get(getLevelIndex()).getPortals());
+                         getLevels().get(getLevelIndex()).getKeyCoords(), getLevels().get(getLevelIndex()).getPortals());
                 if(!getEngine().equals(eng))
                     throw new PostconditionError("Game", "checkAndUpdate", "the engine was not correctly updated");
             }

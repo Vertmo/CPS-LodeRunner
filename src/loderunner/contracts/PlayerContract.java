@@ -181,14 +181,14 @@ public class PlayerContract extends CharacterContract implements Player{
 		//       && getEngine().getNextCommand() == DigL
 		//       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD}
 		//           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
-		//       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) \in { EMP, HOL, LAD, HDR }
+		//       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) \in { EMP, HOL }
 		//       && getEnvi().getCellContent(getCol()@pre-1,getHgt()@pre).isEmpty()
 		//       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre-1)@pre == PLT
 		//       => getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre-1) == HOL
 		if(cmd_pre == Command.DigL && col_pre != 0
 				&& (down_nat_pre == Cell.PLT || down_nat_pre == Cell.MTL || down_nat_pre == Cell.LAD ||
 				down_character_present_pre)
-				&& (left_nat_pre != Cell.MTL && left_nat_pre != Cell.PLT)
+				&& (left_nat_pre == Cell.EMP || left_nat_pre == Cell.HOL)
 				&& left_content_is_empty_pre
 				&& down_left_nat_pre == Cell.PLT) {
 			if(!(getEnvi().getCellNature(col_pre-1, hgt_pre-1) == Cell.HOL))
@@ -200,14 +200,14 @@ public class PlayerContract extends CharacterContract implements Player{
 		//       && getEngine().getNextCommand() == DigR
 		//       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
 		//           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
-		//       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre) \in { EMP, HOL, LAD, HDR }
+		//       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre) \in { EMP, HOL }
 		//       && getEnvi().getCellContent(getCol()@pre+1,getHgt()@pre).isEmpty()
 		//       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre-1)@pre == PLT
 		//       => getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre-1) == HOL
 		if(cmd_pre == Command.DigR && col_pre != getEnvi().getWidth()-1
 				&& (down_nat_pre == Cell.PLT || down_nat_pre == Cell.MTL || down_nat_pre == Cell.LAD ||
 				down_character_present_pre)
-				&& (right_nat_pre != Cell.MTL && right_nat_pre != Cell.PLT)
+				&& (right_nat_pre == Cell.EMP || right_nat_pre == Cell.HOL)
 				&& right_content_is_empty_pre
 				&& down_right_nat_pre == Cell.PLT) {
 			if(!(getEnvi().getCellNature(col_pre+1, hgt_pre-1) == Cell.HOL))

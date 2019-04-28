@@ -25,10 +25,12 @@ public class LevelCanvas extends Canvas {
     private static final Image hdrImg = new Image("assets/img/hdr.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image mtlImg = new Image("assets/img/mtl.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image trpImg = new Image("assets/img/trp.png", (double) CELL_W, (double) CELL_W, true, true);
+    private static final Image dorImg = new Image("assets/img/dor.png", (double) CELL_W, (double) CELL_W, true, true);
 
     private static final Image playerImg = new Image("assets/img/player.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image guardImg = new Image("assets/img/guard.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image treasureImg = new Image("assets/img/treasure.png", (double) CELL_W, (double) CELL_W, true, true);
+    private static final Image keyImg = new Image("assets/img/key.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image treaGuardImg = new Image("assets/img/treasureGuard.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image portalInImg = new Image("assets/img/portalIn.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image portalOutImg = new Image("assets/img/portalOut.png", (double) CELL_W, (double) CELL_W, true, true);
@@ -79,12 +81,14 @@ public class LevelCanvas extends Canvas {
                     if(editorMode) gc.drawImage(trpImg, x*CELL_W, (s.getHeight()-1-y)*CELL_W);
                     else gc.drawImage(pltImg, x*CELL_W, (s.getHeight()-1-y)*CELL_W);
                     break;
+                case DOR:
+                    gc.drawImage(dorImg, x*CELL_W, (s.getHeight()-1-y)*CELL_W);
                 }
             }
         }
     }
 
-    public void drawContents(Screen s, Coord pc, Set<Coord> gCoords, Set<Coord> tCoords, Set<PortalPair> portals) {
+    public void drawContents(Screen s, Coord pc, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals) {
         GraphicsContext gc = getGraphicsContext2D();
 
         // Draw player
@@ -104,6 +108,11 @@ public class LevelCanvas extends Canvas {
                 gc.drawImage(treasureImg, t.getCol()*CELL_W, (s.getHeight()-1-t.getHgt())*CELL_W);
         }
 
+        // Draw keys
+        for (Coord k: kCoords) {
+            gc.drawImage(keyImg, k.getCol()*CELL_W, (s.getHeight()-1-k.getHgt())*CELL_W);
+        }
+
         // Draw portals
         for(PortalPair pp: portals) {
             gc.drawImage(portalInImg, pp.getInPCoord().getCol()*CELL_W, (s.getHeight()-1-pp.getInPCoord().getHgt())*CELL_W);
@@ -114,7 +123,7 @@ public class LevelCanvas extends Canvas {
 
     public void drawLevel(Level l) {
         drawCells(l.getScreen(), true);
-        drawContents(l.getScreen(), l.getPlayerCoord(), l.getGuardCoords(), l.getTreasureCoords(), l.getPortals());
+        drawContents(l.getScreen(), l.getPlayerCoord(), l.getGuardCoords(), l.getTreasureCoords(), l.getKeyCoords(), l.getPortals());
     }
 
     public void drawEnvironment(Engine eng) {
@@ -129,7 +138,10 @@ public class LevelCanvas extends Canvas {
         Set<Coord> tCoords = eng.getTreasures().stream()
             .map(t -> new CoordImpl(t.getCol(), t.getHgt()))
             .collect(Collectors.toSet());
-        drawContents(eng.getEnvironment(), pCoord, gCoords, tCoords, eng.getPortals());
+        Set<Coord> kCoords = eng.getKeys().stream()
+            .map(k -> new CoordImpl(k.getCol(), k.getHgt()))
+            .collect(Collectors.toSet());
+        drawContents(eng.getEnvironment(), pCoord, gCoords, tCoords, kCoords, eng.getPortals());
     }
 
     public void drawGameOver(int score) {

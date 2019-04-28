@@ -46,6 +46,11 @@ public abstract class EngineDecorator implements Engine {
     }
 
     @Override
+    public Set<Item> getKeys() {
+        return delegate.getKeys();
+    }
+
+    @Override
     public Set<Hole> getHoles() {
         return delegate.getHoles();
     }
@@ -81,8 +86,8 @@ public abstract class EngineDecorator implements Engine {
     }
 
     @Override
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<PortalPair> portals) {
-        delegate.init(screen, pCoord, gCoords, tCoords, portals);
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals) {
+        delegate.init(screen, pCoord, gCoords, tCoords, kCoords, portals);
     }
 
     @Override

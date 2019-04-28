@@ -23,12 +23,14 @@ public class LevelIO implements Level {
     private Coord playerCoord;
     private Set<Coord> guardCoords;
     private Set<Coord> treasureCoords;
+    private Set<Coord> keyCoords;
     private Set<PortalPair> portals;
 
     public LevelIO(File file) throws LevelLoadException {
         screen = new EditableScreenImpl();
         guardCoords = new HashSet<>();
         treasureCoords = new HashSet<>();
+        keyCoords = new HashSet<>();
         portals = new HashSet<>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -48,6 +50,7 @@ public class LevelIO implements Level {
                     case 'R': screen.setNature(x, y, Cell.HDR); break;
                     case 'M': screen.setNature(x, y, Cell.MTL); break;
                     case 'T': screen.setNature(x, y, Cell.TRP); break;
+                    case 'D': screen.setNature(x, y, Cell.DOR); break;
                     }
                 }
                 br.read();
@@ -65,6 +68,10 @@ public class LevelIO implements Level {
                 } else if(line.charAt(0) == 'T') {
                     String[] coordS = line.substring(1).split("x");
                     treasureCoords.add(new CoordImpl(Integer.parseInt(coordS[0]),
+                                                     Integer.parseInt(coordS[1])));
+                } else if(line.charAt(0) == 'K') {
+                    String[] coordS = line.substring(1).split("x");
+                    keyCoords.add(new CoordImpl(Integer.parseInt(coordS[0]),
                                                      Integer.parseInt(coordS[1])));
                 } else if(line.charAt(0) == 'W') {
                     String[] coordS = line.substring(1).split("/");
@@ -96,6 +103,7 @@ public class LevelIO implements Level {
         playerCoord = new CoordImpl(0, 1);
         guardCoords = new HashSet<>();
         treasureCoords = new HashSet<>();
+        keyCoords = new HashSet<>();
         portals = new HashSet<>();
     }
 
@@ -103,6 +111,7 @@ public class LevelIO implements Level {
     public Coord getPlayerCoord() { return playerCoord; }
     public Set<Coord> getGuardCoords() { return guardCoords; }
     public Set<Coord> getTreasureCoords() { return treasureCoords; }
+    public Set<Coord> getKeyCoords() { return keyCoords; }
     public Set<PortalPair> getPortals() { return portals; }
 
     public void save(File file) {
@@ -123,6 +132,7 @@ public class LevelIO implements Level {
                     case HDR: bw.write("R"); break;
                     case MTL: bw.write("M"); break;
                     case TRP: bw.write("T"); break;
+                    case DOR: bw.write("D"); break;
                     }
                 }
                 bw.write("\n");
@@ -139,6 +149,11 @@ public class LevelIO implements Level {
             // Treasure coordinates
             for(Coord t: treasureCoords) {
                 bw.write("T" + t.toString() + "\n");
+            }
+
+            // Key coordinates
+            for(Coord k: keyCoords) {
+                bw.write("K" + k.toString() + "\n");
             }
 
             // Portal pairs coordinates

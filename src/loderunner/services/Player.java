@@ -35,7 +35,7 @@ public interface Player extends /* refine */ Character {
     //       && getEngine().getNextCommand() == DigL
     //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
     //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
-    //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) \in { EMP, HOL, LAD, HDR }
+    //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) \in { EMP, HOL }
     //       && getEnvi().getCellContent(getCol()@pre-1,getHgt()@pre).isEmpty()
     //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre-1)@pre == PLT
     //       => getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre-1) == HOL
@@ -43,7 +43,7 @@ public interface Player extends /* refine */ Character {
     //       && getEngine().getNextCommand() == DigR
     //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
     //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
-    //       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre) \in { EMP, HOL, LAD, HDR }
+    //       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre) \in { EMP, HOL }
     //       && getEnvi().getCellContent(getCol()@pre+1,getHgt()@pre).isEmpty()
     //       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre-1)@pre == PLT
     //       => getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre-1) == HOL

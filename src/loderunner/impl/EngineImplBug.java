@@ -25,6 +25,7 @@ public class EngineImplBug implements Engine {
     private Player player;
     private Set<Guard> guards;
     private Set<Item> treasures;
+    private Set<Item> keys;
     private Set<Hole> holes;
     private Status status;
     private int levelScore;
@@ -53,6 +54,11 @@ public class EngineImplBug implements Engine {
     @Override
     public Set<Item> getTreasures() {
         return treasures;
+    }
+
+    @Override
+    public Set<Item> getKeys() {
+        return keys;
     }
 
     @Override
@@ -91,7 +97,7 @@ public class EngineImplBug implements Engine {
     }
 
     @Override
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<PortalPair> portals) {
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals) {
         env = new EnvironmentImpl();
         env.init(screen);
         player = new PlayerImpl();
@@ -113,6 +119,13 @@ public class EngineImplBug implements Engine {
             Item t = new ItemImpl(ItemType.Treasure, c.getCol(), c.getHgt());
             treasures.add(t);
             env.addCellContent(c.getCol(), c.getHgt(), t);
+        }
+
+        keys = new HashSet<>();
+        for(Coord c: kCoords) {
+            Item k = new ItemImpl(ItemType.Key, c.getCol(), c.getHgt());
+            keys.add(k);
+            env.addCellContent(c.getCol(), c.getHgt(), k);
         }
 
         holes = new HashSet<>();

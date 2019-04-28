@@ -22,8 +22,8 @@ import loderunner.services.Coord;
 import loderunner.services.PortalPair;
 
 enum Tool {
-    EMP, PLT, LAD, HDR, MTL, TRP,
-    Player, Guard, Treasure, PortalIn, PortalOut
+    EMP, PLT, LAD, HDR, MTL, TRP, DOR,
+    Player, Guard, Treasure, Key, PortalIn, PortalOut
 }
 
 public class EditorWindow {
@@ -75,6 +75,9 @@ public class EditorWindow {
                 case TRP:
                     level.getScreen().setNature(x, y, Cell.TRP);
                     break;
+                case DOR:
+                    level.getScreen().setNature(x, y, Cell.DOR);
+                    break;
                 case Player:
                     level.getPlayerCoord().setCol(x); level.getPlayerCoord().setHgt(y);
                     break;
@@ -92,6 +95,14 @@ public class EditorWindow {
                         level.getTreasureCoords().remove(tc);
                     } else {
                         level.getTreasureCoords().add(tc);
+                    }
+                    break;
+                case Key:
+                    Coord kc = new CoordImpl(x, y);
+                    if(level.getKeyCoords().contains(kc)) {
+                        level.getKeyCoords().remove(kc);
+                    } else {
+                        level.getKeyCoords().add(kc);
                     }
                     break;
                 case PortalIn:
@@ -202,6 +213,10 @@ public class EditorWindow {
         trpButton.setOnAction(e -> { currentTool = Tool.TRP;
                 if(currentPortalPair != null) level.getPortals().remove(currentPortalPair);
                 redrawCanvas(); });
+        Button dorButton = new Button("DOR");
+        dorButton.setOnAction(e -> { currentTool = Tool.DOR;
+                if(currentPortalPair != null) level.getPortals().remove(currentPortalPair);
+                redrawCanvas(); });
 
         Button playerButton = new Button("Player");
         playerButton.setOnAction(e -> { currentTool = Tool.Player;
@@ -215,14 +230,18 @@ public class EditorWindow {
         treasureButton.setOnAction(e -> { currentTool = Tool.Treasure;
                 if(currentPortalPair != null) level.getPortals().remove(currentPortalPair);
                 redrawCanvas(); });
+        Button keyButton = new Button("Key");
+        keyButton.setOnAction(e -> { currentTool = Tool.Key;
+                if(currentPortalPair != null) level.getPortals().remove(currentPortalPair);
+                redrawCanvas(); });
 
         Button portalButton = new Button("Portal");
         portalButton.setOnAction(e -> { currentTool = Tool.PortalIn;
                 if(currentPortalPair != null) level.getPortals().remove(currentPortalPair);
                 redrawCanvas(); });
 
-        return new ToolBar(empButton, pltButton, ladButton, hdrButton, mtlButton, trpButton,
-                           playerButton, guardButton, treasureButton, portalButton);
+        return new ToolBar(empButton, pltButton, ladButton, hdrButton, mtlButton, trpButton, dorButton,
+                           playerButton, guardButton, treasureButton, keyButton, portalButton);
     }
 
     private void updateIsPlayableLbl() {
@@ -240,6 +259,14 @@ public class EditorWindow {
                level.getScreen().getCellNature(t.getCol(), t.getHgt()-1) != Cell.MTL &&
                !level.getGuardCoords().contains(t)) correctContent = false;
         }
+        for(Coord k: level.getKeyCoords()) {
+            if(level.getScreen().getCellNature(k.getCol(), k.getHgt()) != Cell.EMP) correctContent = false;
+            if(level.getPlayerCoord().getCol() == k.getCol() && level.getPlayerCoord().getHgt() == k.getHgt()) correctContent = false;
+            if(level.getScreen().getCellNature(k.getCol(), k.getHgt()-1) != Cell.PLT &&
+               level.getScreen().getCellNature(k.getCol(), k.getHgt()-1) != Cell.MTL &&
+               !level.getGuardCoords().contains(k)) correctContent = false;
+        }
+
         for(PortalPair pp: level.getPortals()) {
             if(level.getScreen().getCellNature(pp.getInPCoord().getCol(), pp.getInPCoord().getHgt()) != Cell.EMP
                || pp.getOutPCoord() == null || level.getScreen().getCellNature(pp.getOutPCoord().getCol(), pp.getOutPCoord().getHgt()) != Cell.EMP)
