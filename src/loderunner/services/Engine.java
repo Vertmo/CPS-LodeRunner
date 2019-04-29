@@ -44,12 +44,12 @@ public interface Engine {
     // pre: \forall Coord c \in tCoords
     //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
     // pre: \forall Coord c \in tCoords
-    //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL }
+    //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL, LAD, TRP }
     //        || c \in gCoords
     // pre: \forall Coord c \in kCoords
     //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
     // pre: \forall Coord c \in kCoords
-    //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL }
+    //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL, LAD, TRP }
     //        || c \in gCoords
     // post: getStatus() == Playing
     // post: getLevelScore() == 0

@@ -257,6 +257,8 @@ public class EditorWindow {
             if(level.getPlayerCoord().getCol() == t.getCol() && level.getPlayerCoord().getHgt() == t.getHgt()) correctContent = false;
             if(level.getScreen().getCellNature(t.getCol(), t.getHgt()-1) != Cell.PLT &&
                level.getScreen().getCellNature(t.getCol(), t.getHgt()-1) != Cell.MTL &&
+               level.getScreen().getCellNature(t.getCol(), t.getHgt()-1) != Cell.LAD &&
+               level.getScreen().getCellNature(t.getCol(), t.getHgt()-1) != Cell.TRP &&
                !level.getGuardCoords().contains(t)) correctContent = false;
         }
         for(Coord k: level.getKeyCoords()) {
@@ -264,6 +266,8 @@ public class EditorWindow {
             if(level.getPlayerCoord().getCol() == k.getCol() && level.getPlayerCoord().getHgt() == k.getHgt()) correctContent = false;
             if(level.getScreen().getCellNature(k.getCol(), k.getHgt()-1) != Cell.PLT &&
                level.getScreen().getCellNature(k.getCol(), k.getHgt()-1) != Cell.MTL &&
+               level.getScreen().getCellNature(k.getCol(), k.getHgt()-1) != Cell.LAD &&
+               level.getScreen().getCellNature(k.getCol(), k.getHgt()-1) != Cell.TRP &&
                !level.getGuardCoords().contains(k)) correctContent = false;
         }
 

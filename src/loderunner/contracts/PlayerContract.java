@@ -97,6 +97,7 @@ public class PlayerContract extends CharacterContract implements Player{
 		// captures
 		int col_pre = getCol();
 		int hgt_pre = getHgt();
+    int nbKeys_pre = getNbKeys();
 		Engine engine_pre = getEngine();
 		Cell down_nat_pre = getEnvi().getCellNature(col_pre, hgt_pre-1);
 		Cell left_nat_pre = null; //capturer seulement si la cellule existe
@@ -204,6 +205,20 @@ public class PlayerContract extends CharacterContract implements Player{
 			return;
 		}
 
+    // post: \not willFall()
+    //       && getEngine().getNextCommand() == DigL
+    //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
+    //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
+    //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) = DOR
+    //       && getNbKeys()@pre > 0
+    //       => (getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) == EMP && getNbKeys() == getNbKeys()@pre-1)
+    if(cmd_pre == Command.DigL && col_pre != 0
+       && (down_nat_pre == Cell.PLT || down_nat_pre == Cell.MTL || down_nat_pre == Cell.LAD ||
+           down_character_present_pre)
+       && left_nat_pre == Cell.DOR && nbKeys_pre > 0
+       && (getEnvi().getCellNature(col_pre-1, hgt_pre) != Cell.EMP || getNbKeys() != nbKeys_pre-1))
+        throw new PostconditionError("Player", "step", "The left door has not been opened correctly");
+
 		// post: \not willFall()
 		//       && getEngine().getNextCommand() == DigR
 		//       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
@@ -222,6 +237,20 @@ public class PlayerContract extends CharacterContract implements Player{
 				throw new PostconditionError("Player", "step", "The player should have dig right");
 			return;
 		}
+
+    // post: \not willFall()
+    //       && getEngine().getNextCommand() == DigL
+    //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
+    //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
+    //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) = DOR
+    //       && getNbKeys()@pre > 0
+    //       => (getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) == EMP && getNbKeys() == getNbKeys()@pre-1)
+    if(cmd_pre == Command.DigL && col_pre != 0
+       && (down_nat_pre == Cell.PLT || down_nat_pre == Cell.MTL || down_nat_pre == Cell.LAD ||
+           down_character_present_pre)
+       && right_nat_pre == Cell.DOR && nbKeys_pre > 0
+       && (getEnvi().getCellNature(col_pre+1, hgt_pre) != Cell.EMP || getNbKeys() != nbKeys_pre-1))
+        throw new PostconditionError("Player", "step", "The right door has not been opened correctly");
 	}
 
     @Override

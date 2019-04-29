@@ -53,6 +53,10 @@ public class PlayerImpl extends CharacterImpl implements Player{
                getEnvi().getCellNature(getCol()-1, getHgt()-1) == Cell.PLT) {
                 getEnvi().dig(getCol()-1, getHgt()-1);
             }
+            if(left_nat == Cell.DOR && getNbKeys() > 0) {
+                nbKeys--;
+                getEnvi().openDoor(getCol()-1, getHgt());
+            }
         }
     }
 
@@ -66,6 +70,10 @@ public class PlayerImpl extends CharacterImpl implements Player{
             if((right_nat == Cell.EMP || right_nat == Cell.HOL) && right_content_is_empty &&
                getEnvi().getCellNature(getCol()+1, getHgt()-1) == Cell.PLT) {
                 getEnvi().dig(getCol()+1, getHgt()-1);
+            }
+            if(right_nat == Cell.DOR && getNbKeys() > 0) {
+                nbKeys--;
+                getEnvi().openDoor(getCol()+1, getHgt());
             }
         }
     }
