@@ -8,6 +8,7 @@ import loderunner.contracts.errors.PostconditionError;
 import loderunner.contracts.errors.PreconditionError;
 import loderunner.decorators.EngineDecorator;
 import loderunner.services.Cell;
+import loderunner.services.Command;
 import loderunner.services.Coord;
 import loderunner.services.EditableScreen;
 import loderunner.services.Engine;
@@ -118,6 +119,10 @@ public class EngineContract extends EngineDecorator {
                 }
             }
         }
+
+        // inv: getNumberBullet() >= 0
+        if(!(getNumberBullets() >= 0))
+            throw new InvariantError("Engine", "getNumberBullet() >= 0");
     }
 
     @Override
@@ -287,6 +292,9 @@ public class EngineContract extends EngineDecorator {
         for(PortalPair pp: getPortals()) {
             if(!portals.contains(pp)) throw new PostconditionError("Engine", "init", "There are too much portals");
         }
+        // post: getNumberBullet() == 0
+        if(!(getNumberBullets() == 0))
+            throw new PostconditionError("Engine", "init", "getNumberBullet() == 0");
     }
 
     @Override
@@ -319,6 +327,15 @@ public class EngineContract extends EngineDecorator {
         for(int x = 0; x < getEnvironment().getWidth(); x++) {
             for(int y = 0; y < getEnvironment().getHeight(); y++) cellNature_pre[x][y] = getEnvironment().getCellNature(x, y);
         }
+        int getNumberBullets_at_pre = getNumberBullets();
+        boolean player_on_gun_at_pre = false;
+        for(InCell ic : getEnvironment().getCellContent(playerCol_pre, playerHgt_pre)) {
+            if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Gun) {
+                player_on_gun_at_pre = true;
+                break;
+            }
+        }
+        Command getNextCommand_at_pre = peekNextCommand();
 
         // run
         super.step();
@@ -338,30 +355,83 @@ public class EngineContract extends EngineDecorator {
         if(isGuardTurn() == guardTurn_pre)
             throw new PostconditionError("Engine", "step", "isGuardTurn() == !isGuardTurn()@pre");
 
+        // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+        //       && i.getNature() == Gun
+        //       && getNextCommand()@pre \in {DigL, DigR}
+        //       => getNumberBullets() == getNumberBullets()@pre + 4
+        if(player_on_gun_at_pre && (getNextCommand_at_pre == Command.DigL || getNextCommand_at_pre == Command.DigR)){
+            if(!(getNumberBullets() == getNumberBullets_at_pre + 4))
+                throw new PostconditionError("Engine", "step", "The number of bullets should have increased by 4");
+        }
+
+        // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+        //       && i.getNature() == Gun
+        //       && getNextCommand()@pre \not \in {DigL, DigR}
+        //       => getNumberBullets() == getNumberBullets()@pre + 5
+        if(player_on_gun_at_pre && !(getNextCommand_at_pre == Command.DigL || getNextCommand_at_pre == Command.DigR)){
+            if(!(getNumberBullets() == getNumberBullets_at_pre + 5))
+                throw new PostconditionError("Engine", "step", "The number of bullets should have increased by 5");
+        }
+
+        // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+        //             && i.getNature() == Gun)
+        //       && getCommand()@pre \in {DigL, DigR} && getNumberBullets()@pre > 0
+        //       => getNumberBullets() == getNumberNullets()@pre - 1
+        if(!player_on_gun_at_pre
+                && (getNextCommand_at_pre == Command.DigL || getNextCommand_at_pre == Command.DigR)
+                && getNumberBullets_at_pre > 0){
+            if(!(getNumberBullets() == getNumberBullets_at_pre - 1))
+                throw new PostconditionError("Engine", "step", "The number of bullets should have decreased by 1");
+        }
+
+        // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+        //             && i.getNature() == Gun)
+        //       && getCommand()@pre \not \in {DigL, DigR}
+        //       => getNumberBullets() == getNumberNullets()@pre
+        if(!player_on_gun_at_pre
+                && !(getNextCommand_at_pre == Command.DigL || getNextCommand_at_pre == Command.DigR)){
+            if(!(getNumberBullets() == getNumberBullets_at_pre))
+                throw new PostconditionError("Engine", "step", "The number of bullets should have stayed the same");
+        }
+
+        // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+        //       && i.getNature() == Gun
+        //       => i \not \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)
+        if(player_on_gun_at_pre){
+            for(InCell ic : getEnvironment().getCellContent(playerCol_pre, playerHgt_pre)) {
+                if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Gun)
+                    throw new PostconditionError("Engine", "step", "The player should have taken the gun");
+            }
+        }
+
         // post: \forall Item t \in getTreasures()@pre
-        //         \exists Guard g \in getEnvi().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
-        //           getEnvi().getCellNature(g.getCol(), g.getHgt()) != HOL
+        //         \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
+        //         && getEnvironment().getCellNature(g.getCol(), g.getHgt()) != HOL
+        //         && \not g.isShot()
         //         => t.getCol() == g.getCol() && t.getHgt() == g.getHgt()
         for(Item i: treasures_pre) {
             for(InCell ic: cellContent_pre[i.getCol()][i.getHgt()]) {
                 if(ic instanceof Guard) {
                     Guard g = (Guard) ic;
                     if(getEnvironment().getCellNature(g.getCol(), g.getHgt()) != Cell.HOL &&
-                       (i.getCol() != g.getCol() || i.getHgt() != g.getHgt()))
+                            (i.getCol() != g.getCol() || i.getHgt() != g.getHgt()) &&
+                            !g.isShot())
                         throw new PostconditionError("Engine", "step", "The treasure has not moved with the guard");
                 }
             }
         }
         // post: \forall Item t \in getTreasures()@pre
         //         \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
-        //           getEnvironment().getCellNature(g.getCol(), g.getHgt()) == HOL
+        //         && getEnvironment().getCellNature(g.getCol(), g.getHgt()) == HOL
+        //         && \not g.isShot()
         //         => t.getCol() == g.getCol() && t.getHgt() == g.getHgt()+1
         for(Item i: treasures_pre) {
             for(InCell ic: cellContent_pre[i.getCol()][i.getHgt()]) {
                 if(ic instanceof Guard) {
                     Guard g = (Guard) ic;
                     if(getEnvironment().getCellNature(g.getCol(), g.getHgt()) == Cell.HOL &&
-                       (i.getCol() != g.getCol() || i.getHgt() != g.getHgt()+1))
+                            (i.getCol() != g.getCol() || i.getHgt() != g.getHgt()+1) &&
+                            !g.isShot())
                         throw new PostconditionError("Engine", "step", "The treasure has not fallen above the guard");
                 }
             }

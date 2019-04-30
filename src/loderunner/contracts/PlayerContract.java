@@ -7,6 +7,8 @@ import loderunner.services.Character;
 import loderunner.services.Command;
 import loderunner.services.Engine;
 import loderunner.services.Environment;
+import loderunner.services.Guard;
+import loderunner.services.GunShot;
 import loderunner.services.InCell;
 import loderunner.services.Player;
 
@@ -188,13 +190,14 @@ public class PlayerContract extends CharacterContract implements Player{
 
 		// post: \not willFall()
 		//       && getEngine().getNextCommand() == DigL
+		//       && getEngine().getNumberBullets() == 0
 		//       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD}
 		//           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
 		//       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) \in { EMP, HOL }
 		//       && getEnvi().getCellContent(getCol()@pre-1,getHgt()@pre).isEmpty()
 		//       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre-1)@pre == PLT
 		//       => getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre-1) == HOL
-		if(cmd_pre == Command.DigL && col_pre != 0
+		if(cmd_pre == Command.DigL && getEngine().getNumberBullets() == 0 && col_pre != 0
 				&& (down_nat_pre == Cell.PLT || down_nat_pre == Cell.MTL || down_nat_pre == Cell.LAD ||
 				down_character_present_pre)
 				&& (left_nat_pre == Cell.EMP || left_nat_pre == Cell.HOL)
@@ -221,13 +224,14 @@ public class PlayerContract extends CharacterContract implements Player{
 
 		// post: \not willFall()
 		//       && getEngine().getNextCommand() == DigR
+		//       && getEngine().getNumberBullets() == 0
 		//       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
 		//           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
 		//       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre) \in { EMP, HOL }
 		//       && getEnvi().getCellContent(getCol()@pre+1,getHgt()@pre).isEmpty()
 		//       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre-1)@pre == PLT
 		//       => getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre-1) == HOL
-		if(cmd_pre == Command.DigR && col_pre != getEnvi().getWidth()-1
+		if(cmd_pre == Command.DigR && getEngine().getNumberBullets() == 0 && col_pre != getEnvi().getWidth()-1
 				&& (down_nat_pre == Cell.PLT || down_nat_pre == Cell.MTL || down_nat_pre == Cell.LAD ||
 				down_character_present_pre)
 				&& (right_nat_pre == Cell.EMP || right_nat_pre == Cell.HOL)
@@ -251,6 +255,60 @@ public class PlayerContract extends CharacterContract implements Player{
        && right_nat_pre == Cell.DOR && nbKeys_pre > 0
        && (getEnvi().getCellNature(col_pre+1, hgt_pre) != Cell.EMP || getNbKeys() != nbKeys_pre-1))
         throw new PostconditionError("Player", "step", "The right door has not been opened correctly");
+
+		// post: \not willFall()
+		//       && getEngine().getNextCommand() == DigL
+		//       && getEngine().getNumberBullets() > 0
+		//       && (\exist j \in [0, getCol()@pre[,
+		//                     \exist Guard g1 \in getEnvi().getCellContent(j,getHgt()@pre)
+		//                     && \forAll k \in ]j,getCol()@pre[, getEnvi().getCellNature(k,getHgt()@pre) \in {EMP,HOL,LAD,HDR}
+		//                                                        && \not \exist Guard g2 \in getEnvi.getCellContent(k,getHgt()@pre))
+		//       => \exist Gunshot gs \in getEnvi().getCellContent(j,getHgt()@pre)
+		if(cmd_pre == Command.DigL && getEngine().getNumberBullets() > 0) {
+			for(int j=col_pre-1;j>=0;j--) {
+				Cell cell_nat = getEnvi().getCellNature(j, hgt_pre);
+				if(cell_nat == Cell.MTL || cell_nat == Cell.PLT)
+					return;
+				for(InCell content : getEnvi().getCellContent(j, hgt_pre)){
+					if(content instanceof Guard) {
+						for(InCell shot : getEnvi().getCellContent(j, hgt_pre)) {
+							if(shot instanceof GunShot) {
+								return;
+							}
+						}
+						throw new PostconditionError("Player", "step", "The player should have shot");
+					}
+				}
+			}
+			return;
+		}
+
+		// post: \not willFall()
+		//       && getEngine().getNextCommand() == DigR
+		//       && getEngine().getNumberBullets() > 0
+		//       && (\exist j \in ]getCol()@pre, getEnvi().getWidth()[,
+		//                     \exist Guard g1 \in getEnvi().getCellContent(j,getHgt()@pre)
+		//                     && \forAll k \in ]getCol()@pre,j[, getEnvi().getCellNature(k,getHgt()@pre) \in {EMP,HOL,LAD,HDR}
+		//                                                        && \not \exist Guard g2 \in getEnvi.getCellContent(k,getHgt()@pre))
+		//       => \exist Gunshot gs \in getEnvi().getCellContent(j,getHgt()@pre)
+		if(cmd_pre == Command.DigR && getEngine().getNumberBullets() > 0) {
+			for(int j=col_pre+1;j<getEnvi().getWidth();j++) {
+				Cell cell_nat = getEnvi().getCellNature(j, hgt_pre);
+				if(cell_nat == Cell.MTL || cell_nat == Cell.PLT)
+					return;
+				for(InCell content : getEnvi().getCellContent(j, hgt_pre)){
+					if(content instanceof Guard) {
+						for(InCell shot : getEnvi().getCellContent(j, hgt_pre)) {
+							if(shot instanceof GunShot) {
+								return;
+							}
+						}
+						throw new PostconditionError("Player", "step", "The player should have shot");
+					}
+				}
+			}
+			return;
+		}
 	}
 
     @Override

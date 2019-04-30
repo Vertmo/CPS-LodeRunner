@@ -4,6 +4,7 @@ import loderunner.services.Cell;
 import loderunner.services.Command;
 import loderunner.services.Engine;
 import loderunner.services.Environment;
+import loderunner.services.Guard;
 import loderunner.services.InCell;
 import loderunner.services.Player;
 
@@ -46,7 +47,21 @@ public class PlayerImpl extends CharacterImpl implements Player{
      * Traite la commande DigL
      */
     private void instrDigL() {
-        if(getCol() != 0) {
+        if(getEngine().getNumberBullets() > 0) {
+            for(int j=getCol()-1;j>=0;j--) {
+                Cell cell_nat = getEnvi().getCellNature(j, getHgt());
+                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT) {
+                    return;
+                }else {
+                    for(InCell content : getEnvi().getCellContent(j, getHgt())){
+                        if(content instanceof Guard) {
+                            getEnvi().addCellContent(j, getHgt(), new GunShotImpl());
+                            return;
+                        }
+                    }
+                }
+            }
+        }else if(getCol() != 0) {
             Cell left_nat = getEnvi().getCellNature(getCol()-1, getHgt());
             boolean left_content_is_empty = getEnvi().getCellContent(getCol()-1, getHgt()).isEmpty();
             if((left_nat == Cell.EMP || left_nat == Cell.HOL) && left_content_is_empty &&
@@ -64,7 +79,21 @@ public class PlayerImpl extends CharacterImpl implements Player{
      * Traite la commande DigR
      */
     private void instrDigR() {
-        if(getCol() != getEnvi().getWidth()-1) {
+        if(getEngine().getNumberBullets() > 0) {
+            for(int j=getCol()+1;j<getEnvi().getWidth();j++) {
+                Cell cell_nat = getEnvi().getCellNature(j, getHgt());
+                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT) {
+                    return;
+                }else {
+                    for(InCell content : getEnvi().getCellContent(j, getHgt())){
+                        if(content instanceof Guard) {
+                            getEnvi().addCellContent(j, getHgt(), new GunShotImpl());
+                            return;
+                        }
+                    }
+                }
+            }
+        }else if(getCol() != getEnvi().getWidth()-1) {
             Cell right_nat = getEnvi().getCellNature(getCol()+1, getHgt());
             boolean right_content_is_empty = getEnvi().getCellContent(getCol()+1, getHgt()).isEmpty();
             if((right_nat == Cell.EMP || right_nat == Cell.HOL) && right_content_is_empty &&
@@ -145,16 +174,15 @@ public class PlayerImpl extends CharacterImpl implements Player{
     @Override
     public int hashCode() {
         return -1; // Pour les gardes ce sera leur id
-	}
+    }
 
-	@Override
-	public int getNbKeys() {
-		return nbKeys;
-	}
+    @Override
+    public int getNbKeys() {
+        return nbKeys;
+    }
 
-	@Override
-	public void grabKey() {
-      nbKeys++;
-	}
-
+    @Override
+    public void grabKey() {
+        nbKeys++;
+    }
 }

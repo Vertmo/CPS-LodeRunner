@@ -262,6 +262,65 @@
 
 \subsection{Player}
 
+{\small
+\begin{longtable}{rl}
+  \textbf{Service}: & \textrm{Player} \textbf{refine} \textrm{Character}  \\
+
+
+  \textbf{Observators}: & \textbf{const} \texttt{Engine}: \textrm{[Player]} $ \rightarrow $ \textrm{Engine} \\
+
+
+  \textbf{Constructors}: & \texttt{init}: \textrm{Environment} $\times$ \textrm{Engine} $\times$ \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{[Player]}\\
+  & \quad\quad \textbf{pre} \texttt{init(e,eg,x,y)} \textbf{requires} \texttt{Environment::CellNature(e,x,y)} $=$ \textbf{EMP} \\
+
+
+  \textbf{Operators}: & \texttt{step}: \textrm{[Player]} $\rightarrow$ \textrm{[Player]}\\
+
+
+  \textbf{Observations}: & \\
+
+  \textrm{[init]}:
+  & Envi(init(e, eg, x, y)) = e \\
+  & Engine(init(e, eg, x, y)) = eg \\
+  & Col(init(e, eg, x, y)) = x \\
+  & Hgt(init(e, eg, x, y)) = y \\
+
+  \textrm{[Step]}:
+  & on définit le prédicat WillFall pour simplifier les équations suivantes: \\
+  & \textbf{WillFall}\texttt{(C)} \textbf{defined by} (\textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)-1)} \textbf{in} \{\textbf{HOL}, \textbf{EMP}, \textbf{HDR} \}  \\
+  & \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \textbf{not exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)-1)} \\
+  & \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C))} \textbf{not in} \{\textbf{LAD}, \textbf{HDR} \} ) \\
+  & \textrm{WillFall(P)} \textbf{implies} \textrm{Step(P)} = \textrm{GoDown(P)} \\
+
+  & \textbf{not} \texttt{WillFall(P)} \textbf{implies} \\
+  & \quad\quad (\textrm{Engine::NextCommand(Engine(P))} = Left \textbf{implies} \textrm{Step(P)} = \textrm{GoLeft(P)} \\
+  & \quad\quad \textbf{and} \textrm{Engine::NextCommand(Engine(P))} = Right \textbf{implies} \textrm{Step(P)} = \textrm{GoRight(P)} \\
+  & \quad\quad \textbf{and} \textrm{Engine::NextCommand(Engine(P))} = Up \textbf{implies} \textrm{Step(P)} = \textrm{GoUp(P)} \\
+  & \quad\quad \textbf{and} \textrm{Engine::NextCommand(Engine(P))} = Down \textbf{implies} \textrm{Step(P)} = \textrm{GoDown(P)}) \\
+
+  & (\textbf{not} \texttt{WillFall(P)} \\
+  & \quad\quad \textbf{and} \textrm{Engine::NextCommand(Engine(P))} = DigL \\
+  & \quad\quad \textbf{and} (\textrm{Environment::CellNature(Envi(P),Col(P),Hgt(P)-1)} \textbf{in} \{\textbf{PLT},\textbf{MTL},\textbf{LAD}\} \\
+  & \quad\quad\quad\quad \textbf{or} \textbf{exist} Character c \textbf{in} \textrm{Environment::CellContent(Envi(P),Col(P),Hgt(P)-1)}) \\
+  & \quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(P),Col(P)-1,Hgt(P))} \textbf{in} \{\textbf{EMP},\textbf{HOL},\textbf{LAD},\textbf{HDR}\} \\
+  & \quad\quad \textbf{and} \textrm{Environment::CellContent(Envi(P),Col(P)-1,Hgt(P))} \textbf{empty} \\
+  & \quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(P),Col(P)-1,Hgt(P)-1)} = \textbf{PLT}) \\
+  & \quad\quad \textbf{implies} \textrm{Environment::CellNature(Envi(Step(P)),Col(P)-1,Hgt(P)-1)} = \textbf{HOL} \\
+
+  & (\textbf{not} \texttt{WillFall(P)} \\
+  & \quad\quad \textbf{and} \textrm{Engine::NextCommand(Engine(P))} = DigR \\
+  & \quad\quad \textbf{and} (\textrm{Environment::CellNature(Envi(P),Col(P),Hgt(P)-1)} \textbf{in} \{\textbf{PLT},\textbf{MTL},\textbf{LAD}\} \\
+  & \quad\quad\quad\quad \textbf{or} \textbf{exist} Character c \textbf{in} \textrm{Environment::CellContent(Envi(P),Col(P),Hgt(P)-1)}) \\
+  & \quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(P),Col(P)+1,Hgt(P))} \textbf{in} \{\textbf{EMP},\textbf{HOL},\textbf{LAD},\textbf{HDR}\} \\
+  & \quad\quad \textbf{and} \textrm{Environment::CellContent(Envi(P),Col(P)+1,Hgt(P))} \textbf{empty} \\
+  & \quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(P),Col(P)+1,Hgt(P)-1)} = \textbf{PLT}) \\
+  & \quad\quad \textbf{implies} \textrm{Environment::CellNature(Envi(Step(P)),Col(P)+1,Hgt(P)-1)} = \textbf{HOL} \\
+
+  & \textrm{Engine::NextCommand(Engine(P))} \textbf{in} \{\textbf{DigL},\textbf{DigR},\textbf{Neutral}\} \\
+  & \quad\quad \textbf{implies} \textrm{Col(Step(P))} = \textrm{Col(P)} \textbf{and} \textrm{Hgt(Step(P))} = \textrm{Hgt(P)} \\
+
+\end{longtable}}
+
 \subsection{Engine}
 
 {\small

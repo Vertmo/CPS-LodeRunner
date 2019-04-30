@@ -11,6 +11,7 @@ import loderunner.services.EditableScreen;
 import loderunner.services.Engine;
 import loderunner.services.Environment;
 import loderunner.services.Guard;
+import loderunner.services.GunShot;
 import loderunner.services.Hole;
 import loderunner.services.InCell;
 import loderunner.services.Item;
@@ -31,6 +32,7 @@ public class EngineImplBug implements Engine {
     private int levelScore;
     private boolean guardTurn;
     private Set<PortalPair> portals;
+    private int numberBullets;
 
     public EngineImplBug(CommandProvider cmdProvider) {
         this.cmdProvider = cmdProvider;
@@ -97,6 +99,11 @@ public class EngineImplBug implements Engine {
     }
 
     @Override
+    public int getNumberBullets() {
+        return numberBullets;
+    }
+    
+    @Override
     public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals) {
         env = new EnvironmentImpl();
         env.init(screen);
@@ -131,23 +138,41 @@ public class EngineImplBug implements Engine {
         holes = new HashSet<>();
         status = Status.Playing;
         guardTurn = false;
+        numberBullets = 0;
     }
 
     @Override
     public void step() {
         // Step for player
+        for(InCell ic : env.getCellContent(player.getCol(), player.getHgt())) {
+            if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Gun) {
+                env.removeCellContent(player.getCol(), player.getHgt(), ic);
+                numberBullets += 5;
+            }
+        }
+        Command cmd = peekNextCommand();
         env.removeCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
         getPlayer().step();
         env.addCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
+        if(numberBullets > 0 && (cmd == Command.DigL || cmd == Command.DigR)) {
+            numberBullets--;
+        }
 
         // Step for guards
         for(Guard g: getGuards()) {
             Item transported = null;
             for(InCell ic: env.getCellContent(g.getCol(), g.getHgt())) {
-                if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Treasure) {
+                if(ic instanceof GunShot) {
+                    if(transported != null) {
+                        env.addCellContent(g.getCol(), g.getHgt(), transported);
+                        transported = null;
+                    }
+                    env.removeCellContent(g.getCol(), g.getHgt(), ic);
+                    g.setIsShot(true);
+                    break;
+                }else if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Treasure) {
                     env.removeCellContent(g.getCol(), g.getHgt(), ic);
                     transported = (Item)ic;
-                    break;
                 }
             }
             env.removeCellContent(g.getCol(), g.getHgt(), g);
@@ -258,8 +283,8 @@ public class EngineImplBug implements Engine {
             if(!treasure_found) return false;
         }
         return e.getPlayer().equals(getPlayer())
-            && e.getHoles().equals(getHoles())
-            && e.getStatus().equals(getStatus());
+                && e.getHoles().equals(getHoles())
+                && e.getStatus().equals(getStatus());
     }
 
     @Override
@@ -272,5 +297,10 @@ public class EngineImplBug implements Engine {
         ei.holes = new HashSet<>(holes);
         ei.status = status;
         return ei;
+    }
+
+    @Override
+    public void setNumberBullets(int nb) {
+        numberBullets = nb;
     }
 }

@@ -13,6 +13,7 @@ public class GuardImpl extends CharacterImpl implements Guard {
     private int initCol, initHgt;
     private Character target;
     private int timeInHole;
+    private boolean isShot;
 
     public GuardImpl() {
         id = counter; counter++;
@@ -92,11 +93,17 @@ public class GuardImpl extends CharacterImpl implements Guard {
     }
 
     @Override
+    public boolean isShot() {
+        return isShot;
+    }
+
+    @Override
     public void init(Environment e, Character t, int x, int y) {
         super.init(e, x, y);
         initCol = x; initHgt = y;
         target = t;
         timeInHole = 0;
+        isShot = false;
     }
 
     @Override
@@ -134,7 +141,12 @@ public class GuardImpl extends CharacterImpl implements Guard {
 
     @Override
     public void step() {
-        if(willFall()) goDown();
+        if(isShot()) {
+            col = initCol;
+            hgt = initHgt;
+            timeInHole = 0;
+        }
+        else if(willFall()) goDown();
         else if(getEnvi().getCellNature(getCol(), getHgt()) == Cell.HOL) {
             if(getTimeInHole() < 5) timeInHole++;
             else {
@@ -175,4 +187,8 @@ public class GuardImpl extends CharacterImpl implements Guard {
         return g;
     }
 
+    @Override
+    public void setIsShot(boolean b) {
+        isShot = b;
+    }
 }

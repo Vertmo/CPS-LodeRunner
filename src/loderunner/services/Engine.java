@@ -25,6 +25,8 @@ public interface Engine {
     // const
     public Set<PortalPair> getPortals();
 
+    public int getNumberBullets();
+
     /* Constructors */
 
     // pre: screen.isPlayable()
@@ -67,6 +69,7 @@ public interface Engine {
     //       && \forall Item i \in getKeys() \exists Coord c \in kCoords (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
     // post: \forall PortalPair pp \in portals pp \in getPortals()
     //       && \forall PortalPair pp \in getPortals() pp \in portals
+    // post: getNumberBullet() == 0
     public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals);
 
     /* Invariants */
@@ -91,6 +94,7 @@ public interface Engine {
     //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
     //           getEnvironment().getCellNature(x, y) == HOL
     //           => \exists Hole h \in getHoles() (h.getCol() == x && h.getHgt() == y)
+    // inv: getNumberBullet() >= 0
 
     /* Operators */
 
@@ -106,14 +110,37 @@ public interface Engine {
     //       && !isGuardTurn()@pre => \forall Guard g: getGuards() g == g@pre
     // post: isGuardTurn() = !isGuardTurn()@pre
 
+    // Gestion de l'extension Gun
+    // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //       && i.getNature() == Gun
+    //       && getNextCommand()@pre \in {DigL, DigR}
+    //       => getNumberBullets() == getNumberBullets()@pre + 4
+    // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //       && i.getNature() == Gun
+    //       && getNextCommand()@pre \not \in {DigL, DigR}
+    //       => getNumberBullets() == getNumberBullets()@pre + 5
+    // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //             && i.getNature() == Gun)
+    //       && getCommand()@pre \in {DigL, DigR} && getNumberBullets()@pre > 0
+    //       => getNumberBullets() == getNumberNullets()@pre - 1
+    // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //             && i.getNature() == Gun)
+    //       && getCommand()@pre \not \in {DigL, DigR}
+    //       => getNumberBullets() == getNumberNullets()@pre
+    // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //       && i.getNature() == Gun
+    //       => i \not \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)
+
     // Les gardes peuvent porter des trésors (et les perdent quand ils tombent dans un trou)
     // post: \forall Item t \in getTreasures()@pre
     //         \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
-    //           getEnvironment().getCellNature(g.getCol(), g.getHgt()) != HOL
+    //         && getEnvironment().getCellNature(g.getCol(), g.getHgt()) != HOL
+    //         && \not g.isShot()
     //         => t.getCol() == g.getCol() && t.getHgt() == g.getHgt()
     // post: \forall Item t \in getTreasures()@pre
     //         \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
-    //           getEnvironment().getCellNature(g.getCol(), g.getHgt()) == HOL
+    //         && getEnvironment().getCellNature(g.getCol(), g.getHgt()) == HOL
+    //         && \not g.isShot()
     //         => t.getCol() == g.getCol() && t.getHgt() == g.getHgt()+1
     // post: \forall Item t \in getTreasures()@pre
     //         \not \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
@@ -167,4 +194,7 @@ public interface Engine {
     public void step();
 
     public Engine clone();
+
+    //setter
+    public void setNumberBullets(int nb);
 }

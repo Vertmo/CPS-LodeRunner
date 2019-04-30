@@ -58,6 +58,16 @@ public class GuardContract extends CharacterContract implements Guard {
     }
 
     @Override
+    public boolean isShot() {
+        return delegate.isShot();
+    }
+
+    @Override
+    public void setIsShot(boolean b) {
+        delegate.setIsShot(b);
+    }
+
+    @Override
     public void checkInvariant() {
         super.checkInvariant();
 
@@ -186,6 +196,9 @@ public class GuardContract extends CharacterContract implements Guard {
         // post: getTarget() == t
         if(getTarget() != t)
             throw new PostconditionError("Guard", "init", "getTarget() == t");
+        // post: isShot() == false
+//        if(isShot())
+//            throw new PostconditionError("Guard", "init", "isShot() == false");
     }
 
     @Override
@@ -348,21 +361,29 @@ public class GuardContract extends CharacterContract implements Guard {
         if(getInitHgt() != initHgt_pre) throw new PostconditionError("Guard", "step", "initHgt is supposed to be const");
         if(getTarget() != target_pre) throw new PostconditionError("Guard", "step", "target is supposed to be const");
 
-        // post: willFall() => step() == goDown()
+        // post: isShot() => getCol() == getInitCol() && getHgt() == getInitHgt() && getTimeInHole() == 0
+        if(isShot()) {
+            if(!(getCol() == getInitCol()) || !(getHgt() == getInitHgt())) {
+                throw new PostconditionError("Guard", "step", "The guard should have been shot");
+            }
+            return;
+        }
+
+        // post: \not isShot() && willFall() => step() == goDown()
         if(willFall(col_pre, hgt_pre)) {
             Guard clone = delegate_pre.clone();
             clone.goDown();
             if(!delegate.equals(clone))
                 throw new PostconditionError("Guard", "step", "The guard should have fallen");
         }
-        // post: \not willFall()
+        // post: \not isShot() && \not willFall()
         //       && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) == HOL && getTimeInHole()@pre < 5
         //       => getTimeInHole() == getTimeInHole()@pre + 1
         if(!willFall(col_pre, hgt_pre) &&
            getEnvi().getCellNature(col_pre, hgt_pre) == Cell.HOL && timeInHole_pre < 5 &&
            getTimeInHole() != timeInHole_pre + 1)
             throw new PostconditionError("Guard", "step", "The timeInHole has not increased properly");
-        // post: \not willFall()
+        // post: \not isShot() && \not willFall()
         //       && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) == HOL && getTimeInHole()@pre == 5
         //       => (getBehaviour()@pre == Left => step() == climbLeft()
         //           && getBehaviour()@pre == Right => step() == climbRight())
@@ -374,7 +395,7 @@ public class GuardContract extends CharacterContract implements Guard {
             if(!delegate.equals(clone))
                 throw new PostconditionError("Guard", "step", "The guard should have climbed");
         }
-        // post: \not willFall() && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) != HOL
+        // post: \not isShot() && \not willFall() && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) != HOL
         //       => (getBehaviour()@pre == Left => step() == goLeft()
         //           && getBehaviour()@pre == Right => step() == goRight()
         //           && getBehaviour()@pre == Up => step() == goUp()

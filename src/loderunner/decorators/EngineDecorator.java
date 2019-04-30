@@ -102,4 +102,12 @@ public abstract class EngineDecorator implements Engine {
 
     @Override
     public abstract Engine clone();
+
+	public int getNumberBullets() {
+		return delegate.getNumberBullets();
+	}
+
+	public void setNumberBullets(int nb) {
+		delegate.setNumberBullets(nb);
+	}
 }

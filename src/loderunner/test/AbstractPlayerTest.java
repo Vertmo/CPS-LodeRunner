@@ -17,6 +17,8 @@ import loderunner.services.Command;
 import loderunner.services.Coord;
 import loderunner.services.EditableScreen;
 import loderunner.services.Engine;
+import loderunner.services.GunShot;
+import loderunner.services.InCell;
 import loderunner.services.Player;
 
 public abstract class AbstractPlayerTest extends AbstractCharacterTest{
@@ -35,6 +37,7 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		es.setNature(7, 2, Cell.LAD); es.setNature(7, 3, Cell.LAD); es.setNature(7, 4, Cell.LAD);
 		es.setNature(5, 4, Cell.PLT); es.setNature(6, 4, Cell.PLT); es.setNature(8, 4, Cell.PLT); es.setNature(9, 4, Cell.PLT);
 		es.setNature(1, 4, Cell.HDR); es.setNature(2, 4, Cell.HDR); es.setNature(3, 4, Cell.HDR); es.setNature(4, 4, Cell.HDR);
+		es.setNature(5, 2, Cell.PLT);
 		return es;
 	}
 
@@ -147,19 +150,19 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		assert(player.getHgt() == 4);
 	}
 
-		@Test
-		public void testStep4() {
-			//Conditions initiales
-			List<Command> cmd = new ArrayList<Command>();
-			cmd.add(Command.Neutral);
-			Engine eg = createEngine(cmd);
-			player.init(eg.getEnvironment(), eg, 2, 3);
-			//Opération
-			player.step();
-			//Oracle: vérifié par contrats + player ne doit pas tomber à cause de garde en (2,2)
-			assert(player.getCol() == 2);
-			assert(player.getHgt() == 3);
-		}
+	@Test
+	public void testStep4() {
+		//Conditions initiales
+		List<Command> cmd = new ArrayList<Command>();
+		cmd.add(Command.Neutral);
+		Engine eg = createEngine(cmd);
+		player.init(eg.getEnvironment(), eg, 2, 3);
+		//Opération
+		player.step();
+		//Oracle: vérifié par contrats + player ne doit pas tomber à cause de garde en (2,2)
+		assert(player.getCol() == 2);
+		assert(player.getHgt() == 3);
+	}
 
 	@Test
 	public void testStep5() {
@@ -264,11 +267,11 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		List<Command> cmd = new ArrayList<Command>();
 		cmd.add(Command.DigR);
 		Engine eg = createEngine(cmd);
-		player.init(eg.getEnvironment(), eg, 1, 2);
+		player.init(eg.getEnvironment(), eg, 0, 2);
 		//Opération
 		player.step();
 		//Oracle: vérifié par contrats + player a dig la case en bas à droite 
-		assert(player.getEnvi().getCellNature(2, 1) == Cell.HOL);
+		assert(player.getEnvi().getCellNature(1, 1) == Cell.HOL);
 	}
 
 	@Test
@@ -295,6 +298,66 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		//Opération
 		player.step();
 		//Oracle: vérifié par contrats
+	}
+
+        @Test
+	public void testStep15() {
+		//Conditions initiales
+		List<Command> cmd = new ArrayList<Command>();
+		cmd.add(Command.DigL);
+		Engine eg = createEngine(cmd);
+		player.init(eg.getEnvironment(), eg, 3, 2);
+		player.getEngine().setNumberBullets(1);
+		//Opération
+		player.step();
+		//Oracle: vérifié par contrats + gunshot sur le garde en (2,2)
+		boolean gunshot = false;
+		for(InCell c : player.getEnvi().getCellContent(2, 2)) {
+			if(c instanceof GunShot) {
+				gunshot = true;
+			}
+		}
+		assert(gunshot);
+	}
+
+	@Test
+	public void testStep16() {
+		//Conditions initiales
+		List<Command> cmd = new ArrayList<Command>();
+		cmd.add(Command.DigR);
+		Engine eg = createEngine(cmd);
+		player.init(eg.getEnvironment(), eg, 0, 2);
+		player.getEngine().setNumberBullets(1);
+		//Opération
+		player.step();
+		//Oracle: vérifié par contrats + gunshot sur le garde en (2,2)
+		boolean gunshot = false;
+		for(InCell c : player.getEnvi().getCellContent(2, 2)) {
+			if(c instanceof GunShot) {
+				gunshot = true;
+			}
+		}
+		assert(gunshot);
+	}
+
+	@Test
+	public void testStep17() {
+		//Conditions initiales
+		List<Command> cmd = new ArrayList<Command>();
+		cmd.add(Command.DigL);
+		Engine eg = createEngine(cmd);
+		player.init(eg.getEnvironment(), eg, 6, 2);
+		player.getEngine().setNumberBullets(1);
+		//Opération
+		player.step();
+		//Oracle: vérifié par contrats + pas de gunshot sur le garde en (2,2)
+		boolean no_gunshot = true;
+		for(InCell c : player.getEnvi().getCellContent(2, 2)) {
+			if(c instanceof GunShot) {
+				no_gunshot = false;
+			}
+		}
+		assert(no_gunshot);
 	}
 
     @Test
