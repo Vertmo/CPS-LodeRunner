@@ -304,7 +304,7 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 	public void testStep15() {
 		//Conditions initiales
 		List<Command> cmd = new ArrayList<Command>();
-		cmd.add(Command.DigL);
+		cmd.add(Command.ShootL);
 		Engine eg = createEngine(cmd);
 		player.init(eg.getEnvironment(), eg, 3, 2);
 		player.getEngine().setNumberBullets(1);
@@ -324,7 +324,7 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 	public void testStep16() {
 		//Conditions initiales
 		List<Command> cmd = new ArrayList<Command>();
-		cmd.add(Command.DigR);
+		cmd.add(Command.ShootR);
 		Engine eg = createEngine(cmd);
 		player.init(eg.getEnvironment(), eg, 0, 2);
 		player.getEngine().setNumberBullets(1);
@@ -344,7 +344,7 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 	public void testStep17() {
 		//Conditions initiales
 		List<Command> cmd = new ArrayList<Command>();
-		cmd.add(Command.DigL);
+		cmd.add(Command.ShootL);
 		Engine eg = createEngine(cmd);
 		player.init(eg.getEnvironment(), eg, 6, 2);
 		player.getEngine().setNumberBullets(1);

@@ -16,12 +16,16 @@ import loderunner.contracts.errors.PreconditionError;
 import loderunner.impl.CoordImpl;
 import loderunner.impl.EditableScreenImpl;
 import loderunner.impl.PortalPairImpl;
+import loderunner.impl.ItemImpl;
 import loderunner.services.Cell;
 import loderunner.services.Command;
 import loderunner.services.EditableScreen;
 import loderunner.services.Engine;
 import loderunner.services.Guard;
 import loderunner.services.PortalPair;
+import loderunner.services.InCell;
+import loderunner.services.Item;
+import loderunner.services.ItemType;
 import loderunner.services.Status;
 
 public abstract class AbstractEngineTest {
@@ -327,6 +331,56 @@ public abstract class AbstractEngineTest {
         engine.step();
         // Oracle: vérifié par contrat + le trésor est tombé au dessus du garde
         Assert.assertEquals(1, engine.getEnvironment().getCellContent(5, 2).size());
+    }
+
+    @Test
+    public void testStepTrans9() {
+        // Conditions initiales
+        engine.init(createPlayableScreen(), new CoordImpl(4, 2),
+                new HashSet<>(Arrays.asList(new CoordImpl(7, 2))),
+                new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+        Item gun = new ItemImpl(ItemType.Gun, 5, 2);
+        engine.getEnvironment().addCellContent(5, 2, gun);
+        List<Command> coms = new ArrayList<>();
+        coms.add(Command.Right);
+        coms.add(Command.ShootR);
+        tcp.setCommands(coms);
+        Guard g = engine.getGuards().iterator().next();
+        engine.step();
+
+        boolean gun_present = false;
+        for(InCell ic : engine.getEnvironment().getCellContent(5, 2)) {
+            if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Gun) {
+                gun_present = true;
+                break;
+            }
+        }
+        //Le player n'a pas encore de balles
+        assert(engine.getNumberBullets() == 0);
+        assert(gun_present);
+        //Le garde ne s'est pas fait tiré dessus et s'est déplacé en (6,2)
+        assert(!g.isShot());
+        assert(g.getCol() == 6);
+        assert(g.getHgt() == 2);
+
+        // Opération
+        engine.step();
+
+        // Oracle: vérifié par contrat + le player a recuperer des balles et a tiré sur le garde, le garde retourne en (7,2)
+        boolean no_gun_present = true;
+        for(InCell ic : engine.getEnvironment().getCellContent(5, 2)) {
+            if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Gun) {
+                no_gun_present = false;
+                break;
+            }
+        }
+        //Le player a ramassé le pistolet et a tiré une fois
+        assert(engine.getNumberBullets() == 4);
+        assert(no_gun_present);
+        //Le garde s'est fait tiré dessus et retourne à sa case initiale
+        assert(g.isShot());
+        assert(g.getCol() == 7);
+        assert(g.getHgt() == 2);
     }
 
     // Etats remarquables

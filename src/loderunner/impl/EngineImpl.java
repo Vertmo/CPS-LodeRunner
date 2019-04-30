@@ -144,13 +144,13 @@ public class EngineImpl implements Engine {
     @Override
     public void step() {
         // Step for player
+        Command cmd = peekNextCommand();
         for(InCell ic : env.getCellContent(player.getCol(), player.getHgt())) {
             if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Gun) {
                 env.removeCellContent(player.getCol(), player.getHgt(), ic);
                 numberBullets += 5;
             }
         }
-        Command cmd = peekNextCommand();
         env.removeCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
         PortalPair portal = null;
         for(PortalPair pp: getPortals()) {
@@ -163,7 +163,7 @@ public class EngineImpl implements Engine {
             getPlayer().step();
         }
         env.addCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
-        if(numberBullets > 0 && (cmd == Command.DigL || cmd == Command.DigR)) {
+        if(numberBullets > 0 && (cmd == Command.ShootL || cmd == Command.ShootR)) {
             numberBullets--;
         }
 
@@ -173,17 +173,16 @@ public class EngineImpl implements Engine {
             g.setIsShot(false);
             for(InCell ic: env.getCellContent(g.getCol(), g.getHgt())) {
                 if(ic instanceof GunShot) {
-                    if(transported != null) {
-                        env.addCellContent(g.getCol(), g.getHgt(), transported);
-                        transported = null;
-                    }
+                    transported = null;
                     env.removeCellContent(g.getCol(), g.getHgt(), ic);
                     g.setIsShot(true);
                     break;
                 }else if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Treasure) {
-                    env.removeCellContent(g.getCol(), g.getHgt(), ic);
                     transported = (Item)ic;
                 }
+            }
+            if(transported != null) {
+                env.removeCellContent(g.getCol(), g.getHgt(), transported);
             }
             env.removeCellContent(g.getCol(), g.getHgt(), g);
             if(guardTurn) g.step();

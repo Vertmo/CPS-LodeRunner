@@ -40,7 +40,6 @@ public interface Player extends /* refine */ Character {
     //        && getEngine().getNextCommand() == Down => step() == goDown())
     // post: \not willFall()
     //       && getEngine().getNextCommand() == DigL
-    //       && getEngine().getNumberBullets() == 0
     //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
     //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
     //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) \in { EMP, HOL }
@@ -55,16 +54,7 @@ public interface Player extends /* refine */ Character {
     //       && getNbKeys()@pre > 0
     //       => (getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) == EMP && getNbKeys() == getNbKeys()@pre-1)
     // post: \not willFall()
-    //       && getEngine().getNextCommand() == DigL
-    //       && getEngine().getNumberBullets() > 0
-    //       && (\exist j \in [0, getCol()@pre[,
-    //                     \exist Guard g1 \in getEnvi().getCellContent(j,getHgt()@pre)
-    //                     && \forAll k \in ]j,getCol()@pre[, getEnvi().getCellNature(k,getHgt()@pre) \in {EMP,HOL,LAD,HDR}
-    //                                                        && \not \exist Guard g2 \in getEnvi.getCellContent(k,getHgt()@pre))
-    //       => \exist Gunshot gs \in getEnvi().getCellContent(j,getHgt()@pre)
-    // post: \not willFall()
     //       && getEngine().getNextCommand() == DigR
-    //       && getEngine().getNumberBullets() == 0
     //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
     //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
     //       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre) \in { EMP, HOL }
@@ -79,7 +69,15 @@ public interface Player extends /* refine */ Character {
     //       && getNbKeys()@pre > 0
     //       => (getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre) == EMP && getNbKeys() == getNbKeys()@pre-1)
     // post: \not willFall()
-    //       && getEngine().getNextCommand() == DigR
+    //       && getEngine().getNextCommand() == ShootL
+    //       && getEngine().getNumberBullets() > 0
+    //       && (\exist j \in [0, getCol()@pre[,
+    //                     \exist Guard g1 \in getEnvi().getCellContent(j,getHgt()@pre)
+    //                     && \forAll k \in ]j,getCol()@pre[, getEnvi().getCellNature(k,getHgt()@pre) \in {EMP,HOL,LAD,HDR}
+    //                                                        && \not \exist Guard g2 \in getEnvi.getCellContent(k,getHgt()@pre))
+    //       => \exist Gunshot gs \in getEnvi().getCellContent(j,getHgt()@pre)
+    // post: \not willFall()
+    //       && getEngine().getNextCommand() == ShootR
     //       && getEngine().getNumberBullets() > 0
     //       && (\exist j \in ]getCol()@pre, getEnvi().getWidth()[,
     //                     \exist Guard g1 \in getEnvi().getCellContent(j,getHgt()@pre)

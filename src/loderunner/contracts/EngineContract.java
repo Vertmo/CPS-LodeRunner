@@ -357,41 +357,52 @@ public class EngineContract extends EngineDecorator {
 
         // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
         //       && i.getNature() == Gun
-        //       && getNextCommand()@pre \in {DigL, DigR}
-        //       => getNumberBullets() == getNumberBullets()@pre + 4
-        if(player_on_gun_at_pre && (getNextCommand_at_pre == Command.DigL || getNextCommand_at_pre == Command.DigR)){
-            if(!(getNumberBullets() == getNumberBullets_at_pre + 4))
-                throw new PostconditionError("Engine", "step", "The number of bullets should have increased by 4");
+        //       => i \not \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)
+        if(player_on_gun_at_pre){
+            for(InCell ic : getEnvironment().getCellContent(playerCol_pre, playerHgt_pre)) {
+                if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Gun)
+                    throw new PostconditionError("Engine", "step", "The player should have taken the gun");
+            }
         }
 
         // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
         //       && i.getNature() == Gun
-        //       && getNextCommand()@pre \not \in {DigL, DigR}
+        //       && getNextCommand()@pre \not \in {ShootL, ShootR}
         //       => getNumberBullets() == getNumberBullets()@pre + 5
-        if(player_on_gun_at_pre && !(getNextCommand_at_pre == Command.DigL || getNextCommand_at_pre == Command.DigR)){
+        if(player_on_gun_at_pre && !(getNextCommand_at_pre == Command.ShootL || getNextCommand_at_pre == Command.ShootR)){
             if(!(getNumberBullets() == getNumberBullets_at_pre + 5))
                 throw new PostconditionError("Engine", "step", "The number of bullets should have increased by 5");
         }
 
-        // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
-        //             && i.getNature() == Gun)
-        //       && getCommand()@pre \in {DigL, DigR} && getNumberBullets()@pre > 0
-        //       => getNumberBullets() == getNumberNullets()@pre - 1
-        if(!player_on_gun_at_pre
-                && (getNextCommand_at_pre == Command.DigL || getNextCommand_at_pre == Command.DigR)
-                && getNumberBullets_at_pre > 0){
-            if(!(getNumberBullets() == getNumberBullets_at_pre - 1))
-                throw new PostconditionError("Engine", "step", "The number of bullets should have decreased by 1");
+        // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+        //       && i.getNature() == Gun
+        //       && getNextCommand()@pre \in {ShootL, ShootR}
+        //       => getNumberBullets() == getNumberBullets()@pre + 4
+        if(player_on_gun_at_pre && (getNextCommand_at_pre == Command.ShootL || getNextCommand_at_pre == Command.ShootR)){
+            if(!(getNumberBullets() == getNumberBullets_at_pre + 4))
+                throw new PostconditionError("Engine", "step", "The number of bullets should have increased by 4");
         }
 
         // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
         //             && i.getNature() == Gun)
-        //       && getCommand()@pre \not \in {DigL, DigR}
+        //       && (getNextCommand()@pre \not \in {ShootL, ShootR} || getNumberBullets()@pre == 0)
         //       => getNumberBullets() == getNumberNullets()@pre
         if(!player_on_gun_at_pre
-                && !(getNextCommand_at_pre == Command.DigL || getNextCommand_at_pre == Command.DigR)){
+                && (!(getNextCommand_at_pre == Command.ShootL || getNextCommand_at_pre == Command.ShootR) || getNumberBullets_at_pre == 0)){
             if(!(getNumberBullets() == getNumberBullets_at_pre))
-                throw new PostconditionError("Engine", "step", "The number of bullets should have stayed the same");
+                throw new PostconditionError("Engine", "step", "The number of bullets shouldn't have changed");
+        }
+
+        // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+        //             && i.getNature() == Gun)
+        //       && getNextCommand()@pre \in {ShootL, ShootR}
+        //       && getNumberBullet()@pre > 0
+        //       => getNumberBullets() == getNumberNullets()@pre - 1
+        if(!player_on_gun_at_pre
+                && (getNextCommand_at_pre == Command.ShootL || getNextCommand_at_pre == Command.ShootR)
+                && getNumberBullets_at_pre > 0){
+            if(!(getNumberBullets() == getNumberBullets_at_pre - 1))
+                throw new PostconditionError("Engine", "step", "The number of bullets should have decreased by 1");
         }
 
         // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre

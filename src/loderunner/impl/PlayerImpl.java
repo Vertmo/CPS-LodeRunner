@@ -47,21 +47,7 @@ public class PlayerImpl extends CharacterImpl implements Player{
      * Traite la commande DigL
      */
     private void instrDigL() {
-        if(getEngine().getNumberBullets() > 0) {
-            for(int j=getCol()-1;j>=0;j--) {
-                Cell cell_nat = getEnvi().getCellNature(j, getHgt());
-                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT) {
-                    return;
-                }else {
-                    for(InCell content : getEnvi().getCellContent(j, getHgt())){
-                        if(content instanceof Guard) {
-                            getEnvi().addCellContent(j, getHgt(), new GunShotImpl());
-                            return;
-                        }
-                    }
-                }
-            }
-        }else if(getCol() != 0) {
+        if(getCol() != 0) {
             Cell left_nat = getEnvi().getCellNature(getCol()-1, getHgt());
             boolean left_content_is_empty = getEnvi().getCellContent(getCol()-1, getHgt()).isEmpty();
             if((left_nat == Cell.EMP || left_nat == Cell.HOL) && left_content_is_empty &&
@@ -79,6 +65,45 @@ public class PlayerImpl extends CharacterImpl implements Player{
      * Traite la commande DigR
      */
     private void instrDigR() {
+        if(getCol() != getEnvi().getWidth()-1) {
+            Cell right_nat = getEnvi().getCellNature(getCol()+1, getHgt());
+            boolean right_content_is_empty = getEnvi().getCellContent(getCol()+1, getHgt()).isEmpty();
+            if((right_nat == Cell.EMP || right_nat == Cell.HOL) && right_content_is_empty &&
+               getEnvi().getCellNature(getCol()+1, getHgt()-1) == Cell.PLT) {
+                getEnvi().dig(getCol()+1, getHgt()-1);
+            }
+            if(right_nat == Cell.DOR && getNbKeys() > 0) {
+                nbKeys--;
+                getEnvi().openDoor(getCol()+1, getHgt());
+            }
+        }
+    }
+
+    /**
+     * Traite la commande ShootL
+     */
+    private void instrShootL() {
+        if(getEngine().getNumberBullets() > 0) {
+            for(int j=getCol()-1;j>=0;j--) {
+                Cell cell_nat = getEnvi().getCellNature(j, getHgt());
+                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT) {
+                    return;
+                }else {
+                    for(InCell content : getEnvi().getCellContent(j, getHgt())){
+                        if(content instanceof Guard) {
+                            getEnvi().addCellContent(j, getHgt(), new GunShotImpl());
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Traite la commande ShootR
+     */
+    private void instrShootR() {
         if(getEngine().getNumberBullets() > 0) {
             for(int j=getCol()+1;j<getEnvi().getWidth();j++) {
                 Cell cell_nat = getEnvi().getCellNature(j, getHgt());
@@ -92,17 +117,6 @@ public class PlayerImpl extends CharacterImpl implements Player{
                         }
                     }
                 }
-            }
-        }else if(getCol() != getEnvi().getWidth()-1) {
-            Cell right_nat = getEnvi().getCellNature(getCol()+1, getHgt());
-            boolean right_content_is_empty = getEnvi().getCellContent(getCol()+1, getHgt()).isEmpty();
-            if((right_nat == Cell.EMP || right_nat == Cell.HOL) && right_content_is_empty &&
-               getEnvi().getCellNature(getCol()+1, getHgt()-1) == Cell.PLT) {
-                getEnvi().dig(getCol()+1, getHgt()-1);
-            }
-            if(right_nat == Cell.DOR && getNbKeys() > 0) {
-                nbKeys--;
-                getEnvi().openDoor(getCol()+1, getHgt());
             }
         }
     }
@@ -123,6 +137,14 @@ public class PlayerImpl extends CharacterImpl implements Player{
 
             case DigR :
                 instrDigR();
+                break;
+
+            case ShootL :
+                instrShootL();
+                break;
+
+            case ShootR :
+                instrShootR();
                 break;
 
             case Down:

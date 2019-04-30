@@ -110,26 +110,27 @@ public interface Engine {
     //       && !isGuardTurn()@pre => \forall Guard g: getGuards() g == g@pre
     // post: isGuardTurn() = !isGuardTurn()@pre
 
-    // Gestion de l'extension Gun
-    // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
-    //       && i.getNature() == Gun
-    //       && getNextCommand()@pre \in {DigL, DigR}
-    //       => getNumberBullets() == getNumberBullets()@pre + 4
-    // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
-    //       && i.getNature() == Gun
-    //       && getNextCommand()@pre \not \in {DigL, DigR}
-    //       => getNumberBullets() == getNumberBullets()@pre + 5
-    // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
-    //             && i.getNature() == Gun)
-    //       && getCommand()@pre \in {DigL, DigR} && getNumberBullets()@pre > 0
-    //       => getNumberBullets() == getNumberNullets()@pre - 1
-    // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
-    //             && i.getNature() == Gun)
-    //       && getCommand()@pre \not \in {DigL, DigR}
-    //       => getNumberBullets() == getNumberNullets()@pre
+    // Le joueur peut ramasser un pistolet
     // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
     //       && i.getNature() == Gun
     //       => i \not \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)
+    // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //       && i.getNature() == Gun
+    //       && getNextCommand()@pre \not \in {ShootL, ShootR}
+    //       => getNumberBullets() == getNumberBullets()@pre + 5
+    // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //       && i.getNature() == Gun
+    //       && getNextCommand()@pre \in {ShootL, ShootR}
+    //       => getNumberBullets() == getNumberBullets()@pre + 4
+    // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //             && i.getNature() == Gun)
+    //       && (getNextCommand()@pre \not \in {ShootL, ShootR} || getNumberBullets()@pre == 0)
+    //       => getNumberBullets() == getNumberNullets()@pre
+    // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //             && i.getNature() == Gun)
+    //       && getNextCommand()@pre \in {ShootL, ShootR}
+    //       && getNumberBullet()@pre > 0
+    //       => getNumberBullets() == getNumberNullets()@pre - 1
 
     // Les gardes peuvent porter des trésors (et les perdent quand ils tombent dans un trou)
     // post: \forall Item t \in getTreasures()@pre
