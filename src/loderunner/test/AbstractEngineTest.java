@@ -277,7 +277,7 @@ public abstract class AbstractEngineTest {
                     new HashSet<>(Arrays.asList(new CoordImpl(7, 2))),
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
         List<Command> coms = new ArrayList<>(); coms.add(Command.DigR);
-        for(int i = 0; i < 3; i++) coms.add(Command.Neutral);
+        for(int i = 0; i < 10; i++) coms.add(Command.Neutral);
         tcp.setCommands(coms);
         engine.step(); engine.step(); engine.step(); engine.step(); engine.step();
         // Opération
