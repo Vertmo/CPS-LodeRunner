@@ -317,7 +317,7 @@
   & \quad\quad\quad\quad (\textrm{Col(t)} $=$ \textrm{Col(c)} $\land$ \textrm{Hgt(t)} $=$ \textrm{Hgt(c)})\\
   \textrm{[Step]}:&\\
   & \textrm{Player(Step(E))} $=$ \textrm{Step(Player(E))}\\
-  & $\forall$ \textrm{Guard} g $\in$ \textrm{Guards(Step(E))} $\exists$ \textrm{Guard} g' $\in$ \textrm{Guards(E))} g $=$ \textrm{Step(g)}\\
+  & $\forall$ \textrm{Guard} g $\in$ \textrm{Guards(Step(E))} $\exists$ \textrm{Guard} g' $\in$ \textrm{Guards(E))} g' $=$ \textrm{Step(g)}\\
   & $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(E)} $\exists$ \textrm{Guard} g $\in$ \textrm{CellContent(Environment(S), Col(t), Hgt(t))}\\
   & \quad\quad $\land$ \textrm{CellNature(Environment(E), Col(Step(G)), Hgt(Step(G))} $\ne$ \textbf{HOL}\\
   & \quad\quad $\Rightarrow$ $\exists$ \textrm{Treasure} t2 $\in$ \textrm{Treasures(Step(E))}\\
@@ -326,7 +326,7 @@
   & \quad\quad $\land$ \textrm{CellNature(Environment(E), Col(Step(G)), Hgt(Step(G))} $=$ \textbf{HOL}\\
   & \quad\quad $\Rightarrow$ $\exists$ \textrm{Treasure} t2 $\in$ \textrm{Treasures(Step(E))}\\
   & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} $\land$ \textrm{Col(t2)} $=$ \textrm{Col(Step(G))} $\land$ \textrm{Hgt(t2)} $=$ \textrm{Hgt(Step(G))} $+$ 1\\
-& $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(E)} $\neg$$\exists$ \textrm{Guard} g $\in$ \textrm{CellContent(Environment(S), Col(t), Hgt(t))}\\
+& $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(E)} $\neg$ $\exists$ \textrm{Guard} g $\in$ \textrm{CellContent(Environment(S), Col(t), Hgt(t))}\\
   & \quad\quad $\land$ t $\in$ \textrm{Treasures(Step(E))} \\
   & \quad\quad $\Rightarrow$ $\exists$ \textrm{Treasure} t2 $\in$ \textrm{Treasures(Step(E))}\\
   & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} $\land$ \textrm{Col(t2)} $=$ \textrm{Col(t)} $\land$ \textrm{Hgt(t2)} $=$ \textrm{Hgt(t)}\\
@@ -335,7 +335,7 @@
   & \quad\quad $\Rightarrow$ (t $\notin$ Treasures(Step(E)) $\land$ \textrm{LevelScore(Step(E))} $=$ \textrm{LevelScore(E)} $+$ 1)\\
   & $\neg$$\exists$ \textrm{Item} t $\in$ \textrm{Treasures(E)} \textrm{Col(i)} $=$ \textrm{Col(Player(E))} $\land$ \textrm{Hgt(i)} $=$ \textrm{Hgt(Player(E))}\\
   & \quad\quad $\Rightarrow$ \textrm{LevelScore(Step(E))} $=$ \textrm{LevelScore(E)}\\
-  & $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(E)} \textrm{Col(i)} $\ne$ \textrm{Col(Player(E))} $\lor$ \textrm{Hgt(i)} $\ne$ \textrm{Hgt(Player(E))}\\
+  & $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(E)} \textrm{Col(i)} $\ne$ \textrm{Col(Player(E))} \textbf{or} \textrm{Hgt(i)} $\ne$ \textrm{Hgt(Player(E))}\\
   & \quad\quad $\Rightarrow$ t $\in$ \textrm{Treasures(Step(E))}\\
   & \textrm{Treasures(Step(E))} $= \emptyset$ $\Rightarrow$ \textrm{Status(Step(E))} $=$ \textbf{Win}\\
   & $\exists$ \textrm{Guard} g $\in$ \textrm{Guards(Step(E))} (\textrm{Col(g)} $=$ \textrm{Col(Player(E))} $\land$ \textrm{Hgt(g)} $=$ \textrm{Hgt(Player(E))}) \\
@@ -397,5 +397,79 @@
 \end{longtable}}
 
 \section{Extensions}
+
+\subsection{Gardes améliorés}
+
+\subsubsection{Descendre les échelles, tomber des rails}
+Dans le service Guard, on modifie:
+{\small
+\begin{longtable}{rl}
+  \textbf{Observations}:&\\
+  \textrm{[invariant]}:& (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $\in$ \{ \textbf{LAD}, \textbf{HDR} \}\\
+  & \quad\quad\quad\quad $\lor$ (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $=$ \textbf{LAD}\\
+  & \quad\quad\quad\quad\quad\quad $\land$ $\neg$$\exists$ \textrm{Guard} g $\in$ \textrm{Environment::CellContent(Envi(G),Col(G),Hgt(G)-1)}))\\
+  & \quad\quad $\land$ \textrm{Hgt(G)} $>$ \textrm{Character::Hgt(Target(G))} \\
+  & \quad\quad $\land$ (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $\notin$ \{\textbf{PLT}, \textbf{MTL}  \} \\
+  & \quad\quad\quad\quad $\lor$ $\exists$ \textrm{Guard} g $\in$ \textrm{Environment::CellContent(Envi(G),Col(G),Hgt(G)-1)} \\
+  & \quad\quad\quad\quad $\Rightarrow$ \textrm{Hgt(G) - Character::Hgt(Target(G))} $<$ $|$\textrm{Character::Col(Target(G)) - Col(G)})$|$)\\
+  & \quad\quad $\Rightarrow$ \textrm{Behaviour(G)} $=$ \textbf{Down} \\
+
+  & \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{LAD} \\
+  & \quad\quad $\land$ \textrm{Hgt(G)} $=$ \textrm{Character::Hgt(Target(G))} \\
+  & \quad\quad $\land$ ( \textrm{Col(G)} $=$ \textrm{Character::Col(Target(G))}\\
+  & \quad\quad\quad\quad $\lor$ $|$\textrm{Character::Hgt(G) - Hgt(Target(G))}$|$ $<$ $|$\textrm{Character::Col(Target(G)) - Col(G)})$|$) \\
+  & \quad\quad $\Rightarrow$ \textrm{Behaviour(G)} $=$ \textbf{Neutral} \\
+
+  & (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $\in$ \{\textbf{PLT}, \textbf{MTL}  \} \\
+  & \quad\quad\quad\quad $\lor$ ( \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{LAD} \\
+  & \quad\quad\quad\quad\quad\quad $\land$ \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $\neq$ \textbf{LAD}) \\
+  & \quad\quad\quad\quad $\lor$ $\exists$ \textrm{Guard} g $\in$ \textrm{Environment::CellContent(Envi(G),Col(G),Hgt(G)-1)}) \\
+  & \quad\quad $\land$ \textrm{Col(G)} $=$ \textrm{Character::Col(Target(G))} \\
+  & \quad\quad $\land$ (\textrm{Hgt(G)} $=$ \textrm{Character::Hgt(Target(G))} \\
+  & \quad\quad\quad\quad $\lor$ (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $\neq$ \textbf{LAD})\\
+  & \quad\quad\quad\quad\quad\quad $\land$ \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $\neq$ \textbf{LAD}) \\
+  & \quad\quad $\Rightarrow$ \textrm{Behaviour(G)} $=$ \textbf{Neutral} \\
+\end{longtable}}
+
+\subsubsection{Quitter les échelles}
+Dans le service \textrm{Guard}, on modifie:
+{\small
+\begin{longtable}{rl}
+  \textrm{[invariant]}:& (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $\in$ \{\textbf{PLT}, \textbf{MTL}  \} \\
+  & \quad\quad\quad\quad $\lor$ ( \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{LAD} \\
+  & \quad\quad\quad\quad\quad\quad $\land$ (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $\neq$ \textbf{LAD}) \\
+  & \quad\quad\quad\quad\quad\quad\quad\quad $\lor$ \textrm{Environment::CellNature(Envi(G),Col(G)-1,Hgt(G)-1)} $\in$ \{ \textbf{PLT}, \textbf{MTL} \}\\
+  & \quad\quad\quad\quad\quad\quad\quad\quad $\lor$ \textrm{Environment::CellNature(Envi(G),Col(G)-1,Hgt(G))} $=$ \textbf{HDR})\\
+  & \quad\quad\quad\quad $\lor$ $\exists$ \textrm{Guard} g $\in$ \textrm{Environment::CellContent(Envi(G),Col(G),Hgt(G)-1)}) \\
+  & \quad\quad $\land$ \textrm{Col(G)} $<$ \textrm{Character::Col(Target(G))} \\
+  & \quad\quad $\land$ (\textrm{Hgt(G)} $\neq$ \textrm{Character::Hgt(Target(G))} \\
+  & \quad\quad\quad\quad $\land$ \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{LAD}\\
+  & \quad\quad\quad\quad $\Rightarrow$ \textrm{Character::Col(Target(G)) - Col(G)} $<$ $|$\textrm{Character::Hgt(Target(G)) - Hgt(G)})$|$) \\
+  & \quad\quad $\Rightarrow$ \textrm{Behaviour(G)} $=$ \textbf{Left} \\ 
+
+  & (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $\in$ \{\textbf{PLT}, \textbf{MTL}  \} \\
+  & \quad\quad\quad\quad $\lor$ ( \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{LAD} \\
+  & \quad\quad\quad\quad\quad\quad $\land$ (\textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G)-1)} $\neq$ \textbf{LAD}) \\
+  & \quad\quad\quad\quad\quad\quad\quad\quad $\lor$ \textrm{Environment::CellNature(Envi(G),Col(G)+1,Hgt(G)-1)} $\in$ \{ \textbf{PLT}, \textbf{MTL} \}\\
+  & \quad\quad\quad\quad\quad\quad\quad\quad $\lor$ \textrm{Environment::CellNature(Envi(G),Col(G)+1,Hgt(G))} $=$ \textbf{HDR})\\
+  & \quad\quad\quad\quad $\lor$ $\exists$ \textrm{Guard} g $\in$ \textrm{Environment::CellContent(Envi(G),Col(G),Hgt(G)-1)}) \\
+  & \quad\quad $\land$ \textrm{Col(G)} $>$ \textrm{Character::Col(Target(G))} \\
+  & \quad\quad $\land$ (\textrm{Hgt(G)} $\neq$ \textrm{Character::Hgt(Target(G))} \\
+  & \quad\quad\quad\quad $\land$ \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{LAD}\\
+  & \quad\quad\quad\quad $\Rightarrow$ \textrm{Col(G) - Character::Col(Target(G))} $<$ $|$\textrm{Character::Hgt(Target(G)) - Hgt(G)})$|$) \\
+  & \quad\quad $\Rightarrow$ \textrm{Behaviour(G)} $=$ \textbf{Right} \\
+\end{longtable}}
+
+\subsubsection{Un pas sur deux}
+Dans le service Engine, on ajoute et modifie:
+{\small
+\begin{longtable}{rl}
+  \textbf{Observators}:&\texttt{GuardTurn}: \textrm{[Engine]} $\rightarrow$ \textrm{boolean}\\
+  \textbf{Observations}:&\\
+  \textrm{[init]}:& \textrm{GuardTurn(init(screen, pCoord, gCoords, tCoords))} $=$ \textrm{false}\\
+  \textrm{[step]}:& \textrm{GuardTurn(step(E))} $=$ $\neg$ \texttt{GuardTurn(E)}\\
+  & \textrm{GuardTurn(E)} $\Rightarrow$ $\forall$ \textrm{Guard} g $\in$ \textrm{Guards(Step(E))} $\exists$ \textrm{Guard} g' $\in$ \textrm{Guards(E))} g' $=$ \textrm{Step(g)}\\
+  & $\neg$ \textrm{GuardTurn(E)} $\Rightarrow$ $\forall$ \textrm{Guard} g $\in$ \textrm{Guards(Step(E))} $\exists$ \textrm{Guard} g' $\in$ \textrm{Guards(E))} g' $=$ \textrm{g}\\
+\end{longtable}}
 
 \end{document}

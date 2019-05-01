@@ -20,6 +20,8 @@ public interface Engine {
     public Command getNextCommand();
     public Command peekNextCommand();
 
+    public boolean isGuardTurn();
+
     /* Constructors */
 
     // pre: screen.isPlayable()
@@ -38,6 +40,7 @@ public interface Engine {
     //        || c \in gCoords
     // post: getStatus() == Playing
     // post: getLevelScore() == 0
+    // post: !isGuardTurn()
     // post: getEnvironment().getWidth() == screen.getWidth()
     //       && getEnvironment().getHeight() == screen.getHeight()
     //       &&\forall x \in [0..screen.getWidth()[ \forall y \in [0..screen.getHeight()[
@@ -74,7 +77,9 @@ public interface Engine {
 
     // Gestion des déplacements
     // post: getPlayer() == (getPlayer()@pre).step()
-    // post: \forall Guard g: getGuards() g == (g@pre).step()
+    // post: isGuardTurn()@pre => \forall Guard g: getGuards() g == (g@pre).step()
+    //       && !isGuardTurn()@pre => \forall Guard g: getGuards() g == g@pre
+    // post: isGuardTurn() = !isGuardTurn()@pre
 
     // Les gardes peuvent porter des trésors (et les perdent quand ils tombent dans un trou)
     // post: \forall Item t \in getTreasures()@pre

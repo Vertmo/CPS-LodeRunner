@@ -279,7 +279,7 @@ public abstract class AbstractEngineTest {
         List<Command> coms = new ArrayList<>(); coms.add(Command.DigR);
         for(int i = 0; i < 3; i++) coms.add(Command.Neutral);
         tcp.setCommands(coms);
-        engine.step(); engine.step(); engine.step();
+        engine.step(); engine.step(); engine.step(); engine.step(); engine.step();
         // Opération
         engine.step();
         // Oracle: vérifié par contrat + le trésor est tombé au dessus du garde
@@ -310,11 +310,11 @@ public abstract class AbstractEngineTest {
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
-        List<Command> coms = new ArrayList<>(); coms.add(Command.Neutral);
+        List<Command> coms = new ArrayList<>(); coms.add(Command.Neutral); coms.add(Command.Neutral);
         tcp.setCommands(coms);
 
         // Opération
-        engine.step();
+        engine.step(); engine.step();
 
         // Oracle: vérifié par contrat + le joueur a été tué par le garde
         Assert.assertEquals(Status.Loss, engine.getStatus());
@@ -331,11 +331,11 @@ public abstract class AbstractEngineTest {
         coms.add(Command.DigR); coms.add(Command.Left); coms.add(Command.Left);
         coms.add(Command.DigR); coms.add(Command.Left); coms.add(Command.Left);
         coms.add(Command.DigR);
-        for(int i = 0; i < 25; i++) coms.add(Command.Neutral);
+        for(int i = 0; i < 22; i++) coms.add(Command.Neutral);
         tcp.setCommands(coms);
 
         // Opération
-        for(int i = 0; i < 23; i++) engine.step();
+        for(int i = 0; i < 20; i++) engine.step();
 
         // Oracle: vérifié par contrat + le garde est revenu a sa position de départ
         Assert.assertEquals(2, g.getHgt());

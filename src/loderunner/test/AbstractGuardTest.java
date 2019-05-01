@@ -330,6 +330,19 @@ public abstract class AbstractGuardTest extends AbstractCharacterTest {
         assertEquals(4, guard.getHgt());
     }
 
+    @Test
+    public void testStepTrans13() {
+        // Conditions initiales
+        Environment env = createEnvironment();
+        Player p = new PlayerImpl(); p.init(env, 1, 2);
+        guard.init(env, p, 1, 5); guard.step();
+        // Opération
+        guard.step();
+        // Oracle: vérifié par contrats + garde en (4, 2)
+        assertEquals(1, guard.getCol());
+        assertEquals(3, guard.getHgt());
+    }
+
     // Etats remarquables
 
     @Test

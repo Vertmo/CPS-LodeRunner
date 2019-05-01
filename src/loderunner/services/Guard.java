@@ -13,7 +13,7 @@ public interface Guard extends /* refine */ Character, Cloneable {
 
     public Move getBehaviour();
 
-    // const
+    // const.
     public Character getTarget();
 
     // pre: getEnvi().getCellNature(getCol(), getHgt()) == HOL
@@ -28,7 +28,8 @@ public interface Guard extends /* refine */ Character, Cloneable {
     //          => getTarget().getHgt() - getHgt() < |getTarget().getCol() - getCol()|)
     //      => getBehaviour() == Up
 
-    // inv: getEnvi().getCellNature(getCol(), getHgt()) == LAD
+    // inv: (getEnvi().getCellNature(getCol(), getHgt()) \in { LAD, HDR }
+    //        (cell_below == Cell.LAD && \not \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //      && getHgt() > getTarget().getHgt()
     //      && (getCol() != getTarget().getCol() && (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
     //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
@@ -37,13 +38,14 @@ public interface Guard extends /* refine */ Character, Cloneable {
 
     // inv: getEnvi().getCellNature(getCol(), getHgt()) == LAD
     //      && getHgt() == getTarget().getHgt()
-    //      && (getCol() == getTarget().getCol() || !(getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
-    //          || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1)))
+    //      && (getCol() == getTarget().getCol() || |getCol()-getTarget().getCol()| > |getHgt()-getTarget().getHgt()|)
     //      => getBehaviour() == Neutral
 
     // inv: (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
     //       || (getEnvi().getCellNature(getCol(), getHgt()-1) == LAD
-    //           && getEnvi().getCellNature(getCol(), getHgt()) != LAD)
+    //           && (getEnvi().getCellNature(getCol(), getHgt()) != LAD
+    //               || getEnvi().getCellNature(getCol()-1, getHgt()-1) \in { PLT, MTL }
+    //               || getEnvi().getCellNature(getCol()-1, getHgt()) = HDR))
     //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //      && getCol() < getTarget().getCol()
     //      && (getHgt() != getTarget().getHgt() && (getEnvi().getCellNature(getCol(), getHgt()) == LAD)
@@ -52,7 +54,9 @@ public interface Guard extends /* refine */ Character, Cloneable {
 
     // inv: (getEnvi().getCellNature(getCol(), getHgt()-1) \in { PLT, MTL }
     //       || (getEnvi().getCellNature(getCol(), getHgt()-1) == LAD
-    //           && getEnvi().getCellNature(getCol(), getHgt()) != LAD)
+    //           && (getEnvi().getCellNature(getCol(), getHgt()) != LAD
+    //               || getEnvi().getCellNature(getCol()+1, getHgt()-1) \in { PLT, MTL }
+    //               || getEnvi().getCellNature(getCol()+1, getHgt()) = HDR))
     //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1)))
     //      && getCol() > getTarget().getCol()
     //      && (getHgt() != getTarget().getHgt() && (getEnvi().getCellNature(getCol(), getHgt()) == LAD)
@@ -64,7 +68,9 @@ public interface Guard extends /* refine */ Character, Cloneable {
     //           && getEnvi().getCellNature(getCol(), getHgt()) != LAD)
     //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()-1))
     //      && getCol() == getTarget().getCol()
-    //      && (getHgt() == getTarget().getHgt() || (getEnvi().getCellNature(getCol(), getHgt()) != LAD)
+    //      && (getHgt() == getTarget().getHgt() ||
+    //                      (getEnvi().getCellNature(getCol(), getHgt()) != LAD
+    //                       && (getEnvi().getCellNature(getCol(), getHgt()-1) != Cell.LAD)
     //      => getBehaviour() == Neutral
 
     /* Constructors */

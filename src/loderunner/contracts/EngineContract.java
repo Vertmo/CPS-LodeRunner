@@ -158,6 +158,9 @@ public class EngineContract extends EngineDecorator {
         // post: getLevelScore() == 0
         if(getLevelScore() != 0)
             throw new PostconditionError("Engine", "init", "getLevelScore() == 0");
+        // post: !isGuardTurn()
+        if(isGuardTurn())
+            throw new PostconditionError("Engine", "init", "!isGuardTurn()");
         // post: getEnvironment().getWidth() == screen.getWidth()
         //       && getEnvironment().getHeight() == screen.getHeight()
         //       &&\forall x \in [0..screen.getWidth()[ \forall y \in [0..screen.getHeight()[
@@ -236,6 +239,7 @@ public class EngineContract extends EngineDecorator {
                 cellContent_pre[x][y] = new HashSet<>(getEnvironment().getCellContent(x, y));
             }
         }
+        boolean guardTurn_pre = isGuardTurn();
 
         // run
         super.step();
@@ -245,8 +249,12 @@ public class EngineContract extends EngineDecorator {
 
         // post: getPlayer() == (getPlayer()@pre).step()
         // Il n'est pas raisonnable de chercher à tester cela (ça voudrait dire cloner l'état entier)
-        // post: \forall Guard g: getGuards() g == (g@pre).step()
+        // post: isGuardTurn()@pre => \forall Guard g: getGuards() g == (g@pre).step()
+        //       && !isGuardTurn()@pre => \forall Guard g: getGuards() g == g@pre
         // Il n'est pas raisonnable de chercher à tester cela (idem)
+        // post: isGuardTurn() == !isGuardTurn()@pre
+        if(isGuardTurn() == guardTurn_pre)
+            throw new PostconditionError("Engine", "step", "isGuardTurn() == !isGuardTurn()@pre");
 
         // post: \forall Item t \in getTreasures()@pre
         //         \exists Guard g \in getEnvi().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre

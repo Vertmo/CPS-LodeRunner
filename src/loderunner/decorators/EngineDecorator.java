@@ -70,6 +70,11 @@ public abstract class EngineDecorator implements Engine {
     }
 
     @Override
+    public boolean isGuardTurn() {
+        return delegate.isGuardTurn();
+    }
+
+    @Override
     public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords) {
         delegate.init(screen, pCoord, gCoords, tCoords);
     }

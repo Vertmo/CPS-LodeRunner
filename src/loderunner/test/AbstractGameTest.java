@@ -130,9 +130,10 @@ public abstract class AbstractGameTest {
     public void testCheckAndUpdateTrans3() {
         // Conditions initiales
         List<Level> levels = new ArrayList<>(); levels.add(createPlayableLevel());
-        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral, Command.Neutral)));
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral, Command.Neutral,
+                                                      Command.Neutral, Command.Neutral)));
         game.init(levels);
-        game.getEngine().step(); game.getEngine().step();
+        for(int i = 0; i < 4; i++) game.getEngine().step();
         // Opération
         game.checkStateAndUpdate();
         // Oracle: vérifié par les contrats + on a perdu une vie
@@ -145,12 +146,12 @@ public abstract class AbstractGameTest {
     public void testGameOver() {
         // Conditions initiales
         List<Level> levels = new ArrayList<>(); levels.add(createPlayableLevel());
-        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral, Command.Neutral,
-                                                      Command.Neutral, Command.Neutral,
-                                                      Command.Neutral, Command.Neutral)));
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral, Command.Neutral, Command.Neutral, Command.Neutral,
+                                                      Command.Neutral, Command.Neutral, Command.Neutral, Command.Neutral,
+                                                      Command.Neutral, Command.Neutral, Command.Neutral, Command.Neutral)));
         game.init(levels);
         for(int i = 0; i < 3; i++) {
-            game.getEngine().step(); game.getEngine().step();
+            for(int j = 0; j < 4; j++) game.getEngine().step();
             game.checkStateAndUpdate();
         }
         // Oracle: vérifié par les contrats + game over
@@ -163,10 +164,10 @@ public abstract class AbstractGameTest {
     public void testScenar() {
         // Conditions initiales
         List<Level> levels = new ArrayList<>(); levels.add(createPlayableLevel());
-        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral, Command.Neutral,
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Neutral, Command.Neutral, Command.Neutral, Command.Neutral,
                                                       Command.Right)));
         game.init(levels);
-        game.getEngine().step(); game.getEngine().step();
+        for(int i = 0; i < 4; i++) game.getEngine().step();
         game.checkStateAndUpdate();
 
         game.getEngine().step(); game.checkStateAndUpdate();
