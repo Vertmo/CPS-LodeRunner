@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
+import org.junit.Assert;
 
 import loderunner.contracts.errors.PreconditionError;
 import loderunner.impl.CoordImpl;
@@ -30,6 +31,7 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		EditableScreen es = new EditableScreenImpl(); es.init(10, 7);
 		for(int i = 0; i < 10; i++) es.setNature(i, 0, Cell.MTL);
 		for(int i = 0; i < 10; i++) es.setNature(i, 1, Cell.PLT);
+    es.setNature(8, 2, Cell.DOR);
 		es.setNature(7, 2, Cell.LAD); es.setNature(7, 3, Cell.LAD); es.setNature(7, 4, Cell.LAD);
 		es.setNature(5, 4, Cell.PLT); es.setNature(6, 4, Cell.PLT); es.setNature(8, 4, Cell.PLT); es.setNature(9, 4, Cell.PLT);
 		es.setNature(1, 4, Cell.HDR); es.setNature(2, 4, Cell.HDR); es.setNature(3, 4, Cell.HDR); es.setNature(4, 4, Cell.HDR);
@@ -46,7 +48,7 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		gCoords.add(new CoordImpl(2, 2));
 		Set<Coord> tCoords = new HashSet<Coord>();
 		tCoords.add(new CoordImpl(4, 5));
-		eg.init(screen, pCoord, gCoords, tCoords);
+		eg.init(screen, pCoord, gCoords, tCoords, new HashSet<>(), new HashSet<>());
 		return eg;
 	}
 
@@ -75,6 +77,27 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		player.init(eg.getEnvironment(), eg, 0, 0);
 		//Oracle: PreconditoinError
 	}
+
+    @Test
+    public void testTeleportPre1() { // Positif
+        // Conditions initiales
+        Engine eg = createEngine(new ArrayList<>());
+        player.init(eg.getEnvironment(), eg, 0, 2);
+        // Opération
+        player.teleport(7, 5);
+        // Oracle: pas d'exception
+    }
+
+    @Test
+    public void testTeleportPre2() { // Négatif
+        // Conditions initiales
+        Engine eg = createEngine(new ArrayList<>());
+        player.init(eg.getEnvironment(), eg, 0, 2);
+        // Oracle: PreconditionError
+        exception.expect(PreconditionError.class);
+        // Opération
+        player.teleport(7, 2);
+    }
 
 	//============
 	// Transitions
@@ -274,6 +297,27 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		//Oracle: vérifié par contrats
 	}
 
+    @Test
+    public void testTeleportTrans1() {
+        // Conditions initiales
+        Engine eg = createEngine(new ArrayList<>());
+        player.init(eg.getEnvironment(), eg, 0, 2);
+        // Opération
+        player.teleport(8, 5);
+        // Oracle: vérifié par les contrats
+    }
+
+    @Test
+    public void testGrabKeyTrans1() {
+        // Conditions initiales
+        Engine eg = createEngine(new ArrayList<>());
+        player.init(eg.getEnvironment(), eg, 0, 2);
+        // Opération
+        player.grabKey();
+        // Oracle: vérifié par les contrats + le joueur à une clé en plus
+        Assert.assertEquals(1, player.getNbKeys());
+    }
+
 	//==================
 	//Etats remarquables
 	//==================
@@ -292,6 +336,19 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
 		assert(player.getCol() == 3);
 		assert(player.getHgt() == 4);
 	}
+
+    @Test
+    public void testOpenDoor() {
+        // Etat initial
+        List<Command> cmd = new ArrayList<Command>();
+        cmd.add(Command.DigL);
+        Engine eg = createEngine(cmd);
+        eg.getPlayer().grabKey(); eg.getPlayer().teleport(9, 2);
+        // Opération
+        eg.step();
+        // Oracle: vérifié par les contrats + la porte à gauche est ouverte
+        Assert.assertEquals(Cell.EMP, eg.getEnvironment().getCellNature(8, 2));
+    }
 
 	//========
 	//Scénario

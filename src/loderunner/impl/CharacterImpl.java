@@ -34,14 +34,16 @@ public class CharacterImpl implements Character {
     @Override
     public void goLeft() {
         if(col == 0) return;
-        if(envi.getCellNature(col-1, hgt) == Cell.PLT || envi.getCellNature(col-1, hgt) == Cell.MTL) return;
+        if(envi.getCellNature(col-1, hgt) == Cell.PLT || envi.getCellNature(col-1, hgt) == Cell.MTL
+           || envi.getCellNature(col-1, hgt) == Cell.TRP || envi.getCellNature(col-1, hgt) == Cell.DOR) return;
         boolean charUnderneath = false;
         for(InCell ic: envi.getCellContent(col, hgt-1)) {
             if (ic instanceof Character) charUnderneath = true;
         }
         if(envi.getCellNature(col, hgt) != Cell.LAD && envi.getCellNature(col, hgt) != Cell.HDR
            && envi.getCellNature(col, hgt-1) != Cell.PLT && envi.getCellNature(col, hgt-1) != Cell.MTL
-           && envi.getCellNature(col, hgt-1) != Cell.LAD
+           && envi.getCellNature(col, hgt-1) != Cell.LAD && envi.getCellNature(col, hgt-1) != Cell.TRP
+           && envi.getCellNature(col, hgt-1) != Cell.DOR
            && !charUnderneath) return;
         boolean guardLeft = false;
         for(InCell ic: envi.getCellContent(col-1, hgt)) {
@@ -54,14 +56,16 @@ public class CharacterImpl implements Character {
     @Override
     public void goRight() {
         if(col == envi.getWidth()-1) return;
-        if(envi.getCellNature(col+1, hgt) == Cell.PLT || envi.getCellNature(col+1, hgt) == Cell.MTL) return;
+        if(envi.getCellNature(col+1, hgt) == Cell.PLT || envi.getCellNature(col+1, hgt) == Cell.MTL
+           || envi.getCellNature(col+1, hgt) == Cell.TRP || envi.getCellNature(col+1, hgt) == Cell.DOR) return;
         boolean charUnderneath = false;
         for(InCell ic: envi.getCellContent(col, hgt-1)) {
             if (ic instanceof Character) charUnderneath = true;
         }
         if(envi.getCellNature(col, hgt) != Cell.LAD && envi.getCellNature(col, hgt) != Cell.HDR
            && envi.getCellNature(col, hgt-1) != Cell.PLT && envi.getCellNature(col, hgt-1) != Cell.MTL
-           && envi.getCellNature(col, hgt-1) != Cell.LAD
+           && envi.getCellNature(col, hgt-1) != Cell.LAD && envi.getCellNature(col, hgt-1) != Cell.TRP
+           && envi.getCellNature(col, hgt-1) != Cell.DOR
            && !charUnderneath) return;
         boolean guardRight = false;
         for(InCell ic: envi.getCellContent(col+1, hgt)) {

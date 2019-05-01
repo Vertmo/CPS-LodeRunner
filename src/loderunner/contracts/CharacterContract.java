@@ -80,14 +80,14 @@ public class CharacterContract extends CharacterDecorator {
         // (ArrayOutOfBoundException) + de toute façon on sait déjà qu'elles vont passer si celle ci-dessus est passée
         if(col_pre == 0) return;
 
-        // post: getEnvi().getCellNature(getCol()@pre-1,getHgt()) \in { PLT, MTL }
+        // post: getEnvi().getCellNature(getCol()@pre-1,getHgt()) \in { PLT, MTL, TRP, DOR }
         //       => getCol() == getCol()@pre
         Cell nat_left = getEnvi().getCellNature(col_pre-1, getHgt());
-        if((nat_left == Cell.PLT || nat_left == Cell.MTL) && getCol() != col_pre)
+        if((nat_left == Cell.PLT || nat_left == Cell.MTL || nat_left == Cell.TRP || nat_left == Cell.DOR) && getCol() != col_pre)
             throw new PostconditionError("Character", "goLeft", "The character has moved into a non-free cell");
 
         // post: getEnvi().getCellNature(getCol()@pre, getHgt()) \notin { LAD, HDR }
-        //       && getEnvi().getCellNature(getCol()@pre, getHgt()-1) \notin { PLT, MTL, LAD }
+        //       && getEnvi().getCellNature(getCol()@pre, getHgt()-1) \notin { PLT, MTL, LAD, TRP, DOR }
         //       && \not \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()-1)
         //       => getCol() == getCol()@pre
         Cell nat = getEnvi().getCellNature(col_pre, getHgt());
@@ -97,7 +97,7 @@ public class CharacterContract extends CharacterDecorator {
             if(ic instanceof Character) char_below = true;
         }
         if(nat != Cell.LAD && nat != Cell.HDR
-           && nat_below != Cell.PLT && nat_below != Cell.MTL && nat_below != Cell.LAD
+           && nat_below != Cell.PLT && nat_below != Cell.MTL && nat_below != Cell.LAD && nat_below != Cell.TRP && nat_below != Cell.DOR
            && !char_below && getCol() != col_pre)
             throw new PostconditionError("Character", "goLeft", "The character has moved while not in a position to");
 
@@ -111,16 +111,16 @@ public class CharacterContract extends CharacterDecorator {
             throw new PostconditionError("Character", "goLeft", "The guard has moved while another was blocking his way");
 
         // post: getCol()@pre != 0
-        //       && getEnvi().getCellNature(getCol()@pre-1 ,getHgt()) \notin { PLT, MTL }
+        //       && getEnvi().getCellNature(getCol()@pre-1 ,getHgt()) \notin { PLT, MTL, TRP, DOR }
         //       && (getEnvi().getCellNature(getCol()@pre, getHgt()) \in { LAD, HDR }
-        //           || getEnvi().getCellNature(getCol()@pre, getHgt()-1) \in { PLT, MTL, LAD }
+        //           || getEnvi().getCellNature(getCol()@pre, getHgt()-1) \in { PLT, MTL, LAD, TRP, DOR }
         //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()-1))
         //       && (this \notin Guard || \not \exists Guard g \in getEnvi().getCellContent(getCol()@pre-1, getHgt()))
         //       => getCol() == getCol()@pre - 1
         if(col_pre != 0
-           && nat_left != Cell.PLT && nat_left!= Cell.MTL
+           && nat_left != Cell.PLT && nat_left!= Cell.MTL && nat_left!= Cell.TRP && nat_left != Cell.DOR
            && (nat == Cell.LAD || nat == Cell.HDR
-               || nat_below == Cell.PLT || nat_below == Cell.MTL || nat_below == Cell.LAD
+               || nat_below == Cell.PLT || nat_below == Cell.MTL || nat_below == Cell.LAD || nat_below == Cell.TRP || nat_below == Cell.DOR
                || char_below)
            && (!(this instanceof Guard) || !guard_left)
            && getCol() != col_pre - 1)
@@ -158,14 +158,14 @@ public class CharacterContract extends CharacterDecorator {
         // idem que pour goLeft(), on doit et peut arreter de vérifier les postconditions
         if(col_pre == getEnvi().getWidth()-1) return;
 
-        // post: getEnvi().getCellNature(getCol()@pre+1,getHgt()) \in { PLT, MTL }
+        // post: getEnvi().getCellNature(getCol()@pre+1,getHgt()) \in { PLT, MTL, TRP, DOR }
         //       => getCol() == getCol()@pre
         Cell nat_right = getEnvi().getCellNature(col_pre+1, getHgt());
-        if((nat_right == Cell.PLT || nat_right == Cell.MTL) && getCol() != col_pre)
+        if((nat_right == Cell.PLT || nat_right == Cell.MTL || nat_right == Cell.TRP || nat_right == Cell.DOR) && getCol() != col_pre)
             throw new PostconditionError("Character", "goRight", "The character has moved into a non-free cell");
 
         // post: getEnvi().getCellNature(getCol()@pre, getHgt()) \notin { LAD, HDR }
-        //       && getEnvi().getCellNature(getCol()@pre, getHgt()-1) \notin { PLT, MTL, LAD }
+        //       && getEnvi().getCellNature(getCol()@pre, getHgt()-1) \notin { PLT, MTL, LAD, TRP, DOR }
         //       && \not \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()-1)
         //       => getCol() == getCol()@pre
         Cell nat = getEnvi().getCellNature(col_pre, getHgt());
@@ -175,7 +175,7 @@ public class CharacterContract extends CharacterDecorator {
             if(ic instanceof Character) char_below = true;
         }
         if(nat != Cell.LAD && nat != Cell.HDR
-           && nat_below != Cell.PLT && nat_below != Cell.MTL && nat_below != Cell.LAD
+           && nat_below != Cell.PLT && nat_below != Cell.MTL && nat_below != Cell.LAD && nat_below != Cell.TRP && nat_below != Cell.DOR
            && !char_below && getCol() != col_pre)
             throw new PostconditionError("Character", "goRight", "The character has moved while not in a position to");
 
@@ -189,16 +189,16 @@ public class CharacterContract extends CharacterDecorator {
             throw new PostconditionError("Character", "goRight", "The guard has moved while another was blocking his way");
 
         // post: getCol()@pre != getEnvi().getWidth()-1
-        //       && getEnvi().getCellNature(getCol()@pre+1 ,getHgt()) \notin { PLT, MTL }
+        //       && getEnvi().getCellNature(getCol()@pre+1 ,getHgt()) \notin { PLT, MTL, TRP, DOR }
         //       && (getEnvi().getCellNature(getCol()@pre, getHgt()) \in { LAD, HDR }
-        //           || getEnvi().getCellNature(getCol()@pre, getHgt()-1) \in { PLT, MTL, LAD }
+        //           || getEnvi().getCellNature(getCol()@pre, getHgt()-1) \in { PLT, MTL, LAD, TRP, DOR }
         //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()-1))
         //       && (this \notin Guard || \not \exists Guard g \in getEnvi().getCellContent(getCol()@pre+1, getHgt()))
         //       => getCol() == getCol()@pre + 1
         if(col_pre != 0
-           && nat_right != Cell.PLT && nat_right != Cell.MTL
+           && nat_right != Cell.PLT && nat_right != Cell.MTL && nat_right != Cell.TRP && nat_right != Cell.DOR
            && (nat == Cell.LAD || nat == Cell.HDR
-               || nat_below == Cell.PLT || nat_below == Cell.MTL || nat_below == Cell.LAD
+               || nat_below == Cell.PLT || nat_below == Cell.MTL || nat_below == Cell.LAD || nat_below == Cell.TRP || nat_below == Cell.DOR
                || char_below)
            && (!(this instanceof Guard) || !guard_right)
            && getCol() != col_pre + 1)
@@ -242,21 +242,21 @@ public class CharacterContract extends CharacterDecorator {
             if(ic instanceof Guard) guard_above = true;
         }
         // post: getEnvi().getCellNature(getCol(), getHgt()@pre) == LAD
-        //       && getEnvi().getCellNature(getCol(), getHgt()@pre+1) \notin { PLT, MTL }
+        //       && getEnvi().getCellNature(getCol(), getHgt()@pre+1) \notin { PLT, MTL, TRP, DOR }
         //       && (this \notin Guard || \not \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()@pre+1))
         //       => getHgt() == getHgt()@pre + 1
         if(getEnvi().getCellNature(getCol(), hgt_pre) == Cell.LAD
-           && (nat_above != Cell.PLT && nat_above != Cell.MTL)
+           && (nat_above != Cell.PLT && nat_above != Cell.MTL && nat_above != Cell.TRP && nat_above != Cell.DOR)
            && (!(this instanceof Guard) || !guard_above)
            && getHgt() != hgt_pre+1)
             throw new PostconditionError("Character", "goUp", "The character has not moved when he should have");
 
         // post: getEnvi().getCellNature(getCol(), getHgt()@pre) != LAD
-        //       || getEnvi().getCellNature(getCol(), getHgt()@pre+1) \in { PLT, MTL }
+        //       || getEnvi().getCellNature(getCol(), getHgt()@pre+1) \in { PLT, MTL, TRP, DOR }
         //       || (this \in Guard && \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()@pre+1))
         //       => getHgt() == getHgt()@pre
         if((getEnvi().getCellNature(getCol(), hgt_pre) != Cell.LAD
-            || (nat_above == Cell.PLT || nat_above == Cell.MTL)
+            || (nat_above == Cell.PLT || nat_above == Cell.MTL || nat_above == Cell.TRP || nat_above == Cell.DOR)
             || (this instanceof Guard && guard_above))
            && getHgt() != hgt_pre)
             throw new PostconditionError("Character", "goUp", "The character has moved when he should not have");
@@ -298,18 +298,18 @@ public class CharacterContract extends CharacterDecorator {
         for(InCell ic: getEnvi().getCellContent(getCol(), hgt_pre-1)) {
             if(ic instanceof Guard) guard_below = true;
         }
-        // post: getEnvi().getCellNature(getCol(), getHgt()@pre-1) \notin { PLT, MTL }
+        // post: getEnvi().getCellNature(getCol(), getHgt()@pre-1) \notin { PLT, MTL, TRP, DOR }
         //       && \not \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()@pre-1)
         //       => getHgt() == getHgt()@pre - 1
-        if((nat_below != Cell.PLT && nat_below != Cell.MTL)
+        if((nat_below != Cell.PLT && nat_below != Cell.MTL && nat_below != Cell.TRP && nat_below != Cell.DOR)
            && !guard_below
            && getHgt() != hgt_pre-1)
             throw new PostconditionError("Character", "goDown", "The character has not moved when he should have");
 
-        // post: getEnvi().getCellNature(getCol(), getHgt()@pre-1) \notin { PLT, MTL }
+        // post: getEnvi().getCellNature(getCol(), getHgt()@pre-1) \notin { PLT, MTL, TRP, DOR }
         //       || \exists Guard g \in getEnvi().getCellContent(getCol(), getHgt()@pre-1))
         //       => getHgt() == getHgt()@pre
-        if(((nat_below == Cell.PLT || nat_below == Cell.MTL)
+        if(((nat_below == Cell.PLT || nat_below == Cell.MTL || nat_below == Cell.TRP || nat_below == Cell.DOR)
             || guard_below)
            && getHgt() != hgt_pre)
             throw new PostconditionError("Character", "goDown", "The character has moved when he should not have");

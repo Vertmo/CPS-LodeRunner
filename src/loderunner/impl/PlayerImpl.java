@@ -9,6 +9,7 @@ import loderunner.services.Player;
 
 public class PlayerImpl extends CharacterImpl implements Player{
     private Engine engine;
+    private int nbKeys;
 
     @Override
     public Engine getEngine() {
@@ -22,6 +23,7 @@ public class PlayerImpl extends CharacterImpl implements Player{
     public void init(Environment e, Engine eg, int x, int y) {
         super.init(e, x, y);
         engine = eg;
+        nbKeys = 0;
     }
 
     /**
@@ -31,7 +33,7 @@ public class PlayerImpl extends CharacterImpl implements Player{
      */
     private boolean willFall() {
         Cell cell_below = getEnvi().getCellNature(getCol(), getHgt()-1);
-        if(cell_below == Cell.MTL || cell_below == Cell.PLT || cell_below == Cell.LAD ) return false;
+        if(cell_below == Cell.MTL || cell_below == Cell.PLT || cell_below == Cell.LAD || cell_below == Cell.TRP) return false;
         for(InCell ic: getEnvi().getCellContent(getCol(), getHgt()-1)) {
             if(ic instanceof loderunner.services.Character) return false;
         }
@@ -47,9 +49,13 @@ public class PlayerImpl extends CharacterImpl implements Player{
         if(getCol() != 0) {
             Cell left_nat = getEnvi().getCellNature(getCol()-1, getHgt());
             boolean left_content_is_empty = getEnvi().getCellContent(getCol()-1, getHgt()).isEmpty();
-            if(left_nat != Cell.PLT && left_nat != Cell.MTL && left_content_is_empty &&
+            if((left_nat == Cell.EMP || left_nat == Cell.HOL) && left_content_is_empty &&
                getEnvi().getCellNature(getCol()-1, getHgt()-1) == Cell.PLT) {
                 getEnvi().dig(getCol()-1, getHgt()-1);
+            }
+            if(left_nat == Cell.DOR && getNbKeys() > 0) {
+                nbKeys--;
+                getEnvi().openDoor(getCol()-1, getHgt());
             }
         }
     }
@@ -61,9 +67,13 @@ public class PlayerImpl extends CharacterImpl implements Player{
         if(getCol() != getEnvi().getWidth()-1) {
             Cell right_nat = getEnvi().getCellNature(getCol()+1, getHgt());
             boolean right_content_is_empty = getEnvi().getCellContent(getCol()+1, getHgt()).isEmpty();
-            if(right_nat != Cell.PLT && right_nat != Cell.MTL && right_content_is_empty &&
+            if((right_nat == Cell.EMP || right_nat == Cell.HOL) && right_content_is_empty &&
                getEnvi().getCellNature(getCol()+1, getHgt()-1) == Cell.PLT) {
                 getEnvi().dig(getCol()+1, getHgt()-1);
+            }
+            if(right_nat == Cell.DOR && getNbKeys() > 0) {
+                nbKeys--;
+                getEnvi().openDoor(getCol()+1, getHgt());
             }
         }
     }
@@ -108,6 +118,11 @@ public class PlayerImpl extends CharacterImpl implements Player{
         }
     }
 
+    @Override
+    public void teleport(int x, int y) {
+        col = x; hgt = y;
+    }
+
     /**
      * Clone l'instance courant mais l'environnement et l'engine ne sont pas cloné
      */
@@ -130,5 +145,16 @@ public class PlayerImpl extends CharacterImpl implements Player{
     @Override
     public int hashCode() {
         return -1; // Pour les gardes ce sera leur id
-    }
+	}
+
+	@Override
+	public int getNbKeys() {
+		return nbKeys;
+	}
+
+	@Override
+	public void grabKey() {
+      nbKeys++;
+	}
+
 }

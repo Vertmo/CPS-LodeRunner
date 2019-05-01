@@ -14,29 +14,42 @@ public interface Engine {
     public Set<Guard> getGuards();
 
     public Set<Item> getTreasures();
+    public Set<Item> getKeys();
     public Set<Hole> getHoles();
     public Status getStatus();
     public int getLevelScore();
     public Command getNextCommand();
     public Command peekNextCommand();
-
     public boolean isGuardTurn();
+
+    // const
+    public Set<PortalPair> getPortals();
 
     /* Constructors */
 
     // pre: screen.isPlayable()
-    // pre: \forall Coord c \in { pCoord } union gCoords union tCoords
+    // pre: \forall Coord c \in { pCoord } union gCoords union tCoords union kCoords
     //        screen.getCellNature(c.getCol(), c.getHgt()) == EMP
+    // pre: \forall PortalPair pp \in portals
+    //        screen.getCellNature(pp.getInPCoord().getCol(), pp.getInPCoord().getHgt()) == EMP
+    //        && screen.getCellNature(pp.getOutPCoord().getCol(), pp.getOutPCoord().getHgt()) == EMP
     // pre: \forall Coord c1 \in gCoords \forall Coord c2 \in gCoords
     //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
     // pre: \forall Coord c1 \in tCoords \forall Coord c2 \in tCoords
+    //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
+    // pre: \forall Coord c1 \in tCoords \forall Coord c2 \in kCoords
     //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
     // pre: \forall Coord c \in gCoords
     //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
     // pre: \forall Coord c \in tCoords
     //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
     // pre: \forall Coord c \in tCoords
-    //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL }
+    //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL, LAD, TRP }
+    //        || c \in gCoords
+    // pre: \forall Coord c \in kCoords
+    //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
+    // pre: \forall Coord c \in kCoords
+    //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL, LAD, TRP }
     //        || c \in gCoords
     // post: getStatus() == Playing
     // post: getLevelScore() == 0
@@ -50,7 +63,11 @@ public interface Engine {
     //       && \forall Guard g \in getGuards() \exists Coord c \in gCoords (g.getCol() == c.getCol() && g.getHgt() == c.getHgt())
     // post: \forall Coord c \in tCoords \exists Item i \in getTreasures() (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
     //       && \forall Item i \in getTreasures() \exists Coord c \in tCoords (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords);
+    // post: \forall Coord c \in kCoords \exists Item i \in getKeys() (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
+    //       && \forall Item i \in getKeys() \exists Coord c \in kCoords (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
+    // post: \forall PortalPair pp \in portals pp \in getPortals()
+    //       && \forall PortalPair pp \in getPortals() pp \in portals
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals);
 
     /* Invariants */
 
@@ -66,6 +83,10 @@ public interface Engine {
     //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
     //           \forall Item i \in getEnvironment().getCellContent(x, y) i.getNature() == Treasure
     //           => i \in getTreasures() && (i.getCol() == x && i.getHgt() == y)
+    // inv: \forall Item i \in getKeys() i \in getEnvironment().getCellContent(i.getCol(), i.getHgt())
+    //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
+    //           \forall Item i \in getEnvironment().getCellContent(x, y) i.getNature() == Key
+    //           => i \in getKeys() && (i.getCol() == x && i.getHgt() == y)
     // inv: \forall Hole h \in getHoles() getEnvironment().getCellNature(h.getCol(), g.getHgt()) == HOL
     //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
     //           getEnvironment().getCellNature(x, y) == HOL
@@ -77,6 +98,10 @@ public interface Engine {
 
     // Gestion des déplacements
     // post: getPlayer() == (getPlayer()@pre).step()
+    // post: \exists pp \in getPortals() (pp.getCoordPIn().getCol() == (getPlayer()@pre).getCol() && pp.getCoordPIn().getHgt() == (getPlayer()@pre).getHgt())
+    //       => getPlayer() == (getPlayer()@pre).teleport(pp.getCoordPOut().getCol(), pp.getCoordPOut().getHgt())
+    // post: \not \exists pp \in getPortals() (pp.getCoordPIn().getCol() == (getPlayer()@pre).getCol() && pp.getCoordPIn().getHgt() == (getPlayer()@pre).getHgt())
+    //       => getPlayer() == (getPlayer()@pre).step()
     // post: isGuardTurn()@pre => \forall Guard g: getGuards() g == (g@pre).step()
     //       && !isGuardTurn()@pre => \forall Guard g: getGuards() g == g@pre
     // post: isGuardTurn() = !isGuardTurn()@pre
@@ -105,6 +130,12 @@ public interface Engine {
     //       => i \in getTreasures()
     // post: getTreasures().isEmpty() => getStatus() == Win
 
+    // Le joueur peut récupérer une clé
+    // post: \exists Item i \in getKeys()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
+    //       => i \notin getKeys() && getPlayer().getNbKeys() == getPlayer().getNbKeys()@pre + 1
+    // post: \not \exists Item i \in getKeys()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
+    //       => getPlayer().getNbKeys() == getPlayer().getNbKeys()@pre
+
     // Le joueur peut être tué par un garde, mais il gagne si il a attrapé le dernier trésor malgré tout (on est génereux)
     // post: \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
     //       && !getTreasures().isEmpty()
@@ -127,6 +158,12 @@ public interface Engine {
     //           && (getPlayer.getCol()@pre == h.getCol() && getPlayer().getHgt()@pre == h.getHgt() => getStatus() == Loss)
     //           && (\exists Guard g \in getEnvironment().getCellContent(h.getCol(), h.getHgt())@pre
     //               => g.getCol() == g.getInitCol() && g.getHgt() == g.getInitHgt()))
+
+    // Gestion des pieges
+    // post: getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()-1)@pre == TRP
+    //       => getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()-1) == EMP
+    // post: \forall Guard g: getGuards() getEnvironment().getCellNature(g.getCol(), g.getHgt()-1)@pre == TRP
+    //       => getEnvironment().getCellNature(g.getCol(), g.getHgt()-1) == EMP
     public void step();
 
     public Engine clone();

@@ -9,6 +9,7 @@ import loderunner.services.Player;
 
 public class PlayerImplBug extends CharacterImpl implements Player{
 	private Engine engine;
+    private int nbKeys;
 
 	@Override
 	public Engine getEngine() {
@@ -22,6 +23,7 @@ public class PlayerImplBug extends CharacterImpl implements Player{
 	public void init(Environment e, Engine eg, int x, int y) {
 		super.init(e, x, y);
 		engine = eg;
+    nbKeys = 0;
 	}
 
 	/**
@@ -51,6 +53,10 @@ public class PlayerImplBug extends CharacterImpl implements Player{
 					getEnvi().getCellNature(getCol()-1, getHgt()-1) == Cell.PLT) {
 				getEnvi().dig(getCol()-1, getHgt()-1);
 			}
+      if(left_nat == Cell.DOR && getNbKeys() > 0) {
+          nbKeys--;
+          // getEnvi().openDoor(getCol()-1, getHgt()); OUPS
+      }
 		}
 	}
 
@@ -65,6 +71,10 @@ public class PlayerImplBug extends CharacterImpl implements Player{
 					getEnvi().getCellNature(getCol()+1, getHgt()-1) == Cell.PLT) {
 				getEnvi().dig(getCol()-1, getHgt()-1);//bug
 			}
+      if(right_nat == Cell.DOR && getNbKeys() > 0) {
+          nbKeys--;
+          getEnvi().openDoor(getCol()+1, getHgt());
+      }
 		}
 	}
 
@@ -108,6 +118,11 @@ public class PlayerImplBug extends CharacterImpl implements Player{
 		}
 	}
 
+    @Override
+    public void teleport(int x, int y) {
+        col = x; hgt = y;
+    }
+
 	/**
 	 * Vérifie l'égalité de l'instance avec l'instance o
 	 */
@@ -135,5 +150,15 @@ public class PlayerImplBug extends CharacterImpl implements Player{
 		PlayerImpl clone = new PlayerImpl();
 		clone.init(getEnvi(), getEngine(), getCol(), getHgt());;
 		return clone;
+	}
+
+	@Override
+	public int getNbKeys() {
+		return nbKeys;
+	}
+
+	@Override
+	public void grabKey() {
+      nbKeys++;
 	}
 }

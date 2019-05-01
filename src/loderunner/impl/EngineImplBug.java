@@ -16,6 +16,7 @@ import loderunner.services.InCell;
 import loderunner.services.Item;
 import loderunner.services.ItemType;
 import loderunner.services.Player;
+import loderunner.services.PortalPair;
 import loderunner.services.Status;
 
 public class EngineImplBug implements Engine {
@@ -24,10 +25,12 @@ public class EngineImplBug implements Engine {
     private Player player;
     private Set<Guard> guards;
     private Set<Item> treasures;
+    private Set<Item> keys;
     private Set<Hole> holes;
     private Status status;
     private int levelScore;
     private boolean guardTurn;
+    private Set<PortalPair> portals;
 
     public EngineImplBug(CommandProvider cmdProvider) {
         this.cmdProvider = cmdProvider;
@@ -51,6 +54,11 @@ public class EngineImplBug implements Engine {
     @Override
     public Set<Item> getTreasures() {
         return treasures;
+    }
+
+    @Override
+    public Set<Item> getKeys() {
+        return keys;
     }
 
     @Override
@@ -84,13 +92,19 @@ public class EngineImplBug implements Engine {
     }
 
     @Override
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords) {
+    public Set<PortalPair> getPortals() {
+        return portals;
+    }
+
+    @Override
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals) {
         env = new EnvironmentImpl();
         env.init(screen);
         player = new PlayerImpl();
         player.init(env, this, pCoord.getCol(), pCoord.getHgt());
         env.addCellContent(pCoord.getCol(), pCoord.getHgt(), player);
         levelScore = 0;
+        this.portals = new HashSet<>(portals);
 
         guards = new HashSet<>();
         for(Coord c: gCoords) {
@@ -105,6 +119,13 @@ public class EngineImplBug implements Engine {
             Item t = new ItemImpl(ItemType.Treasure, c.getCol(), c.getHgt());
             treasures.add(t);
             env.addCellContent(c.getCol(), c.getHgt(), t);
+        }
+
+        keys = new HashSet<>();
+        for(Coord c: kCoords) {
+            Item k = new ItemImpl(ItemType.Key, c.getCol(), c.getHgt());
+            keys.add(k);
+            env.addCellContent(c.getCol(), c.getHgt(), k);
         }
 
         holes = new HashSet<>();
@@ -189,6 +210,17 @@ public class EngineImplBug implements Engine {
         }
         //if(toRemove != null) treasures.remove(toRemove);
         if(treasures.isEmpty()) status = Status.Win;
+
+        Item toRemove = null;
+        for(Item t: getKeys()) {
+            if(getPlayer().getCol() == t.getCol() && getPlayer().getHgt() == t.getHgt()) {
+                env.removeCellContent(t.getCol(), t.getHgt(), t);
+                toRemove = t;
+                player.grabKey();
+            }
+        }
+        if(toRemove != null) keys.remove(toRemove);
+
     }
 
     @Override

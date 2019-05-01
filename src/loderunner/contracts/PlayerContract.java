@@ -31,6 +31,10 @@ public class PlayerContract extends CharacterContract implements Player{
 		return delegate.getEngine();
 	}
 
+    @Override
+    public int getNbKeys() {
+        return delegate.getNbKeys();
+    }
 
 	@Override
 	public void init(Environment e, Engine eg, int x, int y) {
@@ -62,6 +66,10 @@ public class PlayerContract extends CharacterContract implements Player{
 		// post: getEngine() == eg
 		if(!(getEngine() == eg))
 			throw new PostconditionError("Player", "init", "getEngine() == eg");
+
+    // post: getNbKeys() == 0
+    if(getNbKeys() != 0)
+        throw new PostconditionError("Player", "init", "getNbKeys() == 0");
 	}
 
 
@@ -89,6 +97,7 @@ public class PlayerContract extends CharacterContract implements Player{
 		// captures
 		int col_pre = getCol();
 		int hgt_pre = getHgt();
+    int nbKeys_pre = getNbKeys();
 		Engine engine_pre = getEngine();
 		Cell down_nat_pre = getEnvi().getCellNature(col_pre, hgt_pre-1);
 		Cell left_nat_pre = null; //capturer seulement si la cellule existe
@@ -181,14 +190,14 @@ public class PlayerContract extends CharacterContract implements Player{
 		//       && getEngine().getNextCommand() == DigL
 		//       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD}
 		//           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
-		//       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) \in { EMP, HOL, LAD, HDR }
+		//       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) \in { EMP, HOL }
 		//       && getEnvi().getCellContent(getCol()@pre-1,getHgt()@pre).isEmpty()
 		//       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre-1)@pre == PLT
 		//       => getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre-1) == HOL
 		if(cmd_pre == Command.DigL && col_pre != 0
 				&& (down_nat_pre == Cell.PLT || down_nat_pre == Cell.MTL || down_nat_pre == Cell.LAD ||
 				down_character_present_pre)
-				&& (left_nat_pre != Cell.MTL && left_nat_pre != Cell.PLT)
+				&& (left_nat_pre == Cell.EMP || left_nat_pre == Cell.HOL)
 				&& left_content_is_empty_pre
 				&& down_left_nat_pre == Cell.PLT) {
 			if(!(getEnvi().getCellNature(col_pre-1, hgt_pre-1) == Cell.HOL))
@@ -196,23 +205,98 @@ public class PlayerContract extends CharacterContract implements Player{
 			return;
 		}
 
+    // post: \not willFall()
+    //       && getEngine().getNextCommand() == DigL
+    //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
+    //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
+    //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) = DOR
+    //       && getNbKeys()@pre > 0
+    //       => (getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) == EMP && getNbKeys() == getNbKeys()@pre-1)
+    if(cmd_pre == Command.DigL && col_pre != 0
+       && (down_nat_pre == Cell.PLT || down_nat_pre == Cell.MTL || down_nat_pre == Cell.LAD ||
+           down_character_present_pre)
+       && left_nat_pre == Cell.DOR && nbKeys_pre > 0
+       && (getEnvi().getCellNature(col_pre-1, hgt_pre) != Cell.EMP || getNbKeys() != nbKeys_pre-1))
+        throw new PostconditionError("Player", "step", "The left door has not been opened correctly");
+
 		// post: \not willFall()
 		//       && getEngine().getNextCommand() == DigR
 		//       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
 		//           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
-		//       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre) \in { EMP, HOL, LAD, HDR }
+		//       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre) \in { EMP, HOL }
 		//       && getEnvi().getCellContent(getCol()@pre+1,getHgt()@pre).isEmpty()
 		//       && getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre-1)@pre == PLT
 		//       => getEnvi().getCellNature(getCol()@pre+1, getHgt()@pre-1) == HOL
 		if(cmd_pre == Command.DigR && col_pre != getEnvi().getWidth()-1
 				&& (down_nat_pre == Cell.PLT || down_nat_pre == Cell.MTL || down_nat_pre == Cell.LAD ||
 				down_character_present_pre)
-				&& (right_nat_pre != Cell.MTL && right_nat_pre != Cell.PLT)
+				&& (right_nat_pre == Cell.EMP || right_nat_pre == Cell.HOL)
 				&& right_content_is_empty_pre
 				&& down_right_nat_pre == Cell.PLT) {
 			if(!(getEnvi().getCellNature(col_pre+1, hgt_pre-1) == Cell.HOL))
 				throw new PostconditionError("Player", "step", "The player should have dig right");
 			return;
 		}
+
+    // post: \not willFall()
+    //       && getEngine().getNextCommand() == DigL
+    //       && (getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { PLT, MTL, LAD }
+    //           || \exists Character c \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1))
+    //       && getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) = DOR
+    //       && getNbKeys()@pre > 0
+    //       => (getEnvi().getCellNature(getCol()@pre-1, getHgt()@pre) == EMP && getNbKeys() == getNbKeys()@pre-1)
+    if(cmd_pre == Command.DigL && col_pre != 0
+       && (down_nat_pre == Cell.PLT || down_nat_pre == Cell.MTL || down_nat_pre == Cell.LAD ||
+           down_character_present_pre)
+       && right_nat_pre == Cell.DOR && nbKeys_pre > 0
+       && (getEnvi().getCellNature(col_pre+1, hgt_pre) != Cell.EMP || getNbKeys() != nbKeys_pre-1))
+        throw new PostconditionError("Player", "step", "The right door has not been opened correctly");
 	}
+
+    @Override
+    public void teleport(int x, int y) {
+        // pre: getEnvi().getCellNature(x, y) == EMP
+        if(getEnvi().getCellNature(x, y) != Cell.EMP)
+            throw new PreconditionError("Player", "teleport", "getEnvi().getCellNature(x, y) == EMP");
+
+        // pre-invariant
+        checkInvariant();
+
+        // captures
+        int nbKeys_pre = getNbKeys();
+
+        // run
+        delegate.teleport(x, y);
+
+        // post-invariant
+        checkInvariant();
+
+        // post: getCol() == x
+        if(getCol() != x) throw new PostconditionError("Player", "teleport", "getCol() == x");
+        // post: getHgt() == y
+        if(getHgt() != y) throw new PostconditionError("Player", "teleport", "getHgt() == y");
+
+        // post: getNbKeys() == getNbKeys()@pre
+        if(getNbKeys() != nbKeys_pre)
+            throw new PostconditionError("Player", "teleport", "etNbKeys() == getNbKeys()@pre");
+    }
+
+    @Override
+    public void grabKey() {
+        // pre-invariant
+        checkInvariant();
+
+        // captures
+        int nbKeys_pre = getNbKeys();
+
+        // run
+        delegate.grabKey();
+
+        // post-invariant
+        checkInvariant();
+
+        // post: getNbKeys() = getNbKeys()@pre + 1
+        if(getNbKeys() != nbKeys_pre + 1)
+            throw new PostconditionError("Player", "grabKey", "getNbKeys() = getNbKeys()@pre + 1");
+    }
 }

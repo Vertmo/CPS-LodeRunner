@@ -16,6 +16,7 @@ import loderunner.services.InCell;
 import loderunner.services.Item;
 import loderunner.services.ItemType;
 import loderunner.services.Player;
+import loderunner.services.PortalPair;
 import loderunner.services.Status;
 
 public class EngineImpl implements Engine {
@@ -24,10 +25,12 @@ public class EngineImpl implements Engine {
     private Player player;
     private Set<Guard> guards;
     private Set<Item> treasures;
+    private Set<Item> keys;
     private Set<Hole> holes;
     private Status status;
     private int levelScore;
     private boolean guardTurn;
+    private Set<PortalPair> portals;
 
     public EngineImpl(CommandProvider cmdProvider) {
         this.cmdProvider = cmdProvider;
@@ -51,6 +54,11 @@ public class EngineImpl implements Engine {
     @Override
     public Set<Item> getTreasures() {
         return treasures;
+    }
+
+    @Override
+    public Set<Item> getKeys() {
+        return keys;
     }
 
     @Override
@@ -84,13 +92,19 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords) {
+    public Set<PortalPair> getPortals() {
+        return portals;
+    }
+
+    @Override
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals) {
         env = new EnvironmentImpl();
         env.init(screen);
         player = new PlayerImpl();
         player.init(env, this, pCoord.getCol(), pCoord.getHgt());
         env.addCellContent(pCoord.getCol(), pCoord.getHgt(), player);
         levelScore = 0;
+        this.portals = new HashSet<>(portals);
 
         guards = new HashSet<>();
         for(Coord c: gCoords) {
@@ -107,6 +121,13 @@ public class EngineImpl implements Engine {
             env.addCellContent(c.getCol(), c.getHgt(), t);
         }
 
+        keys = new HashSet<>();
+        for(Coord c: kCoords) {
+            Item k = new ItemImpl(ItemType.Key, c.getCol(), c.getHgt());
+            keys.add(k);
+            env.addCellContent(c.getCol(), c.getHgt(), k);
+        }
+
         holes = new HashSet<>();
         status = Status.Playing;
         guardTurn = false;
@@ -116,7 +137,16 @@ public class EngineImpl implements Engine {
     public void step() {
         // Step for player
         env.removeCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
-        getPlayer().step();
+        PortalPair portal = null;
+        for(PortalPair pp: getPortals()) {
+            if(pp.getInPCoord().getCol() == getPlayer().getCol() && pp.getInPCoord().getHgt() == getPlayer().getHgt())
+                portal = pp;
+        }
+        if(portal != null) {
+            getPlayer().teleport(portal.getOutPCoord().getCol(), portal.getOutPCoord().getHgt());
+        } else {
+            getPlayer().step();
+        }
         env.addCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
 
         // Step for guards
@@ -189,6 +219,26 @@ public class EngineImpl implements Engine {
         }
         if(toRemove != null) treasures.remove(toRemove);
         if(treasures.isEmpty()) status = Status.Win;
+
+        toRemove = null;
+        for(Item t: getKeys()) {
+            if(getPlayer().getCol() == t.getCol() && getPlayer().getHgt() == t.getHgt()) {
+                env.removeCellContent(t.getCol(), t.getHgt(), t);
+                toRemove = t;
+                player.grabKey();
+            }
+        }
+        if(toRemove != null) keys.remove(toRemove);
+
+        // Trigger traps
+        if(getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()-1) == Cell.TRP) {
+            getEnvironment().triggerTrap(getPlayer().getCol(), getPlayer().getHgt()-1);
+        }
+        for(Guard g: getGuards()) {
+            if(getEnvironment().getCellNature(g.getCol(), g.getHgt()-1) == Cell.TRP) {
+                getEnvironment().triggerTrap(g.getCol(), g.getHgt()-1);
+            }
+        }
     }
 
     @Override

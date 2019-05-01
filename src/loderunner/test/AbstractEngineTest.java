@@ -15,11 +15,13 @@ import org.junit.rules.ExpectedException;
 import loderunner.contracts.errors.PreconditionError;
 import loderunner.impl.CoordImpl;
 import loderunner.impl.EditableScreenImpl;
+import loderunner.impl.PortalPairImpl;
 import loderunner.services.Cell;
 import loderunner.services.Command;
 import loderunner.services.EditableScreen;
 import loderunner.services.Engine;
 import loderunner.services.Guard;
+import loderunner.services.PortalPair;
 import loderunner.services.Status;
 
 public abstract class AbstractEngineTest {
@@ -66,7 +68,8 @@ public abstract class AbstractEngineTest {
         EditableScreen s = createPlayableScreen();
         // Opération
         engine.init(s, new CoordImpl(5, 2), new HashSet<>(),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(), new HashSet<>());
         // Oracle: pas d'exception
     }
 
@@ -78,7 +81,7 @@ public abstract class AbstractEngineTest {
         // Oracle: une exception
         exception.expect(PreconditionError.class);
         // Opération
-        engine.init(s, new CoordImpl(5, 2), new HashSet<>(), new HashSet<>());
+        engine.init(s, new CoordImpl(5, 2), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>());
     }
 
     @Test
@@ -90,7 +93,7 @@ public abstract class AbstractEngineTest {
         exception.expect(PreconditionError.class);
         // Opération
         engine.init(s, new CoordImpl(5, 2), new HashSet<>(),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(), new HashSet<>());
     }
 
     @Test
@@ -101,7 +104,8 @@ public abstract class AbstractEngineTest {
         exception.expect(PreconditionError.class);
         // Opération
         engine.init(s, new CoordImpl(5, 2), new HashSet<>(),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2), new CoordImpl(5, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2), new CoordImpl(5, 2))),
+                    new HashSet<>(), new HashSet<>());
     }
 
     @Test
@@ -113,24 +117,45 @@ public abstract class AbstractEngineTest {
         // Opération
         engine.init(s, new CoordImpl(5, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(5, 2))),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(), new HashSet<>());
     }
 
     @Test
     public void testInitPre6() { // Positif
         // Conditions initiales
         EditableScreen s = createPlayableScreen();
+        PortalPair pp = new PortalPairImpl(new CoordImpl(3, 2));
+        pp.setOutPCoord(new CoordImpl(4, 2));
         // Opération
         engine.init(s, new CoordImpl(5, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(pp)));
         // Oracle: pas d'exception
+    }
+
+    @Test
+    public void testInitPre7() { // Négatif
+        // Conditions initiales
+        EditableScreen s = createPlayableScreen();
+        PortalPair pp = new PortalPairImpl(new CoordImpl(3, 2));
+        pp.setOutPCoord(new CoordImpl(4, 4));
+        // Oracle: une exception
+        exception.expect(PreconditionError.class);
+        // Opération
+        engine.init(s, new CoordImpl(5, 2),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(pp)));
     }
 
     @Test
     public void testStepPre1() { // Positif
         // Conditions initiales
-        engine.init(createPlayableScreen(), new CoordImpl(5, 2), new HashSet<>(), new HashSet<>());
+        engine.init(createPlayableScreen(), new CoordImpl(5, 2), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>());
         tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Left)));
         // Opération
         engine.step();
@@ -140,7 +165,7 @@ public abstract class AbstractEngineTest {
     @Test
     public void testStepPre2() { // Négatif
         // Conditions initiales
-        engine.init(createPlayableScreen(), new CoordImpl(5, 2), new HashSet<>(), new HashSet<>());
+        engine.init(createPlayableScreen(), new CoordImpl(5, 2), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>());
         tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Left, Command.Left)));
         engine.step();
         // Oracle: une exception
@@ -154,7 +179,8 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
                     new HashSet<>(),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(), new HashSet<>());
         tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Left, Command.Right)));
         engine.step();
         // Opération
@@ -167,13 +193,28 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(4, 2))),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(), new HashSet<>());
         tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Left, Command.Right)));
         engine.step();
         // Oracle: une exception
         exception.expect(PreconditionError.class);
         // Opération
         engine.step();
+    }
+
+    @Test
+    public void testStepPre5() { // Positif
+        // Conditions initiales
+        engine.init(createPlayableScreen(), new CoordImpl(5, 2),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(2, 2), new CoordImpl(2, 4))), new HashSet<>());
+        tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Left, Command.Right)));
+        engine.step();
+        // Opération
+        engine.step();
+        // Oracle: pas d'exception
     }
 
     // Transitions
@@ -183,7 +224,8 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(3, 2))),
-                    new HashSet<>(Arrays.asList(new CoordImpl(7, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(7, 2))),
+                    new HashSet<>(), new HashSet<>());
         tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Right, Command.Right)));
         // Opération
         engine.step();
@@ -195,7 +237,7 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
                     new HashSet<>(),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(), new HashSet<>());
         tcp.setCommands(new ArrayList<>(Arrays.asList(Command.Right, Command.Right)));
         // Opération
         engine.step();
@@ -207,7 +249,8 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(2, 2), new CoordImpl(5, 4))),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(), new HashSet<>());
         tcp.setCommands(new ArrayList<>(Arrays.asList(Command.DigL)));
         // Opération
         engine.step();
@@ -219,7 +262,7 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
                     new HashSet<>(),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(), new HashSet<>());
         tcp.setCommands(new ArrayList<>(Arrays.asList(Command.DigR)));
         // Opération
         engine.step();
@@ -231,7 +274,7 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
                     new HashSet<>(),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(), new HashSet<>());
         tcp.setCommands(new ArrayList<>(Arrays.asList(Command.DigL, Command.Neutral)));
         engine.step();
         // Opération
@@ -244,7 +287,7 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
                     new HashSet<>(),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(), new HashSet<>());
         List<Command> coms = new ArrayList<>(); coms.add(Command.DigL);
         for(int i = 0; i < 16; i++) coms.add(Command.Neutral);
         tcp.setCommands(new ArrayList<>(coms));
@@ -260,7 +303,7 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(4, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(7, 2))),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(), new HashSet<>());
         List<Command> coms = new ArrayList<>();
         for(int i = 0; i < 2; i++) coms.add(Command.Neutral);
         tcp.setCommands(coms);
@@ -275,7 +318,7 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(4, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(7, 2))),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(), new HashSet<>());
         List<Command> coms = new ArrayList<>(); coms.add(Command.DigR);
         for(int i = 0; i < 10; i++) coms.add(Command.Neutral);
         tcp.setCommands(coms);
@@ -292,7 +335,7 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
                     new HashSet<>(),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(), new HashSet<>());
         List<Command> coms = new ArrayList<>(); coms.add(Command.DigL); coms.add(Command.Left);
         for(int i = 0; i < 15; i++) coms.add(Command.Neutral);
         tcp.setCommands(coms);
@@ -309,7 +352,7 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(), new HashSet<>());
         List<Command> coms = new ArrayList<>(); coms.add(Command.Neutral); coms.add(Command.Neutral);
         tcp.setCommands(coms);
 
@@ -325,7 +368,7 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(7, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(9, 2))),
-                    new HashSet<>(Arrays.asList(new CoordImpl(0, 3))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(0, 3))), new HashSet<>(), new HashSet<>());
         Guard g = engine.getGuards().iterator().next();
         List<Command> coms = new ArrayList<>();
         coms.add(Command.DigR); coms.add(Command.Left); coms.add(Command.Left);
@@ -347,7 +390,7 @@ public abstract class AbstractEngineTest {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(7, 2),
                     new HashSet<>(),
-                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(), new HashSet<>());
         List<Command> coms = new ArrayList<>();
         coms.add(Command.Left);
         tcp.setCommands(coms);
@@ -359,13 +402,73 @@ public abstract class AbstractEngineTest {
         Assert.assertEquals(Status.Win, engine.getStatus());
     }
 
+    @Test
+    public void testTriggerTrap() {
+        // Conditions initiales
+        EditableScreen es = createPlayableScreen();
+        es.setNature(8, 1, Cell.TRP);
+        engine.init(es, new CoordImpl(9, 2),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(), new HashSet<>());
+        List<Command> coms = new ArrayList<>();
+        coms.add(Command.Left); coms.add(Command.Neutral);
+        tcp.setCommands(coms);
+
+        // Opération
+        engine.step(); engine.step();
+
+        // Oracle: vérifié par contrat + le piege s'est déclenché et le joueur est tombé dedans
+        Assert.assertEquals(Cell.EMP, engine.getEnvironment().getCellNature(8, 1));
+        Assert.assertEquals(1, engine.getPlayer().getHgt());
+    }
+
+    @Test
+    public void testPortal() {
+        // Conditions initiales
+        EditableScreen es = createPlayableScreen();
+        PortalPair pp = new PortalPairImpl(new CoordImpl(8, 2));
+        pp.setOutPCoord(new CoordImpl(5, 2));
+        engine.init(es, new CoordImpl(9, 2),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))), new HashSet<>(), new HashSet<>(Arrays.asList(pp)));
+        List<Command> coms = new ArrayList<>();
+        coms.add(Command.Left); coms.add(Command.Neutral);
+        tcp.setCommands(coms);
+
+        // Opération
+        engine.step(); engine.step();
+
+        // Oracle: vérifié par contrat + le piege a traversé le portail
+        Assert.assertEquals(5, engine.getPlayer().getCol());
+        Assert.assertEquals(2, engine.getPlayer().getHgt());
+    }
+
+    @Test
+    public void testGrabKey() {
+        // Conditions initiales
+        EditableScreen es = createPlayableScreen();
+        engine.init(es, new CoordImpl(9, 2),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(8, 2))), new HashSet<>());
+        List<Command> coms = new ArrayList<>();
+        coms.add(Command.Left);
+        tcp.setCommands(coms);
+
+        // Opération
+        engine.step();
+
+        // Oracle: vérifié par contrat + le joueur a attrapé la clé
+        Assert.assertEquals(1, engine.getPlayer().getNbKeys());
+    }
+
     // Scénarios
 
     @Test
     public void testScenar() {
         engine.init(createPlayableScreen(), new CoordImpl(3, 2),
                     new HashSet<>(Arrays.asList(new CoordImpl(5, 2))),
-                    new HashSet<>(Arrays.asList(new CoordImpl(5, 4))));
+                    new HashSet<>(Arrays.asList(new CoordImpl(5, 4))), new HashSet<>(), new HashSet<>());
         List<Command> coms = new ArrayList<>();
         coms.add(Command.Left); coms.add(Command.Left);
         coms.add(Command.Up); coms.add(Command.Up);

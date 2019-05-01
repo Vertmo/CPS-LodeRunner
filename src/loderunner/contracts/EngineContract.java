@@ -17,6 +17,7 @@ import loderunner.services.InCell;
 import loderunner.services.Item;
 import loderunner.services.ItemType;
 import loderunner.services.Player;
+import loderunner.services.PortalPair;
 import loderunner.services.Status;
 
 public class EngineContract extends EngineDecorator {
@@ -79,6 +80,25 @@ public class EngineContract extends EngineDecorator {
                 }
             }
         }
+        // inv: \forall Item i \in getKeys() i \in getEnvironment().getCellContent(i.getCol(), i.getHgt())
+        //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
+        //           \forall Item i \in getEnvironment().getCellContent(x, y) i.getNature() == Key
+        //           => i \in getKeys() && (i.getCol() == x && i.getHgt() == y)
+        for(Item i: getKeys()) {
+            if(!getEnvironment().getCellContent(i.getCol(), i.getHgt()).contains(i))
+                throw new InvariantError("Engine", "A treasure is not in the correct cell");
+        }
+        for(int x = 0; x < getEnvironment().getWidth(); x++) {
+            for(int y = 0; y < getEnvironment().getHeight(); y++) {
+                for(InCell ic: getEnvironment().getCellContent(x, y)) {
+                    if(ic instanceof Item && ((Item)ic).getNature()==ItemType.Key) {
+                        Item k = (Item) ic;
+                        if(!getKeys().contains(k) || k.getCol() != x || k.getHgt() != y)
+                            throw new InvariantError("Engine", "A treasure is not in the correct cell");
+                    }
+                }
+            }
+        }
         // inv: \forall Hole h \in getHoles() getEnvironment().getCellNature(h.getCol(), g.getHgt()) == HOL
         //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
         //           getEnvironment().getCellNature(x, y) == HOL
@@ -101,11 +121,11 @@ public class EngineContract extends EngineDecorator {
     }
 
     @Override
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords) {
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals) {
         // pre: screen.isPlayable()
         if(!screen.isPlayable())
             throw new PreconditionError("Engine", "init", "screen.isPlayable()");
-        // pre: \forall Coord c \in { pCoord } union gCoords union tCoords
+        // pre: \forall Coord c \in { pCoord } union gCoords union tCoords union kCoords
         //        screen.getCellNature(c.getCol(), c.getHgt()) == EMP
         if(screen.getCellNature(pCoord.getCol(), pCoord.getHgt()) != Cell.EMP)
             throw new PreconditionError("Engine", "init", "The player is not on an empty cell");
@@ -116,6 +136,10 @@ public class EngineContract extends EngineDecorator {
         for(Coord c: tCoords) {
             if(screen.getCellNature(c.getCol(), c.getHgt()) != Cell.EMP)
                 throw new PreconditionError("Engine", "init", "A treasure is not on an empty cell");
+        }
+        for(Coord c: kCoords) {
+            if(screen.getCellNature(c.getCol(), c.getHgt()) != Cell.EMP)
+                throw new PreconditionError("Engine", "init", "A key is not on an empty cell");
         }
         // pre: \forall Coord c1 \in gCoords \forall Coord c2 \in gCoords
         //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
@@ -133,6 +157,14 @@ public class EngineContract extends EngineDecorator {
                     throw new PreconditionError("Engine", "init", "Two treasures are on the same cell");
             }
         }
+        // pre: \forall Coord c1 \in kCoords \forall Coord c2 \in kCoords
+        //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
+        for(Coord c1: kCoords) {
+            for(Coord c2: kCoords) {
+                if(c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt() && c1 != c2)
+                    throw new PreconditionError("Engine", "init", "Two keys are on the same cell");
+            }
+        }
         // pre: \forall Coord c \in gCoords
         //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
         for(Coord c: gCoords) {
@@ -145,9 +177,24 @@ public class EngineContract extends EngineDecorator {
             if(c.getCol() == pCoord.getCol() && c.getHgt() == pCoord.getHgt())
                 throw new PreconditionError("Engine", "init", "A treasure is on the same cell as the player");
         }
+        // pre: \forall Coord c \in kCoords
+        //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
+        for(Coord c: kCoords) {
+            if(c.getCol() == pCoord.getCol() && c.getHgt() == pCoord.getHgt())
+                throw new PreconditionError("Engine", "init", "A key is on the same cell as the player");
+        }
+
+        // pre: \forall PortalPair pp \in portals
+        //        screen.getCellNature(pp.getInPCoord().getCol(), pp.getInPCoord().getHgt()) == EMP
+        //        && screen.getCellNature(pp.getOutPCoord().getCol(), pp.getOutPCoord().getHgt()) == EMP
+        for(PortalPair pp: portals) {
+            if(screen.getCellNature(pp.getInPCoord().getCol(), pp.getInPCoord().getHgt()) != Cell.EMP
+               || screen.getCellNature(pp.getOutPCoord().getCol(), pp.getOutPCoord().getHgt()) != Cell.EMP)
+                throw new PreconditionError("Engine", "init", "Every portal should be on an empty cell");
+        }
 
         // run
-        super.init(screen, pCoord, gCoords, tCoords);
+        super.init(screen, pCoord, gCoords, tCoords, kCoords, portals);
 
         // post-invariant
         checkInvariant();
@@ -214,6 +261,32 @@ public class EngineContract extends EngineDecorator {
             if(!found)
                 throw new PostconditionError("Engine", "init", "There are too much treasures");
         }
+        // post: \forall Coord c \in kCoords \exists Item i \in getKeys() (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
+        //       && \forall Item i \in getKeys() \exists Coord c \in kCoords (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
+        for(Coord c: kCoords) {
+            boolean found = false;
+            for(Item k: getKeys()) {
+                if(c.getCol() == k.getCol() && c.getHgt() == k.getHgt()) found = true;
+            }
+            if(!found)
+                throw new PostconditionError("Engine", "init", "A key is missing");
+        }
+        for(Item k: getKeys()) {
+            boolean found = false;
+            for(Coord c: kCoords) {
+                if(c.getCol() == k.getCol() && c.getHgt() == k.getHgt()) found = true;
+            }
+            if(!found)
+                throw new PostconditionError("Engine", "init", "There are too much keys");
+        }
+        // post: \forall PortalPair pp \in portals pp \in getPortals()
+        //       && \forall PortalPair pp \in getPortals() pp \in portals
+        for(PortalPair pp: portals) {
+            if(!getPortals().contains(pp)) throw new PostconditionError("Engine", "init", "A portal is missing");
+        }
+        for(PortalPair pp: getPortals()) {
+            if(!portals.contains(pp)) throw new PostconditionError("Engine", "init", "There are too much portals");
+        }
     }
 
     @Override
@@ -228,6 +301,8 @@ public class EngineContract extends EngineDecorator {
 
         // captures
         Set<Item> treasures_pre = new HashSet<>(getTreasures());
+        Set<Item> keys_pre = new HashSet<>(getKeys());
+        int nbKeys_pre = getPlayer().getNbKeys();
         int levelScore_pre = getLevelScore();
         Set<Hole> holes_pre = new HashSet<>();
         for(Hole h: getHoles()) holes_pre.add(h.clone());
@@ -240,6 +315,10 @@ public class EngineContract extends EngineDecorator {
             }
         }
         boolean guardTurn_pre = isGuardTurn();
+        Cell[][] cellNature_pre = new Cell[getEnvironment().getWidth()][getEnvironment().getHeight()];
+        for(int x = 0; x < getEnvironment().getWidth(); x++) {
+            for(int y = 0; y < getEnvironment().getHeight(); y++) cellNature_pre[x][y] = getEnvironment().getCellNature(x, y);
+        }
 
         // run
         super.step();
@@ -247,7 +326,10 @@ public class EngineContract extends EngineDecorator {
         // post-invariant
         checkInvariant();
 
-        // post: getPlayer() == (getPlayer()@pre).step()
+        // post: \exists pp \in getPortals() (pp.getCoordPIn().getCol() == (getPlayer()@pre).getCol() && pp.getCoordPIn().getHgt() == (getPlayer()@pre).getHgt())
+        //       => getPlayer() == (getPlayer()@pre).teleport(pp.getCoordPOut().getCol(), pp.getCoordPOut().getHgt())
+        // post: \not \exists pp \in getPortals() (pp.getCoordPIn().getCol() == (getPlayer()@pre).getCol() && pp.getCoordPIn().getHgt() == (getPlayer()@pre).getHgt())
+        //       => getPlayer() == (getPlayer()@pre).step()
         // Il n'est pas raisonnable de chercher à tester cela (ça voudrait dire cloner l'état entier)
         // post: isGuardTurn()@pre => \forall Guard g: getGuards() g == (g@pre).step()
         //       && !isGuardTurn()@pre => \forall Guard g: getGuards() g == g@pre
@@ -330,6 +412,23 @@ public class EngineContract extends EngineDecorator {
         // post: getTreasures().isEmpty() => getStatus() == Win
         if(getTreasures().isEmpty() && getStatus() != Status.Win)
             throw new PostconditionError("Engine", "step", "getTreasures().isEmpty() => getStatus() == Win");
+
+        // post: \exists Item i \in getKeys()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
+        //       => i \notin getKeys() && getPlayer().getNbKeys() == getPlayer().getNbKeys()@pre + 1
+        for(Item i: keys_pre) {
+            if(i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt() && !guard_found
+               && (getKeys().contains(i) || getPlayer().getNbKeys() != nbKeys_pre + 1))
+                throw new PostconditionError("Engine", "step", "The key should have been taken by the player");
+        }
+        // post: \not \exists Item i \in getKeys()@pre (i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt())
+        //       => getPlayer().getNbKeys() == getPlayer().getNbKeys()@pre
+        found = false;
+        for(Item i: keys_pre) {
+            if(i.getCol() == getPlayer().getCol() && i.getHgt() == getPlayer().getHgt()) found = true;
+        }
+        if(!found && getPlayer().getNbKeys() != nbKeys_pre)
+            throw new PostconditionError("Engine", "step", "The number of keys was updated when it should not have been");
+
         // post: \exists Guard g: getGuards() (g.getCol() == getPlayer().getCol() && g.getHgt() == getPlayer().getHgt())
         //       && !getTreasures().isEmpty()
         //       => getStatus() == Loss
@@ -393,6 +492,19 @@ public class EngineContract extends EngineDecorator {
                     }
                 }
             }
+        }
+
+        // post: getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()-1)@pre == TRP
+        //       => getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()-1) == EMP
+        if(cellNature_pre[getPlayer().getCol()][getPlayer().getHgt()] == Cell.TRP
+           && getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()) != Cell.EMP)
+            throw new PostconditionError("Engine", "step", "The trap underneath the player should have triggered");
+        // post: \forall Guard g: getGuards() getEnvironment().getCellNature(g.getCol(), g.getHgt()-1)@pre == TRP
+        //       => getEnvironment().getCellNature(g.getCol(), g.getHgt()-1) == EMP
+        for(Guard g: getGuards()) {
+            if(cellNature_pre[g.getCol()][g.getHgt()] == Cell.TRP
+               && getEnvironment().getCellNature(g.getCol(), g.getHgt()) != Cell.EMP)
+                throw new PostconditionError("Engine", "step", "The trap underneath the guard should have triggered");
         }
     }
 

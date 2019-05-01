@@ -11,6 +11,7 @@ import loderunner.services.Guard;
 import loderunner.services.Hole;
 import loderunner.services.Item;
 import loderunner.services.Player;
+import loderunner.services.PortalPair;
 import loderunner.services.Status;
 
 public abstract class EngineDecorator implements Engine {
@@ -45,6 +46,11 @@ public abstract class EngineDecorator implements Engine {
     }
 
     @Override
+    public Set<Item> getKeys() {
+        return delegate.getKeys();
+    }
+
+    @Override
     public Set<Hole> getHoles() {
         return delegate.getHoles();
     }
@@ -75,8 +81,13 @@ public abstract class EngineDecorator implements Engine {
     }
 
     @Override
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords) {
-        delegate.init(screen, pCoord, gCoords, tCoords);
+    public Set<PortalPair> getPortals() {
+        return delegate.getPortals();
+    }
+
+    @Override
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals) {
+        delegate.init(screen, pCoord, gCoords, tCoords, kCoords, portals);
     }
 
     @Override

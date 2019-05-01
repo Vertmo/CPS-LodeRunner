@@ -66,6 +66,24 @@ public abstract class AbstractEditableScreenTest extends AbstractScreenTest {
         // Oracle: pas d'exception
     }
 
+    @Test
+    public void testTriggerTrapPre2() { // Positif
+        // Conditions initiales
+        screen.init(10, 5); screen.setNature(2, 3, Cell.TRP);
+        // Opération
+        screen.triggerTrap(2, 3);
+        // Oracle: pas d'exception
+    }
+
+    @Test
+    public void testOpenDoorPre2() { // Positif
+        // Conditions initiales
+        screen.init(10, 5); screen.setNature(2, 3, Cell.DOR);
+        // Opération
+        screen.openDoor(2, 3);
+        // Oracle: pas d'exception
+    }
+
     // Transititions
 
     @Test
@@ -95,6 +113,15 @@ public abstract class AbstractEditableScreenTest extends AbstractScreenTest {
         // Opération
         screen.fill(4, 2);
         // Oracle: vérifié par contrat
+    }
+
+    @Test
+    public void testOpenDoorTrans() { // Positif
+        // Conditions initiales
+        screen.init(10, 5); screen.setNature(4, 3, Cell.DOR);
+        // Opération
+        screen.openDoor(4, 3);
+        // Oracle: vérifié par les contrats
     }
 
     // Etats remarquables
@@ -128,6 +155,15 @@ public abstract class AbstractEditableScreenTest extends AbstractScreenTest {
         // Opérations
         screen.fill(5, 3); screen.dig(5, 3);
         // Oracle: vérifié par contrat
+    }
+
+    @Test
+    public void testTriggerTrapTrans() {
+        // Conditions initiales
+        screen.init(10, 5); screen.setNature(5, 1, Cell.TRP);
+        // Opération
+        screen.triggerTrap(5, 1);
+        // Oracle: vérifié par les contrats
     }
 
     // Scénarios

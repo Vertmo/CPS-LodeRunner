@@ -17,6 +17,11 @@ public class CoordImpl implements Coord {
     public void setHgt(int hgt) { this.hgt = hgt; }
 
     @Override
+    public String toString() {
+        return col + "x" + hgt;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if(o == null) return false;
         if(this == o) return true;

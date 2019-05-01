@@ -7,4 +7,6 @@ public interface Level {
     public Coord getPlayerCoord();
     public Set<Coord> getGuardCoords();
     public Set<Coord> getTreasureCoords();
+    public Set<Coord> getKeyCoords();
+    public Set<PortalPair> getPortals();
 }
