@@ -16,7 +16,7 @@ import loderunner.services.Engine;
 public class GameWindow {
     private Stage stage;
     private LevelCanvas canvas;
-    private Label hpLabel, scoreLabel;
+    private Label hpLabel, bulletsLabel, scoreLabel;
     private CommandProvider cp;
 
     public GameWindow(Stage stage) {
@@ -33,13 +33,19 @@ public class GameWindow {
         hpLabel = new Label("HP: ");
         hpLabel.setAlignment(Pos.CENTER_LEFT);
 
+        bulletsLabel = new Label("Bullets: ");
+        bulletsLabel.setAlignment(Pos.CENTER);
+
         scoreLabel = new Label("Score: ");
         scoreLabel.setAlignment(Pos.CENTER_RIGHT);
 
-        Region centerReg = new Region();
-        HBox.setHgrow(centerReg, Priority.ALWAYS);
+        Region reg1 = new Region();
+        HBox.setHgrow(reg1, Priority.ALWAYS);
 
-        HBox hbox = new HBox(hpLabel, centerReg, scoreLabel);
+        Region reg2 = new Region();
+        HBox.setHgrow(reg2, Priority.ALWAYS);
+
+        HBox hbox = new HBox(hpLabel, reg1, bulletsLabel, reg2, scoreLabel);
         vbox.getChildren().add(hbox);
 
         Scene scene = new Scene(vbox);
@@ -49,7 +55,7 @@ public class GameWindow {
         stage.show();
 
         // Set command provider
-        cp = new KeyboardCommandProvider(scene);
+        cp = new KeyboardCommandProviderV2(scene);
     }
 
     public void redrawCanvas(Engine eng) {
@@ -63,6 +69,10 @@ public class GameWindow {
 
     public void redrawHp(int hp) {
         hpLabel.setText("HP: " + hp);
+    }
+
+    public void redrawBullets(int bullets) {
+        bulletsLabel.setText("Bullets: " + bullets);
     }
 
     public void redrawScore(int score) {

@@ -25,16 +25,16 @@ public class KeyboardCommandProvider implements CommandProvider {
                 case DOWN:
                     nextCmd = Command.Down;
                     break;
-                case Q:
+                case E:
                     nextCmd = Command.DigL;
                     break;
-                case E:
+                case R:
                     nextCmd = Command.DigR;
                     break;
-                case S:
+                case D:
                     nextCmd = Command.ShootL;
                     break;
-                case D:
+                case F:
                     nextCmd = Command.ShootR;
                     break;
                 default:

@@ -9,4 +9,5 @@ public interface Level {
     public Set<Coord> getTreasureCoords();
     public Set<Coord> getKeyCoords();
     public Set<PortalPair> getPortals();
+    public Set<Coord> getGunCoords();
 }

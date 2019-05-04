@@ -86,8 +86,13 @@ public abstract class EngineDecorator implements Engine {
     }
 
     @Override
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals) {
-        delegate.init(screen, pCoord, gCoords, tCoords, kCoords, portals);
+    public Set<Item> getGuns() {
+        return delegate.getGuns();
+    }
+
+    @Override
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals, Set<Coord> gunCoords) {
+        delegate.init(screen, pCoord, gCoords, tCoords, kCoords, portals, gunCoords);
     }
 
     @Override
@@ -103,11 +108,13 @@ public abstract class EngineDecorator implements Engine {
     @Override
     public abstract Engine clone();
 
-	public int getNumberBullets() {
-		return delegate.getNumberBullets();
-	}
+    @Override
+    public int getNumberBullets() {
+        return delegate.getNumberBullets();
+    }
 
-	public void setNumberBullets(int nb) {
-		delegate.setNumberBullets(nb);
-	}
+    @Override
+    public void setNumberBullets(int nb) {
+        delegate.setNumberBullets(nb);
+    }
 }

@@ -34,6 +34,7 @@ public class LevelCanvas extends Canvas {
     private static final Image treaGuardImg = new Image("assets/img/treasureGuard.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image portalInImg = new Image("assets/img/portalIn.png", (double) CELL_W, (double) CELL_W, true, true);
     private static final Image portalOutImg = new Image("assets/img/portalOut.png", (double) CELL_W, (double) CELL_W, true, true);
+    private static final Image gunImg = new Image("assets/img/gun.png", (double) CELL_W, (double) CELL_W, true, true);
 
     @Override
     public boolean isResizable() {
@@ -88,7 +89,7 @@ public class LevelCanvas extends Canvas {
         }
     }
 
-    public void drawContents(Screen s, Coord pc, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals) {
+    public void drawContents(Screen s, Coord pc, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals, Set<Coord> gunCoords) {
         GraphicsContext gc = getGraphicsContext2D();
 
         // Draw player
@@ -119,11 +120,16 @@ public class LevelCanvas extends Canvas {
             if(pp.getOutPCoord() != null)
                 gc.drawImage(portalOutImg, pp.getOutPCoord().getCol()*CELL_W, (s.getHeight()-1-pp.getOutPCoord().getHgt())*CELL_W);
         }
+
+        // Draw guns
+        for (Coord k: gunCoords) {
+            gc.drawImage(gunImg, k.getCol()*CELL_W, (s.getHeight()-1-k.getHgt())*CELL_W);
+        }
     }
 
     public void drawLevel(Level l) {
         drawCells(l.getScreen(), true);
-        drawContents(l.getScreen(), l.getPlayerCoord(), l.getGuardCoords(), l.getTreasureCoords(), l.getKeyCoords(), l.getPortals());
+        drawContents(l.getScreen(), l.getPlayerCoord(), l.getGuardCoords(), l.getTreasureCoords(), l.getKeyCoords(), l.getPortals(), l.getGunCoords());
     }
 
     public void drawKeys(int nbKeys) {
@@ -147,7 +153,10 @@ public class LevelCanvas extends Canvas {
         Set<Coord> kCoords = eng.getKeys().stream()
             .map(k -> new CoordImpl(k.getCol(), k.getHgt()))
             .collect(Collectors.toSet());
-        drawContents(eng.getEnvironment(), pCoord, gCoords, tCoords, kCoords, eng.getPortals());
+        Set<Coord> gunCoords = eng.getGuns().stream()
+                .map(k -> new CoordImpl(k.getCol(), k.getHgt()))
+                .collect(Collectors.toSet());
+        drawContents(eng.getEnvironment(), pCoord, gCoords, tCoords, kCoords, eng.getPortals(), gunCoords);
     }
 
     public void drawGameOver(int score) {

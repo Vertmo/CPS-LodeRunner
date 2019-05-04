@@ -54,10 +54,10 @@ public class PlayerImplBug extends CharacterImpl implements Player{
                getEnvi().getCellNature(getCol()-1, getHgt()-1) == Cell.PLT) {
                 getEnvi().dig(getCol()-1, getHgt()-1);
             }
-        }
-        if(left_nat == Cell.DOR && getNbKeys() > 0) {
-            nbKeys--;
-            // getEnvi().openDoor(getCol()-1, getHgt()); OUPS
+            if(left_nat == Cell.DOR && getNbKeys() > 0) {
+                nbKeys--;
+                // getEnvi().openDoor(getCol()-1, getHgt()); OUPS
+            }
         }
     }
 
@@ -72,10 +72,10 @@ public class PlayerImplBug extends CharacterImpl implements Player{
                getEnvi().getCellNature(getCol()+1, getHgt()-1) == Cell.PLT) {
                 getEnvi().dig(getCol()-1, getHgt()-1);// Oups
             }
-        }
-        if(right_nat == Cell.DOR && getNbKeys() > 0) {
-            nbKeys--;
-            getEnvi().openDoor(getCol()+1, getHgt());
+            if(right_nat == Cell.DOR && getNbKeys() > 0) {
+                nbKeys--;
+                getEnvi().openDoor(getCol()+1, getHgt());
+            }
         }
     }
 

@@ -67,6 +67,7 @@ public class Main extends Application {
                 Platform.runLater(() -> {
                         window.redrawCanvas(game.getEngine());
                         window.redrawHp(game.getHP());
+                        window.redrawBullets(game.getEngine().getNumberBullets());
                         window.redrawScore(game.getScore()+game.getEngine().getLevelScore());
                     });
                 try {

@@ -77,7 +77,7 @@ public class PlayerContract extends CharacterContract implements Player{
     //                   && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) \notin { LAD, HDR }
     private boolean willFall(int col_pre, int hgt_pre) {
         Cell cell_below = getEnvi().getCellNature(col_pre, hgt_pre-1);
-        if(cell_below == Cell.MTL || cell_below == Cell.PLT || cell_below == Cell.LAD ) return false;
+        if(cell_below == Cell.MTL || cell_below == Cell.PLT || cell_below == Cell.LAD || cell_below == Cell.TRP || cell_below == Cell.DOR) return false;
         for(InCell ic: getEnvi().getCellContent(col_pre, hgt_pre-1)) {
             if(ic instanceof Character) return false;
         }
@@ -217,7 +217,7 @@ public class PlayerContract extends CharacterContract implements Player{
            && left_nat_pre == Cell.DOR && nbKeys_pre > 0
            && (getEnvi().getCellNature(col_pre-1, hgt_pre) != Cell.EMP || getNbKeys() != nbKeys_pre-1))
             throw new PostconditionError("Player", "step", "The left door has not been opened correctly");
-                
+
         // post: \not willFall()
         //       && getEngine().getNextCommand() == DigR
         //       && getEngine().getNumberBullets() == 0
@@ -277,33 +277,33 @@ public class PlayerContract extends CharacterContract implements Player{
                 }
             }
             return;
+        }
 
-            // post: \not willFall()
-            //       && getEngine().getNextCommand() == ShootR
-            //       && getEngine().getNumberBullets() > 0
-            //       && (\exist j \in ]getCol()@pre, getEnvi().getWidth()[,
-            //                     \exist Guard g1 \in getEnvi().getCellContent(j,getHgt()@pre)
-            //                     && \forAll k \in ]getCol()@pre,j[, getEnvi().getCellNature(k,getHgt()@pre) \in {EMP,HOL,LAD,HDR}
-            //                                                        && \not \exist Guard g2 \in getEnvi.getCellContent(k,getHgt()@pre))
-            //       => \exist Gunshot gs \in getEnvi().getCellContent(j,getHgt()@pre)
-            if(cmd_pre == Command.ShootR && getEngine().getNumberBullets() > 0) {
-                for(int j=col_pre+1;j<getEnvi().getWidth();j++) {
-                    Cell cell_nat = getEnvi().getCellNature(j, hgt_pre);
-                    if(cell_nat == Cell.MTL || cell_nat == Cell.PLT)
-                        return;
-                    for(InCell content : getEnvi().getCellContent(j, hgt_pre)){
-                        if(content instanceof Guard) {
-                            for(InCell shot : getEnvi().getCellContent(j, hgt_pre)) {
-                                if(shot instanceof GunShot) {
-                                    return;
-                                }
+        // post: \not willFall()
+        //       && getEngine().getNextCommand() == ShootR
+        //       && getEngine().getNumberBullets() > 0
+        //       && (\exist j \in ]getCol()@pre, getEnvi().getWidth()[,
+        //                     \exist Guard g1 \in getEnvi().getCellContent(j,getHgt()@pre)
+        //                     && \forAll k \in ]getCol()@pre,j[, getEnvi().getCellNature(k,getHgt()@pre) \in {EMP,HOL,LAD,HDR}
+        //                                                        && \not \exist Guard g2 \in getEnvi.getCellContent(k,getHgt()@pre))
+        //       => \exist Gunshot gs \in getEnvi().getCellContent(j,getHgt()@pre)
+        if(cmd_pre == Command.ShootR && getEngine().getNumberBullets() > 0) {
+            for(int j=col_pre+1;j<getEnvi().getWidth();j++) {
+                Cell cell_nat = getEnvi().getCellNature(j, hgt_pre);
+                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT)
+                    return;
+                for(InCell content : getEnvi().getCellContent(j, hgt_pre)){
+                    if(content instanceof Guard) {
+                        for(InCell shot : getEnvi().getCellContent(j, hgt_pre)) {
+                            if(shot instanceof GunShot) {
+                                return;
                             }
-                            throw new PostconditionError("Player", "step", "The player should have shot to the right");
                         }
+                        throw new PostconditionError("Player", "step", "The player should have shot to the right");
                     }
                 }
-                return;
             }
+            return;
         }
     }
 
@@ -339,10 +339,10 @@ public class PlayerContract extends CharacterContract implements Player{
     public void grabKey() {
         // pre-invariant
         checkInvariant();
-            
+
         // captures
         int nbKeys_pre = getNbKeys();
-            
+
         // run
         delegate.grabKey();
 
