@@ -164,9 +164,11 @@
   & \texttt{Target}: \textrm{[Guard]} $\rightarrow$ \textrm{Character}  \\
   & \texttt{TimeInHole}: \textrm{[Guard]} $\rightarrow$ \textrm{int}  \\
   & \quad\quad \textbf{pre} \texttt{TimeInHole(G)} \textbf{requires} \texttt{Environment::CellNature(Envi(G),Hgt(G),Col(G))} $=$ \textbf{HOL} \\
+  \textbf{Constructors}: & \texttt{Init}: \textrm{Environment} $\times$ \textrm{Character} $\times$ \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{[Guard]}\\
+  & \quad\quad \textbf{pre} \texttt{Init(e,c,x,y)} \textbf{requires} \texttt{Environment::CellNature(e,x,y)} $=$ \textbf{EMP} \\
   \textbf{Operators}: & \texttt{ClimbLeft}: \textrm{[Guard]} $\rightarrow$ \textrm{[Guard]}\\
   & \quad\quad \textbf{pre} \texttt{ClimbLeft(G)} \textbf{requires} \texttt{Environment::CellNature(Envi(G),Hgt(G),Col(G))} $=$ \textbf{HOL} \\
-  \textbf{Operators}: & \texttt{ClimbRight}: \textrm{[Guard]} $\rightarrow$ \textrm{[Guard]}\\
+  & \texttt{ClimbRight}: \textrm{[Guard]} $\rightarrow$ \textrm{[Guard]}\\
   & \quad\quad \textbf{pre} \texttt{ClimbRight(G)} \textbf{requires} \texttt{Environment::CellNature(Envi(G),Hgt(G),Col(G))} $=$ \textbf{HOL} \\
   & \texttt{Step}: \textrm{[Guard]} $\rightarrow$ \textrm{[Guard]}\\
   \textbf{Observations}: & \\
@@ -215,10 +217,10 @@
   & \quad\quad\quad\quad $\lor$ \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $\neq$ \textbf{LAD}) \\
   & \quad\quad $\Rightarrow$ \textrm{Behaviour(G)} $=$ \textbf{Neutral} \\
   \textrm{[init]}:
-  & Envi(init(G, e, t, x, y)) = e \\
-  & Col(init(G, e, t, x, y)) = InitCol(init(G, e, t, x, y)) = x \\
-  & Hgt(init(G, e, t, x, y)) = InitHgt(init(G, e, t, x, y)) = y \\
-  & Target(init(G, e, t, x, y)) = t \\
+  & Envi(init(e, t, x, y)) = e \\
+  & Col(init(e, t, x, y)) = InitCol(init(e, t, x, y)) = x \\
+  & Hgt(init(e, t, x, y)) = InitHgt(init(e, t, x, y)) = y \\
+  & Target(init(e, t, x, y)) = t \\
   \textrm{[ClimbLeft]}: 
   & \textrm{Col(C)} $=$ 0 $\Rightarrow$ \textrm{Col(ClimbLeft(C))} = \textrm{Col(C)} $\land$ \textrm{Hgt(ClimbLeft(C))} $=$ \textrm{Hgt(C)} \\
   & \textrm{Screen::CellNature(Envi(C),Col(C)-1,Hgt(C) +1)} $\in$ \{\textbf{MTL}, \textbf{PLT} \} \\ & \quad\quad $\Rightarrow$ \textrm{Col(ClimbLeft(C))} = \textrm{Col(C)} $\land$ \textrm{Hgt(ClimbLeft(C))} $=$ \textrm{Hgt(C)} \\
@@ -280,44 +282,44 @@
   \textbf{Observations}: & \\
 
   \textrm{[init]}:
-  & Envi(init(e, eg, x, y)) = e \\
-  & Engine(init(e, eg, x, y)) = eg \\
-  & Col(init(e, eg, x, y)) = x \\
-  & Hgt(init(e, eg, x, y)) = y \\
+  & Envi(init(e, eg, x, y)) $=$ e \\
+  & Engine(init(e, eg, x, y)) $=$ eg \\
+  & Col(init(e, eg, x, y)) $=$ x \\
+  & Hgt(init(e, eg, x, y)) $=$ y \\
 
   \textrm{[Step]}:
   & on définit le prédicat WillFall pour simplifier les équations suivantes: \\
-  & \textbf{WillFall}\texttt{(C)} \textbf{defined by} (\textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)-1)} \textbf{in} \{\textbf{HOL}, \textbf{EMP}, \textbf{HDR} \}  \\
-  & \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \textbf{not exists} \textrm{Guard} g \textbf{in} \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)-1)} \\
-  & \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C))} \textbf{not in} \{\textbf{LAD}, \textbf{HDR} \} ) \\
-  & \textrm{WillFall(P)} \textbf{implies} \textrm{Step(P)} = \textrm{GoDown(P)} \\
+  & \textbf{WillFall}\texttt{(C)} \textbf{defined by} (\textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C)-1)} $\in$ \{\textbf{HOL}, \textbf{EMP}, \textbf{HDR} \}  \\
+  & \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad $\land$ $\neg$$\exists$ \textrm{Guard} g $\in$ \textrm{Environment::CellContent(Envi(C),Col(C),Hgt(C)-1)} \\
+  & \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad $\land$ \textrm{Environment::CellNature(Envi(C),Col(C),Hgt(C))} $\notin$ \{\textbf{LAD}, \textbf{HDR} \} ) \\
+  & \textrm{WillFall(P)} $\Rightarrow$ \textrm{Step(P)} $=$ \textrm{GoDown(P)} \\
 
-  & \textbf{not} \texttt{WillFall(P)} \textbf{implies} \\
-  & \quad\quad (\textrm{Engine::NextCommand(Engine(P))} = Left \textbf{implies} \textrm{Step(P)} = \textrm{GoLeft(P)} \\
-  & \quad\quad \textbf{and} \textrm{Engine::NextCommand(Engine(P))} = Right \textbf{implies} \textrm{Step(P)} = \textrm{GoRight(P)} \\
-  & \quad\quad \textbf{and} \textrm{Engine::NextCommand(Engine(P))} = Up \textbf{implies} \textrm{Step(P)} = \textrm{GoUp(P)} \\
-  & \quad\quad \textbf{and} \textrm{Engine::NextCommand(Engine(P))} = Down \textbf{implies} \textrm{Step(P)} = \textrm{GoDown(P)}) \\
+  & $\neg$ \texttt{WillFall(P)} $\Rightarrow$ \\
+  & \quad\quad (\textrm{Engine::NextCommand(Engine(P))} $=$ Left $\Rightarrow$ \textrm{Step(P)} $=$ \textrm{GoLeft(P)} \\
+  & \quad\quad $\land$ \textrm{Engine::NextCommand(Engine(P))} $=$ Right $\Rightarrow$ \textrm{Step(P)} $=$ \textrm{GoRight(P)} \\
+  & \quad\quad $\land$ \textrm{Engine::NextCommand(Engine(P))} $=$ Up $\Rightarrow$ \textrm{Step(P)} $=$ \textrm{GoUp(P)} \\
+  & \quad\quad $\land$ \textrm{Engine::NextCommand(Engine(P))} $=$ Down $\Rightarrow$ \textrm{Step(P)} $=$ \textrm{GoDown(P)}) \\
 
-  & (\textbf{not} \texttt{WillFall(P)} \\
-  & \quad\quad \textbf{and} \textrm{Engine::NextCommand(Engine(P))} = DigL \\
-  & \quad\quad \textbf{and} (\textrm{Environment::CellNature(Envi(P),Col(P),Hgt(P)-1)} \textbf{in} \{\textbf{PLT},\textbf{MTL},\textbf{LAD}\} \\
-  & \quad\quad\quad\quad \textbf{or} \textbf{exist} Character c \textbf{in} \textrm{Environment::CellContent(Envi(P),Col(P),Hgt(P)-1)}) \\
-  & \quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(P),Col(P)-1,Hgt(P))} \textbf{in} \{\textbf{EMP},\textbf{HOL},\textbf{LAD},\textbf{HDR}\} \\
-  & \quad\quad \textbf{and} \textrm{Environment::CellContent(Envi(P),Col(P)-1,Hgt(P))} \textbf{empty} \\
-  & \quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(P),Col(P)-1,Hgt(P)-1)} = \textbf{PLT}) \\
-  & \quad\quad \textbf{implies} \textrm{Environment::CellNature(Envi(Step(P)),Col(P)-1,Hgt(P)-1)} = \textbf{HOL} \\
+  & ($\neg$ \texttt{WillFall(P)} \\
+  & \quad\quad $\land$ \textrm{Engine::NextCommand(Engine(P))} $=$ DigL \\
+  & \quad\quad $\land$ (\textrm{Environment::CellNature(Envi(P),Col(P),Hgt(P)-1)} $\in$ \{\textbf{PLT},\textbf{MTL},\textbf{LAD}\} \\
+  & \quad\quad\quad\quad $\lor$ $\exists$ Character c $\in$ \textrm{Environment::CellContent(Envi(P),Col(P),Hgt(P)-1)}) \\
+  & \quad\quad $\land$ \textrm{Environment::CellNature(Envi(P),Col(P)-1,Hgt(P))} $\in$ \{\textbf{EMP},\textbf{HOL},\textbf{LAD},\textbf{HDR}\} \\
+  & \quad\quad $\land$ \textrm{Environment::CellContent(Envi(P),Col(P)-1,Hgt(P))} \textbf{isEmpty} \\
+  & \quad\quad $\land$ \textrm{Environment::CellNature(Envi(P),Col(P)-1,Hgt(P)-1)} $=$ \textbf{PLT}) \\
+  & \quad\quad $\Rightarrow$ \textrm{Environment::CellNature(Envi(Step(P)),Col(P)-1,Hgt(P)-1)} $=$ \textbf{HOL} \\
 
-  & (\textbf{not} \texttt{WillFall(P)} \\
-  & \quad\quad \textbf{and} \textrm{Engine::NextCommand(Engine(P))} = DigR \\
-  & \quad\quad \textbf{and} (\textrm{Environment::CellNature(Envi(P),Col(P),Hgt(P)-1)} \textbf{in} \{\textbf{PLT},\textbf{MTL},\textbf{LAD}\} \\
-  & \quad\quad\quad\quad \textbf{or} \textbf{exist} Character c \textbf{in} \textrm{Environment::CellContent(Envi(P),Col(P),Hgt(P)-1)}) \\
-  & \quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(P),Col(P)+1,Hgt(P))} \textbf{in} \{\textbf{EMP},\textbf{HOL},\textbf{LAD},\textbf{HDR}\} \\
-  & \quad\quad \textbf{and} \textrm{Environment::CellContent(Envi(P),Col(P)+1,Hgt(P))} \textbf{empty} \\
-  & \quad\quad \textbf{and} \textrm{Environment::CellNature(Envi(P),Col(P)+1,Hgt(P)-1)} = \textbf{PLT}) \\
-  & \quad\quad \textbf{implies} \textrm{Environment::CellNature(Envi(Step(P)),Col(P)+1,Hgt(P)-1)} = \textbf{HOL} \\
+  & ($\neg$ \texttt{WillFall(P)} \\
+  & \quad\quad $\land$ \textrm{Engine::NextCommand(Engine(P))} $=$ DigR \\
+  & \quad\quad $\land$ (\textrm{Environment::CellNature(Envi(P),Col(P),Hgt(P)-1)} $\in$ \{\textbf{PLT},\textbf{MTL},\textbf{LAD}\} \\
+  & \quad\quad\quad\quad $\lor$ $\exists$ Character c $\in$ \textrm{Environment::CellContent(Envi(P),Col(P),Hgt(P)-1)}) \\
+  & \quad\quad $\land$ \textrm{Environment::CellNature(Envi(P),Col(P)+1,Hgt(P))} $\in$ \{\textbf{EMP},\textbf{HOL},\textbf{LAD},\textbf{HDR}\} \\
+  & \quad\quad $\land$ \textrm{Environment::CellContent(Envi(P),Col(P)+1,Hgt(P))} \textbf{isEmpty} \\
+  & \quad\quad $\land$ \textrm{Environment::CellNature(Envi(P),Col(P)+1,Hgt(P)-1)} $=$ \textbf{PLT}) \\
+  & \quad\quad $\Rightarrow$ \textrm{Environment::CellNature(Envi(Step(P)),Col(P)+1,Hgt(P)-1)} $=$ \textbf{HOL} \\
 
-  & \textrm{Engine::NextCommand(Engine(P))} \textbf{in} \{\textbf{DigL},\textbf{DigR},\textbf{Neutral}\} \\
-  & \quad\quad \textbf{implies} \textrm{Col(Step(P))} = \textrm{Col(P)} \textbf{and} \textrm{Hgt(Step(P))} = \textrm{Hgt(P)} \\
+  & \textrm{Engine::NextCommand(Engine(P))} $\in$ \{\textbf{DigL},\textbf{DigR},\textbf{Neutral}\} \\
+  & \quad\quad $\Rightarrow$ \textrm{Col(Step(P))} $=$ \textrm{Col(P)} $\land$ \textrm{Hgt(Step(P))} $=$ \textrm{Hgt(P)} \\
 
 \end{longtable}}
 
@@ -335,7 +337,7 @@
   & \texttt{NextCommand}: \textrm{[Engine]} $\rightarrow$ \textrm{Command} \\
   \textbf{Constructors}: &\texttt{init}: \textrm{EditableScreen} $\times$ \textrm{Coord} $\times$ \textrm{Set\{Coord\}} $\times$ \textrm{Set\{Coord\}} $\rightarrow$ \textrm{[Engine]} \\
   & \quad \textbf{pre} \texttt{init(screen, pCoord, gCoords, tCoords)} \textbf{requires} \textrm{Playable(screen)}\\
-  & \quad\quad\quad $\land$ $\forall$ \textrm{Coord} c $\in$ \{pCoord\} \textbf{union} gCoords \textbf{union} tCoords \textrm{CellNature(screen, Col(c), Hgt(c))} = \textbf{EMP} \\
+  & \quad\quad\quad $\land$ $\forall$ \textrm{Coord} c $\in$ \{pCoord\} \textbf{union} gCoords \textbf{union} tCoords \textrm{CellNature(screen, Col(c), Hgt(c))} $=$ \textbf{EMP} \\
   & \quad\quad\quad $\land$ $\forall$ \textrm{Coord} c1 $\in$ gCoords $\forall$ \textrm{Coord} c2 $\in$ gCoords \\
   & \quad\quad\quad\quad\quad (\textrm{Col(c1)} $=$ \textrm{Col(c2))} $\land$ \textrm{Hgt(c1)} $=$ \textrm{Hgt(c2))}) $\Rightarrow$ c1 $=$ c2\\
   & \quad\quad\quad $\land$ $\forall$ \textrm{Coord} c1 $\in$ tCoords $\forall$ \textrm{Coord} c2 $\in$ tCoords \\
@@ -385,7 +387,7 @@
   & \quad\quad $\land$ \textrm{CellNature(Environment(E), Col(Step(G)), Hgt(Step(G))} $=$ \textbf{HOL}\\
   & \quad\quad $\Rightarrow$ $\exists$ \textrm{Treasure} t2 $\in$ \textrm{Treasures(Step(E))}\\
   & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} $\land$ \textrm{Col(t2)} $=$ \textrm{Col(Step(G))} $\land$ \textrm{Hgt(t2)} $=$ \textrm{Hgt(Step(G))} $+$ 1\\
-& $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(E)} $\neg$ $\exists$ \textrm{Guard} g $\in$ \textrm{CellContent(Environment(S), Col(t), Hgt(t))}\\
+  & $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(E)} $\neg$ $\exists$ \textrm{Guard} g $\in$ \textrm{CellContent(Environment(S), Col(t), Hgt(t))}\\
   & \quad\quad $\land$ t $\in$ \textrm{Treasures(Step(E))} \\
   & \quad\quad $\Rightarrow$ $\exists$ \textrm{Treasure} t2 $\in$ \textrm{Treasures(Step(E))}\\
   & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} $\land$ \textrm{Col(t2)} $=$ \textrm{Col(t)} $\land$ \textrm{Hgt(t2)} $=$ \textrm{Hgt(t)}\\
@@ -635,7 +637,7 @@ Et dans le service \textrm{Engine}, on ajoute et modifie:
     & \quad\quad\quad $\land$ $\forall$ \textrm{Coord} c $\in$ \{pCoord\} \textbf{union} gCoords \textbf{union} tCoords \textbf{union} kcoords\\
     & \quad\quad\quad\quad\quad \textrm{CellNature(screen, Col(c), Hgt(c))} = \textbf{EMP} \\
     & \quad\quad\quad $\land$ $\forall$ \textrm{Coord} c $\in$ kCoords (\textrm{Col(c)} $\neq$ \textrm{Col(pCoord)} $\lor$ \textrm{Hgt(c)} $\neq$ \textrm{Hgt(pCoord)})\\
-    & \quad\quad\quad $\land$ $\forall$ \textrm{Coord} c $\in$ lCoords \textrm{CellNature(screen, Col(c), Hgt(c)-1)} $\in$ \{\textbf{PLT}, \textbf{MTL}, \textbf{LAD}, \textbf{TRP}\} \\
+    & \quad\quad\quad $\land$ $\forall$ \textrm{Coord} c $\in$ kCoords \textrm{CellNature(screen, Col(c), Hgt(c)-1)} $\in$ \{\textbf{PLT}, \textbf{MTL}, \textbf{LAD}, \textbf{TRP}\} \\
     \textbf{Observations}: &\\
     \textrm{[invariant]}: & $\forall$ \textrm{Item} i $\in$ \textrm{Keys(E)} i $\in$ \textrm{CellContent(Environment(E), Col(i), Hgt(i))}\\
     & \quad\quad $\land$ $\forall$ $(\mathtt{x},\mathtt{y})$ $\in$ \texttt{[0;Width(Environment(E))[} $\times$ \texttt{[0;Height(Environment(E))[}\\
@@ -648,6 +650,157 @@ Et dans le service \textrm{Engine}, on ajoute et modifie:
   & \quad\quad $\Rightarrow$ (k $\notin$ Keys(Step(E)) $\land$ \textrm{NbKeys(Player(Step(E)))} $=$ \textrm{NbKeys(Player(E))} $+$ 1)\\
   & $\neg$$\exists$ \textrm{Item} k $\in$ \textrm{Treasures(E)} \textrm{Col(k)} $=$ \textrm{Col(Player(E))} $\land$ \textrm{Hgt(k)} $=$ \textrm{Hgt(Player(E))}\\
   & \quad\quad $\Rightarrow$ \textrm{NbKeys(Player(Step(E)))} $=$ \textrm{NbKeys(Player(E))}\\
+  \end{longtable}}
+
+\subsubsection{Pistolet}
+
+Dans le service \textrm{Player}, on ajoute:
+{\small
+  \begin{longtable}{rl}
+    \textbf{Observations}:&\\
+    \textrm{[Step]}: & ($\neg$ \texttt{WillFall(P)} \\
+    & \quad\quad $\land$ \textrm{Engine::NextCommand(Engine(P))} $=$ ShootL \\
+    & \quad\quad $\land$ \textrm{Engine::NumberBullets(Engine(P))} $>$ 0 \\
+    & \quad\quad $\land$ $\exists$ j $\in$ \texttt{[0;Col(P)[},\\
+    & \quad\quad\quad\quad $\exists$ Guard g1 $\in$ \textrm{Environment::CellContent(Envi(P),j,Hgt(P))}\\
+    & \quad\quad\quad\quad $\land$ $\forall$ k $\in$ \texttt{]j;Col(P)[},\\
+    & \quad\quad\quad\quad\quad\quad \texttt{Environment::CellNature(Envi(P),k,Hgt(P))} $\in$ \{\textbf{EMP},\textbf{HOL},\textbf{LAD},\textbf{HDR}\}\\
+    & \quad\quad\quad\quad\quad\quad $\land$ $\neg$ $\exists$ Guard g2 $\in$ \texttt{Environment::CellContent(Envi(P),k,Hgt(P))}\\
+    & \quad\quad $\Rightarrow$ $\exists$ Gunshot gs $\in$ \textrm{Environment::CellContent(Envi(Step(P)),j,Hgt(P))}\\
+
+    & ($\neg$ \texttt{WillFall(P)} \\
+    & \quad\quad $\land$ \textrm{Engine::NextCommand(Engine(P))} $=$ ShootR \\
+    & \quad\quad $\land$ \textrm{Engine::NumberBullets(Engine(P))} $>$ 0 \\
+    & \quad\quad $\land$ $\exists$ j $\in$ \texttt{]Col(P),Environment::Width(Envi(P))[},\\
+    & \quad\quad\quad\quad $\exists$ Guard g1 $\in$ \textrm{Environment::CellContent(Envi(P),j,Hgt(P))}\\
+    & \quad\quad\quad\quad $\land$ $\forall$ k $\in$ \texttt{]Col(P),j[},\\
+    & \quad\quad\quad\quad\quad\quad \texttt{Environment::CellNature(Envi(P),k,Hgt(P))} $\in$ \{\textbf{EMP},\textbf{HOL},\textbf{LAD},\textbf{HDR}\}\\
+    & \quad\quad\quad\quad\quad\quad $\land$ $\neg$ $\exists$ Guard g2 $\in$ \texttt{Environment::CellContent(Envi(P),k,Hgt(P))}\\
+    & \quad\quad $\Rightarrow$ $\exists$ Gunshot gs $\in$ \textrm{Environment::CellContent(Envi(Step(P)),j,Hgt(P))}\\
+  \end{longtable}}
+
+Dans le service \textrm{Guard}, on ajoute et on modifie:
+{\small
+  \begin{longtable}{rl}
+    \textbf{Observators}:& \texttt{IsShot}: \textrm{[Guard]} $\rightarrow$ \textrm{boolean} \\
+    \textbf{Observations}:&\\
+    \textrm{[Init]}: & $\neg$ \textrm{IsShot(init(e,c,x,y))} \\
+
+    \textrm{[Step]}: & \textrm{IsShot(G)} $\Rightarrow$ \textrm{Col(Step(G))} $=$ \textrm{InitCol(G)} $\land$ \textrm{Hgt(Step(G))} $=$ \textrm{InitHgt(G)} \\
+
+    & $\neg$ \texttt{IsShot(G)} $\land$ \textrm{WillFall(G)} $\Rightarrow$ \textrm{Step(G)} = \textrm{GoDown(G)} \\
+
+    & $\neg$ \texttt{IsShot(G)} $\land$ $\neg$ \texttt{WillFall(C)} \\
+    & \quad\quad $\land$ \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{HOL}) \\
+    & \quad\quad $\land$ \textrm{TimeInHole(G)} $<$ 5 \\
+    & \quad\quad $\Rightarrow$ \textrm{TimeInHole(Step(G))} = \textrm{TimeInHole(G)} $+$ 1 \\
+
+    & $\neg$ \texttt{IsShot(G)} $\land$ $\neg$ \texttt{WillFall(G)} \\
+    & \quad\quad $\land$ \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $=$ \textbf{HOL}) \\
+    & \quad\quad $\land$ \textrm{TimeInHole(G)} $=$ 5 \\
+    & \quad\quad $\Rightarrow$ (\textrm{Behaviour(G)} $=$ \textbf{Left} $\Rightarrow$ \textrm{Step(G)} = \textrm{ClimbLeft(G)} \\
+    & \quad\quad\quad\quad $\land$ \textrm{Behaviour(G)} $=$ \textbf{Right} $\Rightarrow$ \textrm{Step(G)} = \textrm{ClimbRight(G)}) \\
+
+    & $\neg$ \texttt{IsShot(G)} $\land$ $\neg$ \texttt{WillFall(G)} \\
+    & \quad\quad $\land$ \textrm{Environment::CellNature(Envi(G),Col(G),Hgt(G))} $\neq$ \textbf{HOL} \\
+    & \quad\quad $\Rightarrow$ (\textrm{Behaviour(G)} $=$ \textbf{Left} $\Rightarrow$ \textrm{Step(G)} = \textrm{GoLeft(G)} \\
+    & \quad\quad\quad\quad $\land$ \textrm{Behaviour(G)} $=$ \textbf{Right} $\Rightarrow$ \textrm{Step(G)} = \textrm{GoRight(G)}\\
+    & \quad\quad\quad\quad $\land$ \textrm{Behaviour(G)} $=$ \textbf{Up} $\Rightarrow$ \textrm{Step(G)} = \textrm{GoUp(G)}\\
+    & \quad\quad\quad\quad $\land$ \textrm{Behaviour(G)} $=$ \textbf{Down} $\Rightarrow$ \textrm{Step(G)} = \textrm{GoDown(G)})\\
+  \end{longtable}}
+
+Dans le service \textrm{Game}, on ajoute et on modifie:
+{\small
+  \begin{longtable}{rl}
+    \textbf{Observations}:&\\
+    \textrm{[CheckStateAndUpdate]}:& \textrm{Status(Engine(G))} $=$ \textbf{Loss}\\
+    & \quad\quad $\Rightarrow$ (\textrm{HP(CheckStateAndUpdate(G))} $=$ \textrm{HP(G)-1}\\
+    & \quad\quad\quad\quad $\land$ \textrm{Engine(CheckStateAndUpdate(G))} $=$ \\
+    & \quad\quad\quad\quad\quad\quad  \textrm{Engine::init(Screen(Levels(G)[LevelIndex(G)]), PlayerCoord(Levels(G)[LevelIndex(G)]),}\\
+    & \quad\quad\quad\quad\quad\quad  \textrm{GuardCoords(Levels(G)[LevelIndex(G)]), TreasureCoords(Levels(G)[LevelIndex(G)]),}\\
+    & \quad\quad\quad\quad\quad\quad  \textrm{KeyCoords(Levels(G)[LevelIndex(G)]), Portals(Levels(G)[LevelIndex(G)]),}\\
+    & \quad\quad\quad\quad\quad\quad  \textrm{GunCoords(Levels(G)[LevelIndex(G)])))}\\
+
+    & \textrm{Status(Engine(G))} $=$ \textbf{Win}\\
+    & \quad\quad $\Rightarrow$ (\textrm{Score(CheckStateAndUpdate(G))} $=$ \textrm{Score(G)} $+$ \textrm{LevelScore(Engine(G))}\\
+    & \quad\quad\quad\quad $\land$ \textrm{LevelIndex(CheckStateAndUpdate(G))} $=$ \textrm{LevelIndex(G)} $+$ 1\\
+    & \quad\quad\quad\quad $\land$ (\textrm{LevelIndex(CheckStateAndUpdate(G))} $<$ \textrm{$|$Levels(G)$|$} $\Rightarrow$\\
+    & \quad\quad\quad\quad\quad\quad \textrm{Engine(CheckStateAndUpdate(G))} $=$\\
+    & \quad\quad\quad\quad\quad\quad  \textrm{Engine::init(Screen(Levels(G)[LevelIndex(CheckStateAndUpdate(G))]),}\\
+    & \quad\quad\quad\quad\quad\quad\quad\quad \textrm{PlayerCoord(Levels(G)[LevelIndex(CheckStateAndUpdate(G))]),}\\
+    & \quad\quad\quad\quad\quad\quad\quad\quad  \textrm{GuardCoords(Levels(G)[LevelIndex(CheckStateAndUpdate(G))]),}\\
+    & \quad\quad\quad\quad\quad\quad\quad\quad  \textrm{TreasureCoords(Levels(G)[LevelIndex(CheckStateAndUpdate(G))]),}\\
+    & \quad\quad\quad\quad\quad\quad\quad\quad  \textrm{KeyCoords(Levels(G)[LevelIndex(CheckStateAndUpdate(G))]),}\\
+    & \quad\quad\quad\quad\quad\quad\quad\quad  \textrm{Portals(Levels(G)[LevelIndex(CheckStateAndUpdate(G))]),}\\
+    & \quad\quad\quad\quad\quad\quad\quad\quad  \textrm{GunCoords(Levels(G)[LevelIndex(CheckStateAndUpdate(G))]))))}\\
+  \end{longtable}}
+
+Dans le service \textrm{Engine}, on modifie:
+{\small
+  \begin{longtable}{rl}
+    \textbf{Observators}: & \texttt{Guns}: \textrm{[Engine]} $\rightarrow$ \textrm{Set\{Item\}} \\
+    & \texttt{NumberBullets}: \textrm{[Engine]} $\rightarrow$ \textrm{int} \\
+
+    \textbf{Constructors}: & \texttt{init}: \textrm{EditableScreen} $\times$ \textrm{Coord} $\times$ \textrm{Set\{Coord\}} $\times$ \textrm{Set\{Coord\}} $\times$\\
+    & \quad\quad\quad \textrm{Set\{Coord\}} $\times$ \textrm{Set\{PortalPair\}} $\times$ \textrm{Set\{Coord\}} $\rightarrow$ \textrm{[Engine]} \\
+    & \quad \textbf{pre} $\ldots$\\
+    & \quad\quad $\land$ $\forall$ \textrm{Coord} c $\in$ \{pCoord\} \textbf{union} gCoords \textbf{union} tCoords \textbf{union} kCoords \textbf{union} gunCoords\\
+    & \quad\quad\quad\quad\quad \textrm{CellNature(screen, Col(c), Hgt(c))} = \textbf{EMP} \\
+    & \quad\quad $\land$ $\forall$ \textrm{Coord} c1 $\in$ gunCoords $\forall$ \textrm{Coord} c2 $\in$ gunCoords\\
+    & \quad\quad\quad\quad\quad \textrm{Col(c1)} $=$ \textrm{Col(c2)} $\land$ \textrm{Hgt(c1)} $=$ \textrm{Hgt(c2)} $\Rightarrow$ c1 $=$ c2\\
+    & \quad\quad $\land$ $\forall$ \textrm{Coord} c $\in$ gunCoords \textrm{CellNature(screen, Col(c), Hgt(c)-1)} $\in$ \{\textbf{PLT}, \textbf{MTL}, \textbf{LAD}, \textbf{TRP}\} \\
+
+    \textbf{Observations}:&\\
+    \textrm{[invariant]}: & \textrm{NumberBullets(EG)} $>=$ 0\\
+    & $\forall$ \textrm{Item} i $\in$ \textrm{Guns(EG)} i $\in$ \textrm{CellContent(Environment(EG), Col(i), Hgt(i))}\\
+    & \quad\quad $\land$ $\forall$ $(\mathtt{x},\mathtt{y})$ $\in$ \texttt{[0;Width(Environment(EG))[} $\times$ \texttt{[0;Height(Environment(EG))[}\\
+    & \quad\quad\quad\quad $\forall$ \textrm{Gun} i $\in$ \textrm{CellContent(Environment(EG), x, y)} \\
+    & \quad\quad\quad\quad\quad\quad $\Rightarrow$ (i $\in$ \textrm{Guns(EG)} $\land$ \textrm{Col(i)} $=$ x $\land$ \textrm{Hgt(i)} $=$ y)\\
+
+    \textrm{[init]}: & \textrm{NumberBullets(EG)} $=$ 0\\
+    & $\forall$ \textrm{Coord} c $\in$ gunC $\exists$ \textrm{Item} t $\in$ \textrm{Guns(init(s, pC, gC, tC, kC, portals, gunC))} (\textrm{Col(t)} $=$ \textrm{Col(c)} $\land$ \textrm{Hgt(t)} $=$ \textrm{Hgt(c)})\\
+    & \quad\quad $\land$ $\forall$ \textrm{Item} t $\in$ \textrm{Guns(init(s, pC, gC, tC, kC, portals, gunC))} $\exists$ \textrm{Coord} c $\in$ gunC\\
+
+    \textrm{[Step]}: & $\forall$ Guard g $\in$ \textrm{Guards(Step(EG))}\\
+    & \quad\quad GuardTurn(EG) $\lor$ Guard::IsShot(g) $\Rightarrow$ $\exists$ Guard g' $\in$ Guards(EG)  g $=$ Guard::Step(g')\\
+    & \quad\quad $\land$ $\neg$ GuardTurn(EG) $\land$ $\neg$ Guard::IsShot(g) $\Rightarrow$ $\exists$ Guard g' $\in$ Guards(EG)  g $=$ g'\\
+
+    & $\exists$ Item i $\in$ Environment::CellContent(Environment(EG),Player::Col(Player(EG)),Player::Hgt(Player(EG)))\\
+    & \quad\quad $\land$ Item::Nature(i) $=$ \textbf{Gun}\\
+    & \quad\quad $\Rightarrow$ i $\notin$ Environment::CellContent(Environment(Step(EG)),Player::Col(Player(EG)),Player::Hgt(Player(EG)))\\
+
+    & $\exists$ Item i $\in$ Environment::CellContent(Environment(EG),Player::Col(Player(EG)),Player::Hgt(Player(EG)))\\
+    & \quad\quad $\land$ Item::Nature(i) $=$ \textbf{Gun}\\
+    & \quad\quad $\land$ NextCommand(EG) $\notin$ \{\textbf{ShootL},\textbf{ShootR}\}\\
+    & \quad\quad $\Rightarrow$ NumberBullets(Step(EG)) $=$ NumberBullets(EG) + 5\\
+
+    & $\exists$ Item i $\in$ Environment::CellContent(Environment(EG),Player::Col(Player(EG)),Player::Hgt(Player(EG)))\\
+    & \quad\quad $\land$ Item::Nature(i) $=$ \textbf{Gun}\\
+    & \quad\quad $\land$ NextCommand(EG) $\in$ \{\textbf{ShootL},\textbf{ShootR}\}\\
+    & \quad\quad $\Rightarrow$ NumberBullets(Step(EG)) $=$ NumberBullets(EG) + 4\\
+
+    & $\neg$ ($\exists$ Item i $\in$ Environment::CellContent(Environment(EG),Player::Col(Player(EG)),Player::Hgt(Player(EG)))\\
+    & \quad\quad\quad\quad $\land$ Item::Nature(i) $=$ \textbf{Gun})\\
+    & \quad\quad $\land$ (NextCommand(EG) $\notin$ \{\textbf{ShootL},\textbf{ShootR}\} $\lor$ NumberBullets(EG) $=$ 0)\\
+    & \quad\quad $\Rightarrow$ NumberBullets(Step(EG)) $=$ NumberBullets(EG)\\
+
+    & $\neg$ ($\exists$ Item i $\in$ Environment::CellContent(Environment(EG),Player::Col(Player(EG)),Player::Hgt(Player(EG)))\\
+    & \quad\quad\quad\quad $\land$ Item::Nature(i) $=$ \textbf{Gun})\\
+    & \quad\quad $\land$ (NextCommand(EG) $\in$ \{\textbf{ShootL},\textbf{ShootR}\}\\
+    & \quad\quad $\land$ NumberBullets(EG) $>$ 0)\\
+    & \quad\quad $\Rightarrow$ NumberBullets(Step(EG)) $=$ NumberBullets(EG) - 1\\
+
+    & $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(EG)} $\exists$ \textrm{Guard} g $\in$ \textrm{CellContent(Environment(EG), Col(t), Hgt(t))}\\
+    & \quad\quad $\land$ \textrm{CellNature(Environment(EG), Col(Step(G)), Hgt(Step(G))} $\ne$ \textbf{HOL}\\
+    & \quad\quad $\land$ $\neg$ IsShot(g)\\
+    & \quad\quad $\Rightarrow$ $\exists$ \textrm{Treasure} t2 $\in$ \textrm{Treasures(Step(EG))}\\
+    & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} $\land$ \textrm{Col(t2)} $=$ \textrm{Col(Step(G))} $\land$ \textrm{Hgt(t2)} $=$ \textrm{Hgt(Step(G))}\\
+
+    & $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(EG)} $\exists$ \textrm{Guard} g $\in$ \textrm{CellContent(Environment(EG), Col(t), Hgt(t))}\\
+    & \quad\quad $\land$ \textrm{CellNature(Environment(EG), Col(Step(G)), Hgt(Step(G))} $=$ \textbf{HOL}\\
+    & \quad\quad $\land$ $\neg$ IsShot(g)\\
+    & \quad\quad $\Rightarrow$ $\exists$ \textrm{Treasure} t2 $\in$ \textrm{Treasures(Step(EG))}\\
+    & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} $\land$ \textrm{Col(t2)} $=$ \textrm{Col(Step(G))} $\land$ \textrm{Hgt(t2)} $=$ \textrm{Hgt(Step(G))} $+$ 1\\
   \end{longtable}}
 
 \end{document}
