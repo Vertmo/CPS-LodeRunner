@@ -263,7 +263,7 @@ public class PlayerContract extends CharacterContract implements Player{
         if(cmd_pre == Command.ShootL && getEngine().getNumberBullets() > 0) {
             for(int j=col_pre-1;j>=0;j--) {
                 Cell cell_nat = getEnvi().getCellNature(j, hgt_pre);
-                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT)
+                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT || cell_nat == Cell.DOR || cell_nat == Cell.TRP)
                     return;
                 for(InCell content : getEnvi().getCellContent(j, hgt_pre)){
                     if(content instanceof Guard) {
@@ -290,7 +290,7 @@ public class PlayerContract extends CharacterContract implements Player{
         if(cmd_pre == Command.ShootR && getEngine().getNumberBullets() > 0) {
             for(int j=col_pre+1;j<getEnvi().getWidth();j++) {
                 Cell cell_nat = getEnvi().getCellNature(j, hgt_pre);
-                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT)
+                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT || cell_nat == Cell.DOR || cell_nat == Cell.TRP)
                     return;
                 for(InCell content : getEnvi().getCellContent(j, hgt_pre)){
                     if(content instanceof Guard) {

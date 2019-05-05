@@ -86,7 +86,7 @@ public class PlayerImplBug extends CharacterImpl implements Player{
         if(getEngine().getNumberBullets() > 0) {
             for(int j=getCol()-1;j>=0;j--) {
                 Cell cell_nat = getEnvi().getCellNature(j, getHgt());
-                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT) {
+                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT || cell_nat == Cell.DOR || cell_nat == Cell.TRP) {
                     return;
                 }else {
                     for(InCell content : getEnvi().getCellContent(j, getHgt())){
@@ -107,7 +107,7 @@ public class PlayerImplBug extends CharacterImpl implements Player{
         if(getEngine().getNumberBullets() > 0) {
             for(int j=getCol()+1;j<getEnvi().getWidth();j++) {
                 Cell cell_nat = getEnvi().getCellNature(j, getHgt());
-                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT) {
+                if(cell_nat == Cell.MTL || cell_nat == Cell.PLT || cell_nat == Cell.DOR || cell_nat == Cell.TRP) {
                     return;
                 }else {
                     for(InCell content : getEnvi().getCellContent(j, getHgt())){
