@@ -17,8 +17,7 @@ import loderunner.services.Command;
 import loderunner.services.Coord;
 import loderunner.services.EditableScreen;
 import loderunner.services.Engine;
-import loderunner.services.GunShot;
-import loderunner.services.InCell;
+import loderunner.services.Guard;
 import loderunner.services.Player;
 
 public abstract class AbstractPlayerTest extends AbstractCharacterTest{
@@ -311,13 +310,8 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
         //Opération
         player.step();
         //Oracle: vérifié par contrats + gunshot sur le garde en (2,2)
-        boolean gunshot = false;
-        for(InCell c : player.getEnvi().getCellContent(2, 2)) {
-            if(c instanceof GunShot) {
-                gunshot = true;
-            }
-        }
-        assert(gunshot);
+        Guard g = eg.getGuards().iterator().next();
+        assert(g.isShot());
     }
 
     @Test
@@ -331,13 +325,8 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
         //Opération
         player.step();
         //Oracle: vérifié par contrats + gunshot sur le garde en (2,2)
-        boolean gunshot = false;
-        for(InCell c : player.getEnvi().getCellContent(2, 2)) {
-            if(c instanceof GunShot) {
-                gunshot = true;
-            }
-        }
-        assert(gunshot);
+        Guard g = eg.getGuards().iterator().next();
+        assert(g.isShot());
     }
 
     @Test
@@ -351,13 +340,8 @@ public abstract class AbstractPlayerTest extends AbstractCharacterTest{
         //Opération
         player.step();
         //Oracle: vérifié par contrats + pas de gunshot sur le garde en (2,2)
-        boolean no_gunshot = true;
-        for(InCell c : player.getEnvi().getCellContent(2, 2)) {
-            if(c instanceof GunShot) {
-                no_gunshot = false;
-            }
-        }
-        assert(no_gunshot);
+        Guard g = eg.getGuards().iterator().next();
+        assert(!g.isShot());
     }
 
     @Test

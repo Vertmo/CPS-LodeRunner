@@ -75,7 +75,7 @@ public interface Player extends /* refine */ Character {
     //                     \exist Guard g1 \in getEnvi().getCellContent(j,getHgt()@pre)
     //                     && \forAll k \in ]j,getCol()@pre[, getEnvi().getCellNature(k,getHgt()@pre) \in {EMP,HOL,LAD,HDR}
     //                                                        && \not \exist Guard g2 \in getEnvi.getCellContent(k,getHgt()@pre))
-    //       => \exist Gunshot gs \in getEnvi().getCellContent(j,getHgt()@pre)
+    //       => g1.iShot()
     // post: \not willFall()
     //       && getEngine().getNextCommand() == ShootR
     //       && getEngine().getNumberBullets() > 0
@@ -83,7 +83,7 @@ public interface Player extends /* refine */ Character {
     //                     \exist Guard g1 \in getEnvi().getCellContent(j,getHgt()@pre)
     //                     && \forAll k \in ]getCol()@pre,j[, getEnvi().getCellNature(k,getHgt()@pre) \in {EMP,HOL,LAD,HDR}
     //                                                        && \not \exist Guard g2 \in getEnvi.getCellContent(k,getHgt()@pre))
-    //       => \exist Gunshot gs \in getEnvi().getCellContent(j,getHgt()@pre)
+    //       => g1.isShot()
     // post: getEngine().getNextCommand() \in { DigL, DigR, Neutral }
     //       => getCol() == getCol()@pre && getHgt() == getHgt()@pre
     public void step();

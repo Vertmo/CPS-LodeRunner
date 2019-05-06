@@ -8,7 +8,6 @@ import loderunner.services.Command;
 import loderunner.services.Engine;
 import loderunner.services.Environment;
 import loderunner.services.Guard;
-import loderunner.services.GunShot;
 import loderunner.services.InCell;
 import loderunner.services.Player;
 
@@ -259,7 +258,7 @@ public class PlayerContract extends CharacterContract implements Player{
         //                     \exist Guard g1 \in getEnvi().getCellContent(j,getHgt()@pre)
         //                     && \forAll k \in ]j,getCol()@pre[, getEnvi().getCellNature(k,getHgt()@pre) \in {EMP,HOL,LAD,HDR}
         //                                                        && \not \exist Guard g2 \in getEnvi.getCellContent(k,getHgt()@pre))
-        //       => \exist Gunshot gs \in getEnvi().getCellContent(j,getHgt()@pre)
+        //       => g1.isShot()
         if(cmd_pre == Command.ShootL && getEngine().getNumberBullets() > 0) {
             for(int j=col_pre-1;j>=0;j--) {
                 Cell cell_nat = getEnvi().getCellNature(j, hgt_pre);
@@ -267,12 +266,9 @@ public class PlayerContract extends CharacterContract implements Player{
                     return;
                 for(InCell content : getEnvi().getCellContent(j, hgt_pre)){
                     if(content instanceof Guard) {
-                        for(InCell shot : getEnvi().getCellContent(j, hgt_pre)) {
-                            if(shot instanceof GunShot) {
-                                return;
-                            }
-                        }
-                        throw new PostconditionError("Player", "step", "The player should have shot to the left");
+                        Guard g = (Guard) content;
+                        if(!g.isShot())
+                            throw new PostconditionError("Player", "step", "The player should have shot to the left");
                     }
                 }
             }
@@ -286,7 +282,7 @@ public class PlayerContract extends CharacterContract implements Player{
         //                     \exist Guard g1 \in getEnvi().getCellContent(j,getHgt()@pre)
         //                     && \forAll k \in ]getCol()@pre,j[, getEnvi().getCellNature(k,getHgt()@pre) \in {EMP,HOL,LAD,HDR}
         //                                                        && \not \exist Guard g2 \in getEnvi.getCellContent(k,getHgt()@pre))
-        //       => \exist Gunshot gs \in getEnvi().getCellContent(j,getHgt()@pre)
+        //       => g1.isShot()
         if(cmd_pre == Command.ShootR && getEngine().getNumberBullets() > 0) {
             for(int j=col_pre+1;j<getEnvi().getWidth();j++) {
                 Cell cell_nat = getEnvi().getCellNature(j, hgt_pre);
@@ -294,12 +290,9 @@ public class PlayerContract extends CharacterContract implements Player{
                     return;
                 for(InCell content : getEnvi().getCellContent(j, hgt_pre)){
                     if(content instanceof Guard) {
-                        for(InCell shot : getEnvi().getCellContent(j, hgt_pre)) {
-                            if(shot instanceof GunShot) {
-                                return;
-                            }
-                        }
-                        throw new PostconditionError("Player", "step", "The player should have shot to the right");
+                        Guard g = (Guard) content;
+                        if(!g.isShot())
+                            throw new PostconditionError("Player", "step", "The player should have shot to the right");
                     }
                 }
             }

@@ -11,7 +11,6 @@ import loderunner.services.EditableScreen;
 import loderunner.services.Engine;
 import loderunner.services.Environment;
 import loderunner.services.Guard;
-import loderunner.services.GunShot;
 import loderunner.services.Hole;
 import loderunner.services.InCell;
 import loderunner.services.Item;
@@ -156,6 +155,11 @@ public class EngineImplBug implements Engine {
 
     @Override
     public void step() {
+      //On enleve l'état isShot à tous les gardes
+        for(Guard g: getGuards()) {
+            g.setIsShot(false);
+        }
+
         // Step for player
         Command cmd = peekNextCommand();
         Item toRemove = null;
@@ -186,15 +190,12 @@ public class EngineImplBug implements Engine {
         // Step for guards
         for(Guard g: getGuards()) {
             Item transported = null;
-            g.setIsShot(false);
-            for(InCell ic: env.getCellContent(g.getCol(), g.getHgt())) {
-                if(ic instanceof GunShot) {
-                    transported = null;
-                    env.removeCellContent(g.getCol(), g.getHgt(), ic);
-                    g.setIsShot(true);
-                    break;
-                }else if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Treasure) {
-                    transported = (Item)ic;
+            if(!g.isShot()) {
+                for(InCell ic: env.getCellContent(g.getCol(), g.getHgt())) {
+                    if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Treasure) {
+                        transported = (Item)ic;
+                        break;
+                    }
                 }
             }
             if(transported != null) {
