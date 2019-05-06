@@ -42,7 +42,16 @@
 \end{longtable}
 \end{frame}
 
-\begin{frame}{Armes à feux}
+\begin{frame}{Pistolet}
+  Dans le service \textrm{Guard}:
+  \begin{longtable}{rl}
+    \textbf{Observators}:& \texttt{IsShot}: \textrm{[Guard]} $\rightarrow$ \textrm{boolean} \\
+    \textbf{Observations}:&\\
+    \textrm{[Init]}: & $\neg$ \textrm{IsShot(init(e,c,x,y))} \\
+    \textrm{[Step]}: & \textrm{IsShot(G)} $\Rightarrow$ \textrm{Col(Step(G))} $=$ \textrm{InitCol(G)} $\land$ \textrm{Hgt(Step(G))} $=$ \textrm{InitHgt(G)} \\
+    & $\ldots$
+  \end{longtable}
+
   Dans le service \textrm{Player}:
   \begin{longtable}{rl}
     \textbf{Observations}:&\\
@@ -52,13 +61,34 @@
     & \quad\quad $\land$ $\exists$ j $\in$ \texttt{[0;Col(P)[},\\
     & \quad\quad\quad\quad $\exists$ Guard g1 $\in$ \textrm{Environment::CellContent(Envi(P),j,Hgt(P))}\\
     & \quad\quad\quad\quad $\land$ $\forall$ k $\in$ \texttt{]j;Col(P)[},\\
-    & \quad\quad\quad\quad\quad\quad \texttt{Environment::CellNature(Envi(P),k,Hgt(P))} $\in$ \{\textbf{EMP},\textbf{HOL},\textbf{LAD},\textbf{HDR}\}\\
-    & \quad\quad\quad\quad\quad\quad $\land$ $\neg$ $\exists$ Guard g2 $\in$ \texttt{Environment::CellContent(Envi(P),k,Hgt(P))}\\
+    & \quad\quad\quad\quad\quad\quad \textrm{Environment::CellNature(Envi(P),k,Hgt(P))} $\in$ \{\textbf{EMP},\textbf{HOL},\textbf{LAD},\textbf{HDR}\}\\
+    & \quad\quad\quad\quad\quad\quad $\land$ $\neg$ $\exists$ Guard g2 $\in$ \textrm{Environment::CellContent(Envi(P),k,Hgt(P))}\\
     & \quad\quad $\Rightarrow$ \textrm{Guard::IsShot(g1)}
   \end{longtable}
+\end{frame}
 
+\begin{frame}{Pistolet}
   Dans le service \textrm{Engine}:
-  TODO
+  \begin{longtable}{rl}
+    \textbf{Observators}: & NumberBullets: [Engine] $\rightarrow$ int\\
+    & $\ldots$\\
+    \textbf{Observations} &\\
+    \textrm{[init]}: & NumberBullets(init(s, pC, gC, tC, kC, portals, gunC)) $=$ 0\\
+    & $\ldots$\\
+    \textrm{[Step]}: & $\exists$ Item i $\in$ Environment::CellContent(Environment(EG),Player::Col(Player(EG)),Player::Hgt(Player(EG)))\\
+    & \quad\quad $\land$ Item::Nature(i) $=$ \textbf{Gun}\\
+    & \quad\quad $\Rightarrow$ i $\notin$ Environment::CellContent(Environment(Step(EG)),Player::Col(Player(EG)),Player::Hgt(Player(EG)))\\
+     & $\exists$ Item i $\in$ Environment::CellContent(Environment(EG),Player::Col(Player(EG)),Player::Hgt(Player(EG)))\\
+    & \quad\quad $\land$ Item::Nature(i) $=$ \textbf{Gun}\\
+    & \quad\quad $\land$ NextCommand(EG) $\notin$ \{\textbf{ShootL},\textbf{ShootR}\}\\
+    & \quad\quad $\Rightarrow$ NumberBullets(Step(EG)) $=$ NumberBullets(EG) + 5\\
+    & $\ldots$\\
+    & $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(EG)} $\exists$ \textrm{Guard} g1 $\in$ \textrm{CellContent(Environment(EG), Col(t), Hgt(t))}\\
+    & \quad\quad $\land$ \textrm{CellNature(Environment(EG), Col(Step(g1)), Hgt(Step(g1))} $\ne$ \textbf{HOL}\\
+    & \quad\quad $\land$ $\exists$ \textrm{Guard} g2 $\in$ \textrm{Guards(Step(EG))}, Guard::Id(g2) $=$ Guard::Id(g1) $\land$ $\neg$ Guard::IsShot(g2)\\
+    & \quad\quad $\Rightarrow$ $\exists$ \textrm{Treasure} t2 $\in$ \textrm{Treasures(Step(EG))}\\
+    & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} $\land$ \textrm{Col(t2)} $=$ \textrm{Col(Step(G))} $\land$ \textrm{Hgt(t2)} $=$ \textrm{Hgt(Step(G))}\\
+  \end{longtable}
 \end{frame}
 
 \begin{frame}{Cases spéciales: Pièges}

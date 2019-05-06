@@ -757,7 +757,7 @@ Dans le service \textrm{Engine}, on modifie:
     & \quad\quad\quad\quad $\forall$ \textrm{Gun} i $\in$ \textrm{CellContent(Environment(EG), x, y)} \\
     & \quad\quad\quad\quad\quad\quad $\Rightarrow$ (i $\in$ \textrm{Guns(EG)} $\land$ \textrm{Col(i)} $=$ x $\land$ \textrm{Hgt(i)} $=$ y)\\
 
-    \textrm{[init]}: & \textrm{NumberBullets(EG)} $=$ 0\\
+    \textrm{[init]}: & \textrm{NumberBullets(init(s, pC, gC, tC, kC, portals, gunC))} $=$ 0\\
     & $\forall$ \textrm{Coord} c $\in$ gunC $\exists$ \textrm{Item} t $\in$ \textrm{Guns(init(s, pC, gC, tC, kC, portals, gunC))} (\textrm{Col(t)} $=$ \textrm{Col(c)} $\land$ \textrm{Hgt(t)} $=$ \textrm{Hgt(c)})\\
     & \quad\quad $\land$ $\forall$ \textrm{Item} t $\in$ \textrm{Guns(init(s, pC, gC, tC, kC, portals, gunC))} $\exists$ \textrm{Coord} c $\in$ gunC\\
 
@@ -790,15 +790,15 @@ Dans le service \textrm{Engine}, on modifie:
     & \quad\quad $\land$ NumberBullets(EG) $>$ 0)\\
     & \quad\quad $\Rightarrow$ NumberBullets(Step(EG)) $=$ NumberBullets(EG) - 1\\
 
-    & $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(EG)} $\exists$ \textrm{Guard} g $\in$ \textrm{CellContent(Environment(EG), Col(t), Hgt(t))}\\
-    & \quad\quad $\land$ \textrm{CellNature(Environment(EG), Col(Step(G)), Hgt(Step(G))} $\ne$ \textbf{HOL}\\
-    & \quad\quad $\land$ $\neg$ IsShot(g)\\
+    & $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(EG)} $\exists$ \textrm{Guard} g1 $\in$ \textrm{CellContent(Environment(EG), Col(t), Hgt(t))}\\
+    & \quad\quad $\land$ \textrm{CellNature(Environment(EG), Col(Step(g1)), Hgt(Step(g1))} $\ne$ \textbf{HOL}\\
+    & \quad\quad $\land$ $\exists$ \textrm{Guard} g2 $\in$ \textrm{Guards(Step(EG))}, Guard::Id(g2) $=$ Guard::Id(g1) $\land$ $\neg$ Guard::IsShot(g2)\\
     & \quad\quad $\Rightarrow$ $\exists$ \textrm{Treasure} t2 $\in$ \textrm{Treasures(Step(EG))}\\
     & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} $\land$ \textrm{Col(t2)} $=$ \textrm{Col(Step(G))} $\land$ \textrm{Hgt(t2)} $=$ \textrm{Hgt(Step(G))}\\
 
-    & $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(EG)} $\exists$ \textrm{Guard} g $\in$ \textrm{CellContent(Environment(EG), Col(t), Hgt(t))}\\
-    & \quad\quad $\land$ \textrm{CellNature(Environment(EG), Col(Step(G)), Hgt(Step(G))} $=$ \textbf{HOL}\\
-    & \quad\quad $\land$ $\neg$ IsShot(g)\\
+    & $\forall$ \textrm{Item} t $\in$ \textrm{Treasures(EG)} $\exists$ \textrm{Guard} g1 $\in$ \textrm{CellContent(Environment(EG), Col(t), Hgt(t))}\\
+    & \quad\quad $\land$ \textrm{CellNature(Environment(EG), Col(Step(g1)), Hgt(Step(g1))} $=$ \textbf{HOL}\\
+    & \quad\quad $\land$ $\exists$ \textrm{Guard} g2 $\in$ \textrm{Guards(Step(EG))}, Guard::Id(g2) $=$ Guard::Id(g1) $\land$ $\neg$ Guard::IsShot(g2)\\
     & \quad\quad $\Rightarrow$ $\exists$ \textrm{Treasure} t2 $\in$ \textrm{Treasures(Step(EG))}\\
     & \quad\quad\quad\quad \textrm{Id(t2)} $=$ \textrm{Id(t)} $\land$ \textrm{Col(t2)} $=$ \textrm{Col(Step(G))} $\land$ \textrm{Hgt(t2)} $=$ \textrm{Hgt(Step(G))} $+$ 1\\
   \end{longtable}}
