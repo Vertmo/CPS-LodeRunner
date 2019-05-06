@@ -583,9 +583,9 @@ Dans le service \textrm{Engine}, on ajoute et modifie:
     \textbf{Observations}: &\\
     \textrm{[init]}: & $\forall$ \textrm{PortalPair} pp $\in$ \textrm{portals} pp $\in$ \textrm{Portals(init(screen, pCoord, gCoords, tCoords, portals))}\\
     & $\land$ $\forall$ \textrm{PortalPair} pp $\in$ \textrm{Portals(init(screen, pCoord, gCoords, tCoords, portals))} pp $\in$ portals\\
-    \textrm{[Step]}: & $\exists$ \textrm{PortalPair} pp $\in$ \textrm{Portals(E)} (\textrm{Col(CoordPIn(pp))} $=$ \textrm{Col(Player(E))} $land$ \textrm{Hgt(CoordPIn(pp))} $=$ \textrm{Hgt(Player(E))})\\
+    \textrm{[Step]}: & $\exists$ \textrm{PortalPair} pp $\in$ \textrm{Portals(E)} (\textrm{Col(CoordPIn(pp))} $=$ \textrm{Col(Player(E))} $\land$ \textrm{Hgt(CoordPIn(pp))} $=$ \textrm{Hgt(Player(E))})\\
     & \quad\quad $\Rightarrow$ \textrm{Player(Step(E))} $=$ \textrm{Teleport(Player(E), Col(CoordPOut(pp)), Hgt(CoordPOut(pp)))}\\
-    \textrm{[Step]}: & $\neg\exists$ \textrm{PortalPair} pp $\in$ \textrm{Portals(E)} (\textrm{Col(CoordPIn(pp))} $=$ \textrm{Col(Player(E))} $land$ \textrm{Hgt(CoordPIn(pp))} $=$ \textrm{Hgt(Player(E))})\\
+    \textrm{[Step]}: & $\neg\exists$ \textrm{PortalPair} pp $\in$ \textrm{Portals(E)} (\textrm{Col(CoordPIn(pp))} $=$ \textrm{Col(Player(E))} $\land$ \textrm{Hgt(CoordPIn(pp))} $=$ \textrm{Hgt(Player(E))})\\
     & \quad\quad $\Rightarrow$ \textrm{Player(Step(E))} $=$ \textrm{Step(Player(E))}\\
   \end{longtable}}
 

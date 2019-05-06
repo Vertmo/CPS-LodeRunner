@@ -12,3 +12,5 @@
 *.cb2
 .*.lb
 *.pdf
+*.nav
+*.snm
