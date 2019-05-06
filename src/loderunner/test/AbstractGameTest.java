@@ -100,6 +100,15 @@ public abstract class AbstractGameTest {
     // Transitions
 
     @Test
+    public void testInitTrans() {
+        // Conditions initiales
+        List<Level> levels = new ArrayList<>(); levels.add(createPlayableLevel());
+        // Opération
+        game.init(levels);
+        // Oracle: vérifié par les contrats
+    }
+
+    @Test
     public void testCheckAndUpdateTrans1() {
         // Conditions initiales
         List<Level> levels = new ArrayList<>();

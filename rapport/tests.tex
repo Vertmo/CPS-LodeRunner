@@ -13,6 +13,20 @@ On trouvera ici des spécifications de quelque-uns des tests que nous avons écr
 
 \section{Screen}
 
+\subsection{Couverture}
+
+\begin{longtable}{r|cc}
+  &Nombre de tests&Couverture\\
+  \hline
+  Préconditions & 13 & 75\%\\
+  Transitions & 1 & 33\%\\
+  Paires de transitions &0& 0\%\\
+  Etats remarquables &0& NA\\
+  Scénarios &0& NA\\
+\end{longtable}
+
+\subsection{Exemples de test}
+
 {\small
   \begin{longtable}{rl}
     \texttt{Cas de test}: &\textrm{Screen::testCellNaturePre1}\\
@@ -23,6 +37,20 @@ On trouvera ici des spécifications de quelque-uns des tests que nous avons écr
   \end{longtable}}
 
 \section{EditableScreen}
+
+\subsection{Couverture}
+
+\begin{longtable}{r|cc}
+  &Nombre de tests&Couverture\\
+  \hline
+  Préconditions & 7 & 100\%\\
+  Transitions & 5 & 100\%\\
+  Paires de transitions & 2 & 25\%\\
+  Etats remarquables & 1 & NA\\
+  Scénarios & 1 & NA\\
+\end{longtable}
+
+\subsection{Exemples de test}
 
 {\small
   \begin{longtable}{rl}
@@ -44,6 +72,20 @@ On trouvera ici des spécifications de quelque-uns des tests que nous avons écr
 
 \section{Environment}
 
+\subsection{Couverture}
+
+\begin{longtable}{r|cc}
+  &Nombre de tests&Couverture\\
+  \hline
+  Préconditions & 7 & 100\%\\
+  Transitions & 4 & 100\%\\
+  Paires de transitions & 3 & 50\%\\
+  Etats remarquables & 1 & NA\\
+  Scénarios & 1 & NA\\
+\end{longtable}
+
+\subsection{Exemples de test}
+
 {\small
   \begin{longtable}{rl}
     \texttt{Cas de test}: &\textrm{Environment::testItemInCell}\\
@@ -56,6 +98,20 @@ On trouvera ici des spécifications de quelque-uns des tests que nous avons écr
   \end{longtable}}
 
 \section{Character}
+
+\subsection{Couverture}
+
+\begin{longtable}{r|cc}
+  &Nombre de tests&Couverture\\
+  \hline
+  Préconditions & 2 & 100\%\\
+  Transitions & 15 & 100\%\\
+  Paires de transitions & 4 & 25\%\\
+  Etats remarquables & 3 & NA\\
+  Scénarios & 2 & NA\\
+\end{longtable}
+
+\subsection{Exemples de test}
 
 {\small
   \begin{longtable}{rl}
@@ -82,6 +138,20 @@ On trouvera ici des spécifications de quelque-uns des tests que nous avons écr
   \end{longtable}}
 
 \section{Guard}
+
+\subsection{Couverture}
+
+\begin{longtable}{r|cc}
+  &Nombre de tests&Couverture\\
+  \hline
+  Préconditions & 7 & 80\%\\
+  Transitions & 19 & 100\%\\
+  Paires de transitions & 0 & 0\%\\
+  Etats remarquables & 1 & NA\\
+  Scénarios & 1 & NA\\
+\end{longtable}
+
+\subsection{Exemples de test}
 
 Pour les tests sur Guard, on a défini la fonction $createEnvironment$ suivante créant l'environment suivant:\\
 \begin{tabular}{cccccccccc}
@@ -131,7 +201,23 @@ Pour les tests sur Guard, on a défini la fonction $createEnvironment$ suivante 
 
 \section{Player}
 
-Pour les tests sur Guard, on a défini la fonction $createEnvironment$ suivante créant l'environment suivant:\\
+\begin{minipage}{\textwidth}
+\subsection{Couverture}
+
+\begin{longtable}{r|cc}
+  &Nombre de tests&Couverture\\
+  \hline
+  Préconditions & 4 & 100\% \\
+  Transitions & 19 & 100\% \\
+  Paires de transitions & 0 & 0\% \\
+  Etats remarquables & 2 & NA\\
+  Scénarios & 1& NA\\
+\end{longtable}
+\end{minipage}
+
+\subsection{Exemples de test}
+
+Pour les tests sur Player, on a défini la fonction $createEnvironment$ suivante créant l'environment suivant:\\
 \begin{tabular}{cccccccccc}
    & & & & & & & & & \\
    & & & & & & & & & \\
@@ -167,6 +253,20 @@ De plus, on défini la fonction $createEngine(List<Command>)$, qui renvoie un En
 
 \section{Engine}
 
+\subsection{Couverture}
+
+\begin{longtable}{r|cc}
+  &Nombre de tests&Couverture\\
+  \hline
+  Préconditions & 12 & 100\%\\
+  Transitions & 10 & 100\%\\
+  Paires de transitions & 0 & 100\%\\
+  Etats remarquables & 7 & NA\\
+  Scénarios & 1 & NA\\
+\end{longtable}
+
+\subsection{Exemples de test}
+
 Pour les tests sur Engine, on a défini la fonction $createPlayableScreen$ suivante créant l'environment suivant:\\
 \begin{tabular}{cccccccccc}
    & & & &H& & & & & \\
@@ -200,7 +300,21 @@ De plus \textrm{tcp.setCommands(List<Command>)} permet de donner les commandes a
 
 \section{Game}
 
-Pour les tests sur Engine, on a défini la fonction $createPlayableScreen$ suivante créant le niveau avec le Screen suivant:\\
+\subsection{Couverture}
+
+\begin{longtable}{r|cc}
+  &Nombre de tests&Couverture\\
+  \hline
+  Préconditions & 4 & 100\%\\
+  Transitions & 4& 100\%\\
+  Paires de transitions & 0 & 100\%\\
+  Etats remarquables & 1 & NA\\
+  Scénarios & 1 & NA\\
+\end{longtable}
+
+\subsection{Exemples de test}
+
+Pour les tests sur Game, on a défini la fonction $createPlayableScreen$ suivante créant le niveau avec le Screen suivant:\\
 \begin{tabular}{cccccccccc}
    & & & & & & & & & \\
    & & & & & & & & & \\
@@ -231,5 +345,19 @@ Pour les tests sur Engine, on a défini la fonction $createPlayableScreen$ suiva
     &$S_3$ $=$ \textrm{CheckStateAndUpdate(Step(Step($S_2$)))}\\
     \texttt{Oracle}: &\textrm{HP($S_3$)} $=$ 0\\
   \end{longtable}}
+
+\begin{minipage}{\textwidth}
+\section{Nombre total de tests}
+\begin{longtable}{r|cc}
+  &Nombre de tests\\
+  \hline
+  Préconditions & 56\\
+  Transitions & 77\\
+  Paires de transitions & 9\\
+  Etats remarquables & 16\\
+  Scénarios & 8\\
+  TOTAL & 166\\
+\end{longtable}
+\end{minipage}
 
 \end{document}

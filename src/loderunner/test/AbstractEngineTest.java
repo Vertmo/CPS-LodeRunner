@@ -223,6 +223,22 @@ public abstract class AbstractEngineTest {
     // Transitions
 
     @Test
+    public void testInitTrans1() {
+        // Conditions initiales
+        EditableScreen s = createPlayableScreen();
+        PortalPair pp = new PortalPairImpl(new CoordImpl(3, 2));
+        pp.setOutPCoord(new CoordImpl(4, 2));
+        // Opération
+        engine.init(s, new CoordImpl(5, 2),
+                    new HashSet<>(Arrays.asList(new CoordImpl(6, 2))),
+                    new HashSet<>(Arrays.asList(new CoordImpl(7, 2))),
+                    new HashSet<>(),
+                    new HashSet<>(Arrays.asList(pp)), new HashSet<>());
+        // Oracle: vérifié par contrats
+    }
+
+
+    @Test
     public void testStepTrans1() {
         // Conditions initiales
         engine.init(createPlayableScreen(), new CoordImpl(5, 2),
