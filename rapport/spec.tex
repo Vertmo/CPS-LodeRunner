@@ -666,7 +666,7 @@ Dans le service \textrm{Player}, on ajoute:
     & \quad\quad\quad\quad $\land$ $\forall$ k $\in$ \texttt{]j;Col(P)[},\\
     & \quad\quad\quad\quad\quad\quad \texttt{Environment::CellNature(Envi(P),k,Hgt(P))} $\in$ \{\textbf{EMP},\textbf{HOL},\textbf{LAD},\textbf{HDR}\}\\
     & \quad\quad\quad\quad\quad\quad $\land$ $\neg$ $\exists$ Guard g2 $\in$ \texttt{Environment::CellContent(Envi(P),k,Hgt(P))}\\
-    & \quad\quad $\Rightarrow$ $\exists$ Gunshot gs $\in$ \textrm{Environment::CellContent(Envi(Step(P)),j,Hgt(P))}\\
+    & \quad\quad $\Rightarrow$ Guard::IsShot(g1)\\
 
     & ($\neg$ \texttt{WillFall(P)} \\
     & \quad\quad $\land$ \textrm{Engine::NextCommand(Engine(P))} $=$ ShootR \\
@@ -676,7 +676,7 @@ Dans le service \textrm{Player}, on ajoute:
     & \quad\quad\quad\quad $\land$ $\forall$ k $\in$ \texttt{]Col(P),j[},\\
     & \quad\quad\quad\quad\quad\quad \texttt{Environment::CellNature(Envi(P),k,Hgt(P))} $\in$ \{\textbf{EMP},\textbf{HOL},\textbf{LAD},\textbf{HDR}\}\\
     & \quad\quad\quad\quad\quad\quad $\land$ $\neg$ $\exists$ Guard g2 $\in$ \texttt{Environment::CellContent(Envi(P),k,Hgt(P))}\\
-    & \quad\quad $\Rightarrow$ $\exists$ Gunshot gs $\in$ \textrm{Environment::CellContent(Envi(Step(P)),j,Hgt(P))}\\
+    & \quad\quad $\Rightarrow$ Guard::IsShot(g1)\\
   \end{longtable}}
 
 Dans le service \textrm{Guard}, on ajoute et on modifie:

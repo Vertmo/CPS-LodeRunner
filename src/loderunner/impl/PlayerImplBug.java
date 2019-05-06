@@ -91,7 +91,8 @@ public class PlayerImplBug extends CharacterImpl implements Player{
                 }else {
                     for(InCell content : getEnvi().getCellContent(j, getHgt())){
                         if(content instanceof Guard) {
-                            getEnvi().addCellContent(j, getHgt(), new GunShotImpl());
+                            Guard g = (Guard) content;
+                            g.setIsShot(true);
                             return;
                         }
                     }
@@ -112,7 +113,8 @@ public class PlayerImplBug extends CharacterImpl implements Player{
                 }else {
                     for(InCell content : getEnvi().getCellContent(j, getHgt())){
                         if(content instanceof Guard) {
-                            getEnvi().addCellContent(j, getHgt(), new GunShotImpl());
+                            Guard g = (Guard) content;
+                            g.setIsShot(true);
                             return;
                         }
                     }
