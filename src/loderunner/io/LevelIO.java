@@ -25,6 +25,7 @@ public class LevelIO implements Level {
     private Set<Coord> treasureCoords;
     private Set<Coord> keyCoords;
     private Set<PortalPair> portals;
+    private Set<Coord> gunCoords;
 
     public LevelIO(File file) throws LevelLoadException {
         screen = new EditableScreenImpl();
@@ -32,6 +33,7 @@ public class LevelIO implements Level {
         treasureCoords = new HashSet<>();
         keyCoords = new HashSet<>();
         portals = new HashSet<>();
+        gunCoords = new HashSet<>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line = br.readLine();
@@ -83,6 +85,10 @@ public class LevelIO implements Level {
                                                        Integer.parseInt(coordOutS[1]));
                     PortalPair pp = new PortalPairImpl(coordIn); pp.setOutPCoord(coordOut);
                     portals.add(pp);
+                } else if(line.charAt(0) == 'U') {
+                    String[] coordS = line.substring(1).split("x");
+                    gunCoords.add(new CoordImpl(Integer.parseInt(coordS[0]),
+                                                     Integer.parseInt(coordS[1])));
                 }
             }
 
@@ -105,6 +111,7 @@ public class LevelIO implements Level {
         treasureCoords = new HashSet<>();
         keyCoords = new HashSet<>();
         portals = new HashSet<>();
+        gunCoords = new HashSet<>();
     }
 
     public EditableScreen getScreen() { return screen; }
@@ -113,6 +120,7 @@ public class LevelIO implements Level {
     public Set<Coord> getTreasureCoords() { return treasureCoords; }
     public Set<Coord> getKeyCoords() { return keyCoords; }
     public Set<PortalPair> getPortals() { return portals; }
+    public Set<Coord> getGunCoords() { return gunCoords; }
 
     public void save(File file) {
         try {
@@ -160,6 +168,11 @@ public class LevelIO implements Level {
             for(PortalPair p: portals) {
                 if(p.getOutPCoord() != null)
                     bw.write("W" + p.getInPCoord().toString() + "/" + p.getOutPCoord().toString() + "\n");
+            }
+
+            // Gun coordinates
+            for(Coord k: gunCoords) {
+                bw.write("U" + k.toString() + "\n");
             }
 
             bw.close();

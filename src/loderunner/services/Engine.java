@@ -15,6 +15,7 @@ public interface Engine {
 
     public Set<Item> getTreasures();
     public Set<Item> getKeys();
+    public Set<Item> getGuns();
     public Set<Hole> getHoles();
     public Status getStatus();
     public int getLevelScore();
@@ -25,10 +26,12 @@ public interface Engine {
     // const
     public Set<PortalPair> getPortals();
 
+    public int getNumberBullets();
+
     /* Constructors */
 
     // pre: screen.isPlayable()
-    // pre: \forall Coord c \in { pCoord } union gCoords union tCoords union kCoords
+    // pre: \forall Coord c \in { pCoord } union gCoords union tCoords union kCoords union gunCoords
     //        screen.getCellNature(c.getCol(), c.getHgt()) == EMP
     // pre: \forall PortalPair pp \in portals
     //        screen.getCellNature(pp.getInPCoord().getCol(), pp.getInPCoord().getHgt()) == EMP
@@ -37,7 +40,9 @@ public interface Engine {
     //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
     // pre: \forall Coord c1 \in tCoords \forall Coord c2 \in tCoords
     //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
-    // pre: \forall Coord c1 \in tCoords \forall Coord c2 \in kCoords
+    // pre: \forall Coord c1 \in kCoords \forall Coord c2 \in kCoords
+    //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
+    // pre: \forall Coord c1 \in gunCoords \forall Coord c2 \in gunCoords
     //         (c1.getCol() == c2.getCol() && c1.getHgt() == c2.getHgt()) => c1 == c2
     // pre: \forall Coord c \in gCoords
     //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
@@ -49,6 +54,9 @@ public interface Engine {
     // pre: \forall Coord c \in kCoords
     //        (c.getCol() != pCoord.getCol() || c.getHgt() != pCoord.getHgt())
     // pre: \forall Coord c \in kCoords
+    //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL, LAD, TRP }
+    //        || c \in gCoords
+    // pre: \forall Coord c \in gunCoords
     //        screen.getCellNature(c.getCol(). c.getHgt()-1) \in { PLT, MTL, LAD, TRP }
     //        || c \in gCoords
     // post: getStatus() == Playing
@@ -67,7 +75,10 @@ public interface Engine {
     //       && \forall Item i \in getKeys() \exists Coord c \in kCoords (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
     // post: \forall PortalPair pp \in portals pp \in getPortals()
     //       && \forall PortalPair pp \in getPortals() pp \in portals
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals);
+    // post: \forall Coord c \in gunCoords \exists Item i \in getGuns() (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
+    //       && \forall Item i \in getGuns() \exists Coord c \in gunCoords (i.getCol() == c.getCol() && i.getHgt() == c.getHgt())
+    // post: getNumberBullet() == 0
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals, Set<Coord> gunCoords);
 
     /* Invariants */
 
@@ -91,6 +102,11 @@ public interface Engine {
     //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
     //           getEnvironment().getCellNature(x, y) == HOL
     //           => \exists Hole h \in getHoles() (h.getCol() == x && h.getHgt() == y)
+    // inv: \forall Item i \in getGuns() i \in getEnvironment().getCellContent(i.getCol(), i.getHgt())
+    //      && \forall x \in [0..getEnvironment().getWidth()[ \forall y \in [0..getEnvironment().getHeight()[
+    //           \forall Item i \in getEnvironment().getCellContent(x, y) i.getNature() == Gun
+    //           => i \in getGuns() && (i.getCol() == x && i.getHgt() == y)
+    // inv: getNumberBullet() >= 0
 
     /* Operators */
 
@@ -102,18 +118,43 @@ public interface Engine {
     //       => getPlayer() == (getPlayer()@pre).teleport(pp.getCoordPOut().getCol(), pp.getCoordPOut().getHgt())
     // post: \not \exists pp \in getPortals() (pp.getCoordPIn().getCol() == (getPlayer()@pre).getCol() && pp.getCoordPIn().getHgt() == (getPlayer()@pre).getHgt())
     //       => getPlayer() == (getPlayer()@pre).step()
-    // post: isGuardTurn()@pre => \forall Guard g: getGuards() g == (g@pre).step()
-    //       && !isGuardTurn()@pre => \forall Guard g: getGuards() g == g@pre
+    // post: \forall Guard g: getGuards()
+    //          (isGuardTurn()@pre || g.isShot() => g == (g@pre).step())
+    //          && (!isGuardTurn()@pre && !g.isShot() => g == g@pre)
     // post: isGuardTurn() = !isGuardTurn()@pre
+
+    // Le joueur peut ramasser un pistolet
+    // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //       && i.getNature() == Gun
+    //       => i \not \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)
+    // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //       && i.getNature() == Gun
+    //       && getNextCommand()@pre \not \in {ShootL, ShootR}
+    //       => getNumberBullets() == getNumberBullets()@pre + 5
+    // post: \exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //       && i.getNature() == Gun
+    //       && getNextCommand()@pre \in {ShootL, ShootR}
+    //       => getNumberBullets() == getNumberBullets()@pre + 4
+    // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //             && i.getNature() == Gun)
+    //       && (getNextCommand()@pre \not \in {ShootL, ShootR} || getNumberBullets()@pre == 0)
+    //       => getNumberBullets() == getNumberNullets()@pre
+    // post: \not (\exist Item i \in getEnvironment().getCellContent(getPlayer().getCol()@pre,getPlayer().getHgt()@pre)@pre
+    //             && i.getNature() == Gun)
+    //       && getNextCommand()@pre \in {ShootL, ShootR}
+    //       && getNumberBullet()@pre > 0
+    //       => getNumberBullets() == getNumberNullets()@pre - 1
 
     // Les gardes peuvent porter des trésors (et les perdent quand ils tombent dans un trou)
     // post: \forall Item t \in getTreasures()@pre
     //         \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
-    //           getEnvironment().getCellNature(g.getCol(), g.getHgt()) != HOL
+    //         && getEnvironment().getCellNature(g.getCol(), g.getHgt()) != HOL
+    //         && \not g.isShot()
     //         => t.getCol() == g.getCol() && t.getHgt() == g.getHgt()
     // post: \forall Item t \in getTreasures()@pre
     //         \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
-    //           getEnvironment().getCellNature(g.getCol(), g.getHgt()) == HOL
+    //         && getEnvironment().getCellNature(g.getCol(), g.getHgt()) == HOL
+    //         && \not g.isShot()
     //         => t.getCol() == g.getCol() && t.getHgt() == g.getHgt()+1
     // post: \forall Item t \in getTreasures()@pre
     //         \not \exists Guard g \in getEnvironment().getCellContent(t.getCol()@pre, t.getHgt()@pre)@pre
@@ -167,4 +208,7 @@ public interface Engine {
     public void step();
 
     public Engine clone();
+
+    //setter
+    public void setNumberBullets(int nb);
 }

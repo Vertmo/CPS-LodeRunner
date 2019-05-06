@@ -19,6 +19,8 @@ public interface Guard extends /* refine */ Character, Cloneable {
     // pre: getEnvi().getCellNature(getCol(), getHgt()) == HOL
     public int getTimeInHole();
 
+    public boolean isShot();
+
     /* Invariants */
 
     // inv: getEnvi().getCellNature(getCol(), getHgt()) == LAD
@@ -80,6 +82,7 @@ public interface Guard extends /* refine */ Character, Cloneable {
     // post: getCol() == getInitCol() == x
     // post: getHgt() == getInitCol() == y
     // post: getTarget() == t
+    // post: isShot() == false
     public void init(Environment e, Character t, int x, int y);
 
     /* Operators */
@@ -113,15 +116,16 @@ public interface Guard extends /* refine */ Character, Cloneable {
     // def: willFall() = getEnvi().getCellNature(getCol()@pre, getHgt()@pre-1) \in { HOL, EMP, HDR }
     //                   && \not \exists Guard g \in getEnvi().getCellContent(getCol()@pre, getHgt()@pre-1)
     //                   && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) \notin { LAD, HDR }
-    // post: willFall() => step() == goDown()
-    // post: \not willFall()
+    // post: isShot() => getCol() == getInitCol() && getHgt() == getInitHgt()
+    // post: \not isShot() && willFall() => step() == goDown()
+    // post: \not isShot() && \not willFall()
     //       && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) == HOL && getTimeInHole()@pre < 5
     //       => getTimeInHole() == getTimeInHole()@pre + 1
-    // post: \not willFall()
+    // post: \not isShot() && \not willFall()
     //       && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) == HOL && getTimeInHole()@pre == 5
     //       => (getBehaviour()@pre == Left => step() == climbLeft()
     //           && getBehaviour()@pre == Right => step() == climbRight())
-    // post: \not willFall() && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) != HOL
+    // post: \not isShot() && \not willFall() && getEnvi().getCellNature(getCol()@pre, getHgt()@pre) != HOL
     //       => (getBehaviour()@pre == Left => step() == goLeft()
     //           && getBehaviour()@pre == Right => step() == goRight()
     //           && getBehaviour()@pre == Up => step() == goUp()
@@ -129,4 +133,6 @@ public interface Guard extends /* refine */ Character, Cloneable {
     public void step();
 
     public Guard clone();
+
+    public void setIsShot(boolean b);
 }

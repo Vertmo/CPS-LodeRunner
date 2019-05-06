@@ -23,7 +23,7 @@ import loderunner.services.PortalPair;
 
 enum Tool {
     EMP, PLT, LAD, HDR, MTL, TRP, DOR,
-    Player, Guard, Treasure, Key, PortalIn, PortalOut
+    Player, Guard, Treasure, Key, PortalIn, PortalOut, Gun
 }
 
 public class EditorWindow {
@@ -135,6 +135,14 @@ public class EditorWindow {
                     }
                     currentTool = Tool.PortalIn;
                     break;
+                case Gun:
+                    Coord gun = new CoordImpl(x, y);
+                    if(level.getGunCoords().contains(gun)) {
+                        level.getGunCoords().remove(gun);
+                    } else {
+                        level.getGunCoords().add(gun);
+                    }
+                    break;
                 }
                 redrawCanvas();
                 updateIsPlayableLbl();
@@ -240,8 +248,13 @@ public class EditorWindow {
                 if(currentPortalPair != null) level.getPortals().remove(currentPortalPair);
                 redrawCanvas(); });
 
+        Button gunButton = new Button("Gun");
+        gunButton.setOnAction(e -> { currentTool = Tool.Gun;
+                if(currentPortalPair != null) level.getPortals().remove(currentPortalPair);
+                redrawCanvas(); });
+
         return new ToolBar(empButton, pltButton, ladButton, hdrButton, mtlButton, trpButton, dorButton,
-                           playerButton, guardButton, treasureButton, keyButton, portalButton);
+                           playerButton, guardButton, treasureButton, keyButton, portalButton, gunButton);
     }
 
     private void updateIsPlayableLbl() {
@@ -269,6 +282,15 @@ public class EditorWindow {
                level.getScreen().getCellNature(k.getCol(), k.getHgt()-1) != Cell.LAD &&
                level.getScreen().getCellNature(k.getCol(), k.getHgt()-1) != Cell.TRP &&
                !level.getGuardCoords().contains(k)) correctContent = false;
+        }
+        for(Coord gun: level.getGunCoords()) {
+            if(level.getScreen().getCellNature(gun.getCol(), gun.getHgt()) != Cell.EMP) correctContent = false;
+            if(level.getPlayerCoord().getCol() == gun.getCol() && level.getPlayerCoord().getHgt() == gun.getHgt()) correctContent = false;
+            if(level.getScreen().getCellNature(gun.getCol(), gun.getHgt()-1) != Cell.PLT &&
+               level.getScreen().getCellNature(gun.getCol(), gun.getHgt()-1) != Cell.MTL &&
+               level.getScreen().getCellNature(gun.getCol(), gun.getHgt()-1) != Cell.LAD &&
+               level.getScreen().getCellNature(gun.getCol(), gun.getHgt()-1) != Cell.TRP &&
+               !level.getGuardCoords().contains(gun)) correctContent = false;
         }
 
         for(PortalPair pp: level.getPortals()) {

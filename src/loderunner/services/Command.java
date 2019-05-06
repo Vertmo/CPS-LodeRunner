@@ -7,5 +7,7 @@ public enum Command {
     Down,
     DigL,
     DigR,
-    Neutral
+    Neutral,
+    ShootL,
+    ShootR
 }

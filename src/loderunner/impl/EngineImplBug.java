@@ -11,6 +11,7 @@ import loderunner.services.EditableScreen;
 import loderunner.services.Engine;
 import loderunner.services.Environment;
 import loderunner.services.Guard;
+import loderunner.services.GunShot;
 import loderunner.services.Hole;
 import loderunner.services.InCell;
 import loderunner.services.Item;
@@ -31,6 +32,8 @@ public class EngineImplBug implements Engine {
     private int levelScore;
     private boolean guardTurn;
     private Set<PortalPair> portals;
+    private Set<Item> guns;
+    private int numberBullets;
 
     public EngineImplBug(CommandProvider cmdProvider) {
         this.cmdProvider = cmdProvider;
@@ -97,7 +100,17 @@ public class EngineImplBug implements Engine {
     }
 
     @Override
-    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals) {
+    public Set<Item> getGuns() {
+        return guns;
+    }
+
+    @Override
+    public int getNumberBullets() {
+        return numberBullets;
+    }
+
+    @Override
+    public void init(EditableScreen screen, Coord pCoord, Set<Coord> gCoords, Set<Coord> tCoords, Set<Coord> kCoords, Set<PortalPair> portals, Set<Coord> gunCoords) {
         env = new EnvironmentImpl();
         env.init(screen);
         player = new PlayerImpl();
@@ -128,30 +141,67 @@ public class EngineImplBug implements Engine {
             env.addCellContent(c.getCol(), c.getHgt(), k);
         }
 
+        guns = new HashSet<>();
+        for(Coord c: gunCoords) {
+            Item k = new ItemImpl(ItemType.Gun, c.getCol(), c.getHgt());
+            guns.add(k);
+            env.addCellContent(c.getCol(), c.getHgt(), k);
+        }
+
         holes = new HashSet<>();
         status = Status.Playing;
         guardTurn = false;
+        numberBullets = 0;
     }
 
     @Override
     public void step() {
         // Step for player
+        Command cmd = peekNextCommand();
+        Item toRemove = null;
+        for(Item gun: getGuns()) {
+            if(getPlayer().getCol() == gun.getCol() && getPlayer().getHgt() == gun.getHgt()) {
+                env.removeCellContent(gun.getCol(), gun.getHgt(), gun);
+                toRemove = gun;
+                numberBullets += 5;
+            }
+        }
+        if(toRemove != null) guns.remove(toRemove);
         env.removeCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
-        getPlayer().step();
+        PortalPair portal = null;
+        for(PortalPair pp: getPortals()) {
+            if(pp.getInPCoord().getCol() == getPlayer().getCol() && pp.getInPCoord().getHgt() == getPlayer().getHgt())
+                portal = pp;
+        }
+        if(portal != null) {
+            getPlayer().teleport(portal.getOutPCoord().getCol(), portal.getOutPCoord().getHgt());
+        } else {
+            getPlayer().step();
+        }
         env.addCellContent(getPlayer().getCol(), getPlayer().getHgt(), getPlayer());
+        if(numberBullets > 0 && portal == null && (cmd == Command.ShootL || cmd == Command.ShootR)) {
+            numberBullets--;
+        }
 
         // Step for guards
         for(Guard g: getGuards()) {
             Item transported = null;
+            g.setIsShot(false);
             for(InCell ic: env.getCellContent(g.getCol(), g.getHgt())) {
-                if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Treasure) {
+                if(ic instanceof GunShot) {
+                    transported = null;
                     env.removeCellContent(g.getCol(), g.getHgt(), ic);
-                    transported = (Item)ic;
+                    g.setIsShot(true);
                     break;
+                }else if(ic instanceof Item && ((Item) ic).getNature() == ItemType.Treasure) {
+                    transported = (Item)ic;
                 }
             }
+            if(transported != null) {
+                env.removeCellContent(g.getCol(), g.getHgt(), transported);
+            }
             env.removeCellContent(g.getCol(), g.getHgt(), g);
-            if(guardTurn) g.step();
+            if(guardTurn || g.isShot()) g.step();
             env.addCellContent(g.getCol(), g.getHgt(), g);
             if(g.getCol() == player.getCol() && g.getHgt() == player.getHgt() && !treasures.isEmpty()) status = Status.Loss;
 
@@ -200,6 +250,7 @@ public class EngineImplBug implements Engine {
         for(Guard g: guards) {
             if(g.getCol() == player.getCol() && g.getHgt() == player.getHgt()) guard_found = true;
         }
+
         // Item toRemove = null;
         for(Item t: getTreasures()) {
             if(getPlayer().getCol() == t.getCol() && getPlayer().getHgt() == t.getHgt() && !guard_found) {
@@ -211,7 +262,7 @@ public class EngineImplBug implements Engine {
         //if(toRemove != null) treasures.remove(toRemove);
         if(treasures.isEmpty()) status = Status.Win;
 
-        Item toRemove = null;
+        toRemove = null;
         for(Item t: getKeys()) {
             if(getPlayer().getCol() == t.getCol() && getPlayer().getHgt() == t.getHgt()) {
                 env.removeCellContent(t.getCol(), t.getHgt(), t);
@@ -221,6 +272,15 @@ public class EngineImplBug implements Engine {
         }
         if(toRemove != null) keys.remove(toRemove);
 
+        // Trigger traps
+        if(getEnvironment().getCellNature(getPlayer().getCol(), getPlayer().getHgt()-1) == Cell.TRP) {
+            getEnvironment().triggerTrap(getPlayer().getCol(), getPlayer().getHgt()-1);
+        }
+        for(Guard g: getGuards()) {
+            if(getEnvironment().getCellNature(g.getCol(), g.getHgt()-1) == Cell.TRP) {
+                getEnvironment().triggerTrap(g.getCol(), g.getHgt()-1);
+            }
+        }
     }
 
     @Override
@@ -229,6 +289,7 @@ public class EngineImplBug implements Engine {
         if(o == this) return true;
         if(!(o instanceof Engine)) return false;
         Engine e = (Engine) o;
+        // Les égalités d'ensemble c'est compliqué...
         for(Guard g1: getGuards()) {
             boolean guard_found = false;
             for(Guard g2: e.getGuards()) {
@@ -272,5 +333,10 @@ public class EngineImplBug implements Engine {
         ei.holes = new HashSet<>(holes);
         ei.status = status;
         return ei;
+    }
+
+    @Override
+    public void setNumberBullets(int nb) {
+        numberBullets = nb;
     }
 }
