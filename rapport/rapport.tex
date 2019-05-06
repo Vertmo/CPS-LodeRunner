@@ -8,6 +8,38 @@
 \begin{document}
 \maketitle
 
+\section{Manuel d'utilisation}
+
+Le projet a été fait en utilisant Java 8. Un fichier build.xml permet de compiler le projet, d'exécuter le jeu, d'ouvrir l'éditeur de niveau et de lancer les test.\\
+Les différentes commandes sont:
+\begin{itemize}
+\item \textbf{ant compile} pour compiler
+\item \textbf{ant run} pour lancer le jeu
+\item \textbf{ant run-editor} pour lancer l'éditeur
+\item \textbf{ant test} pour lancer les tests MBT
+\end{itemize}
+Les commandes dans le jeu sont:
+\begin{itemize}
+\item \textbf{Mouvements}: touches fléchées
+\item \textbf{DigL (et ouvrir une porte à gauche)}: E
+\item \textbf{DigR (et ouvrir une porte à droite)}: R
+\item \textbf{ShootL}: D
+\item \textbf{ShootR}: F
+\end{itemize}
+L'éditeur intègre un interface graphique avec une toolbar des différents éléments possible à ajouter dans le niveau. La nature des cellules fonctionnent comme on pourrait s'y attendre. Pour les contenus des cellules, on peut enlever un contenu en cliquant dessus si c'est le contenu choisi dans la toolbar (par exemple pour enlever un garde, il faut choisir "garde" dans la toolbar puis cliquer sur la cellule contenant le garde). 
+
+\section{Le Projet}
+
+\subsection{Quelques détails}
+
+Nous avons terminé le projet de base avec les implémentations, les contrats et les tests MBT. De plus, noua avons ajouté trois autres extensions qui seront détaillées après. Le jeu et l'éditeur intègre une interface graphique utilisant JavaFX.
+
+\subsection{Difficultés rencontrés}
+
+Pour toute la partie commune du projet, nous n'avons pas réellement rencontré de difficultés. Pour les implémentations, il suffisait simplement de suivre les spécifications définies. Pour les contrats, le seul point à noter est l'utilisation de clone dans certaines situation  afin de vérifier des post conditions. Enfin pour les tests MBT, l'utilisation des contrats permet rapidement de vérifier le bon fonctionnement des implémentations.\\
+
+Ce n'est qu'à partir l'ajout des extensions que certains problèmes sont apparus. En effet, le projet de base avait une spécification prenant en compte la globalité des services existants. En ajoutant des extensions, il a fallu modifier la spécification globale à certains endroit ce qui a provoqué des erreurs dans les contrats et donc des erreurs dans les tests MBT. Nous avons donc dû passer du temps à refaire fonctionner tous les contrats et les tests MBT.
+
 \section{Extensions}
 La spécification des extensions décrites ci-dessous est disponible dans le fichier \textit{spec.pdf}, dans les sections du même nom.
 
