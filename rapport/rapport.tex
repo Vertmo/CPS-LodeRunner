@@ -13,31 +13,30 @@
 Le projet a été fait en utilisant Java 8. Un fichier build.xml permet de compiler le projet, d'exécuter le jeu, d'ouvrir l'éditeur de niveau et de lancer les test.\\
 Les différentes commandes sont:
 \begin{itemize}
-\item \textbf{ant compile} pour compiler
+\item \textbf{ant compile} pour compiler (mais c'est aussi une dépendance des autres commandes, il n'est donc pas nécessaire de l'exécuter explicitement)
 \item \textbf{ant run} pour lancer le jeu
 \item \textbf{ant run-editor} pour lancer l'éditeur
-\item \textbf{ant test} pour lancer les tests MBT
+\item \textbf{ant test} pour lancer les tests MBT (et \textbf{ant test-bug} pour lancer les tests sur les implémentations buggées). Les rapports de tests respectifs sont alors générés dans les fichiers \textit{report.txt} et \textit{report-bug.txt}
 \end{itemize}
 Les commandes dans le jeu sont:
 \begin{itemize}
 \item \textbf{Mouvements}: touches fléchées
-\item \textbf{DigL (et ouvrir une porte à gauche)}: E
-\item \textbf{DigR (et ouvrir une porte à droite)}: R
-\item \textbf{ShootL}: D
-\item \textbf{ShootR}: F
+\item \textbf{DigL (et ouvrir une porte à gauche)}: E, \textbf{DigR (et ouvrir une porte à droite)}: R
+\item \textbf{ShootL}: D, \textbf{ShootR}: F
 \end{itemize}
-L'éditeur intègre un interface graphique avec une toolbar des différents éléments possible à ajouter dans le niveau. La nature des cellules fonctionnent comme on pourrait s'y attendre. Pour les contenus des cellules, on peut enlever un contenu en cliquant dessus si c'est le contenu choisi dans la toolbar (par exemple pour enlever un garde, il faut choisir "garde" dans la toolbar puis cliquer sur la cellule contenant le garde). 
+L'éditeur intègre un interface graphique avec une toolbar présentant les différents éléments possible ajoutables dans le niveau. La nature des cellules fonctionne comme on pourrait s'y attendre. Pour les contenus des cellules, on peut enlever un contenu en cliquant dessus si c'est le contenu choisi dans la toolbar (par exemple pour enlever un garde, il faut choisir "garde" dans la toolbar puis cliquer sur la cellule contenant le garde). 
 
-\section{Le Projet}
+\section{Travail réalisé}
 
 \subsection{Quelques détails}
 
-Nous avons terminé le projet de base avec les implémentations, les contrats et les tests MBT. De plus, noua avons ajouté trois autres extensions qui seront détaillées après. Le jeu et l'éditeur intègre une interface graphique utilisant JavaFX.\\
-En tout, on a écrit 166 tests. Comme la distribution des tests présente dans \textit{test.pdf} l'indique, on s'est principalement focalisé sur les tests de transition et de préconditions, où on atteint des couvertures proches des 100\%. En revanche, on a implémenté moins de tests de paires de transitions (même si certains tests de transitions recouvrent des tests de paires de transitions) principalement pour des raisons de temps. On à aussi implémenté au moins un test de scénario par service (sauf pour le service \textrm{Screen}, pour lequel cela n'avait pas beaucoup de sens).
+Nous avons terminé le projet de base avec les implémentations, les contrats et les tests MBT. Nous avons tenté de suivre au plus près possible le comportement du jeu original, parfois en nous éloignant de la spécification du projet (en particulier en ce qui concerne les interactions avec différents types de cellules). De plus, noua avons ajouté trois autres extensions (qui elles s'éloignent parfois du jeu original) qui seront détaillées après. Le jeu et l'éditeur intègrent une interface graphique utilisant JavaFX (qui est normalement livré avec toute installation complète de Java 8).\\
+
+En tout, on a écrit 166 tests. Comme la distribution des tests présente dans \textit{test.pdf} l'indique, on s'est principalement focalisé sur les tests de transition et de préconditions, où on atteint des couvertures proches des 100\%. En revanche, on a implémenté moins de tests de paires de transitions (même si certains tests de transitions recouvrent des tests de paires de transitions) principalement pour des raisons de temps. On a aussi implémenté au moins un test de scénario par service (sauf pour le service \textrm{Screen}, pour lequel cela n'avait pas beaucoup de sens).
 
 \subsection{Difficultés rencontrés}
 
-Pour toute la partie commune du projet, nous n'avons pas réellement rencontré de difficultés. Pour les implémentations, il suffisait simplement de suivre les spécifications définies. Pour les contrats, le seul point à noter est l'utilisation de clone dans certaines situation  afin de vérifier des post conditions. Enfin pour les tests MBT, l'utilisation des contrats permet rapidement de vérifier le bon fonctionnement des implémentations.\\
+Pour toute la partie commune du projet, nous n'avons pas réellement rencontré de difficultés, en dehors de quelques imprécisions dans le sujet fourni qu'il nous a fallu corriger dans notre spécification. Pour les implémentations, il suffisait simplement de suivre les spécifications définies. Pour les contrats, le seul point à noter est l'utilisation de \textit{clone}, \textit{equals} ou \textit{hashcode} dans certaines situation afin de vérifier des post conditions. Comme nous avons utilisé la classe \textit{HashSet<T>} de Java pour gérer les collections vues comme des ensembles dans la spécification, il a parfois était difficile de définir des ces méthodes de manière cohérente, afin que les comparaisons des contrats fonctionnent correctement, en particulier pour le service \textrm{Guard}. Enfin pour les tests MBT, l'utilisation des contrats permet rapidement de vérifier le bon fonctionnement des implémentations (même si nous avons aussi ajouté quelques \textit{assertEquals} pour vérifier les points importants des oracles par nous même).\\
 
 Ce n'est qu'à partir l'ajout des extensions que certains problèmes sont apparus. En effet, le projet de base avait une spécification prenant en compte la globalité des services existants. En ajoutant des extensions, il a fallu modifier la spécification globale à certains endroit ce qui a provoqué des erreurs dans les contrats et donc des erreurs dans les tests MBT. Nous avons donc dû passer du temps à refaire fonctionner tous les contrats et les tests MBT.
 
@@ -88,5 +87,13 @@ Le pistolet est un \textbf{Item} dont la nature est \textbf{Gun}. Il existe deux
 L'Engine s'occupe de gérer le reste. Lorsque que le Player se trouve sur une cellule contenant un pistolet, cinq munitions sont récupérées, et s'il tire le nombre de munitions est décrémenté. L'opérateur \textrm{NumberBullets : [Engine] $\rightarrow$ int} permet de connaître le nombre de munitions disponibles. Après l'action du Player, l'Engine exécute l'action des gardes seulement lorsque \textbf{GuardTurn(EG)} est à True sauf pour un cas: si \textbf{IsShot(G)} d'un garde retourne True, alors il exécute son action du garde. Au début de chaque tour de l'Engine, l'état des gardes est changé pour que \textbf{IsShot(G)} de chaque retourne False.\\
 
 Lorsqu'un garde fait son action, si \textbf{IsShot(G)} est True alors le garde retourne à sa cellule initiale tout en laissant le trésor qu'il a ramassé s'il en avait un.
+
+\section{Conclusion}
+Lors de ce projet, on a pu implémenter un (petit) système entier en utilisant la méthodologie ``programmation par contrats'' et le Model-Based-Testing, et on y a constaté deux choses: premièrement, c'est évidemment un travail très long et fastidieux; en particulier l'implémentation des contrats demande d'écrire beaucoup de code (qu'on pourrait éventuellement générer automatiquement ?). De plus, il est toujours possible de se tromper en traduisant la spécification en contrat.\\
+
+
+De plus, la non exhaustivité des tests (en particulier dans les case des opérateurs \textrm{Step} de \textrm{Guard}, \textrm{Player} et \textrm{Engine}, ou les cas différents sont beaucoup trop nombreux) nous empêche même d'être sur de l'exact validité du programme: il est toujours possible qu'un cas vraiment spécifique se soit glissé entre les mailles du filet.\\
+
+Il est donc difficile de conclure sur l'efficacité de ces méthodes: même si il est vrai qu'elles permettent d'éviter ``99\%" des bugs, et sont donc plus que suffisantes pour un jeu ou une application sans conséquence, mais probablement pas suffisante pour des applications plus critiques. On a donc hâte de pouvoir explorer des méthodes plus formelles, telle que la preuve de programme, qui donnent plus de certitudes !
 
 \end{document}
